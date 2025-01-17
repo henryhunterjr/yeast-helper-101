@@ -1,12 +1,34 @@
-import React from 'react';
-import { Scale } from 'lucide-react';
+import React, { useState } from 'react';
+import { Scale, Copy, Check } from 'lucide-react';
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '../ui/accordion';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
+import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 
 const ConversionReference = () => {
+  const { toast } = useToast();
+  const [copiedCell, setCopiedCell] = useState<string | null>(null);
+
+  const handleCopyValue = (value: string, description: string) => {
+    navigator.clipboard.writeText(value);
+    setCopiedCell(value);
+    toast({
+      title: "Copied to clipboard",
+      description: `Conversion ratio: ${description}`,
+      duration: 2000,
+    });
+    setTimeout(() => setCopiedCell(null), 2000);
+  };
+
   return (
     <AccordionItem value="conversion">
       <AccordionTrigger className="text-lg font-semibold">
@@ -28,34 +50,45 @@ const ConversionReference = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="p-2 border font-medium bg-yeast-50">Active Dry</td>
-                <td className="p-2 border">1</td>
-                <td className="p-2 border">0.89</td>
-                <td className="p-2 border">3</td>
-                <td className="p-2 border">48</td>
-              </tr>
-              <tr>
-                <td className="p-2 border font-medium bg-yeast-50">Instant</td>
-                <td className="p-2 border">1.125</td>
-                <td className="p-2 border">1</td>
-                <td className="p-2 border">3.375</td>
-                <td className="p-2 border">54</td>
-              </tr>
-              <tr>
-                <td className="p-2 border font-medium bg-yeast-50">Fresh</td>
-                <td className="p-2 border">0.333</td>
-                <td className="p-2 border">0.296</td>
-                <td className="p-2 border">1</td>
-                <td className="p-2 border">16</td>
-              </tr>
-              <tr>
-                <td className="p-2 border font-medium bg-yeast-50">Sourdough</td>
-                <td className="p-2 border">0.021</td>
-                <td className="p-2 border">0.019</td>
-                <td className="p-2 border">0.0625</td>
-                <td className="p-2 border">1</td>
-              </tr>
+              {[
+                ['Active Dry', '1', '0.89', '3', '48'],
+                ['Instant', '1.125', '1', '3.375', '54'],
+                ['Fresh', '0.333', '0.296', '1', '16'],
+                ['Sourdough', '0.021', '0.019', '0.0625', '1']
+              ].map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  <td className="p-2 border font-medium bg-yeast-50">{row[0]}</td>
+                  {row.slice(1).map((cell, cellIndex) => (
+                    <td key={cellIndex} className="p-2 border">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="font-mono"
+                              onClick={() => handleCopyValue(
+                                cell,
+                                `${row[0]} to ${['Active Dry', 'Instant', 'Fresh', 'Sourdough'][cellIndex]}`
+                              )}
+                            >
+                              {cell}
+                              {copiedCell === cell ? (
+                                <Check className="ml-2 h-4 w-4 text-green-500" />
+                              ) : (
+                                <Copy className="ml-2 h-4 w-4 text-gray-400" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Click to copy conversion ratio</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

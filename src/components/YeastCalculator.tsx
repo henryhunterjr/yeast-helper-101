@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calculator, Settings as SettingsIcon, HelpCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import YeastInput from './YeastInput';
 import TemperatureInput from './TemperatureInput';
 import { Button } from './ui/button';
@@ -8,10 +8,21 @@ import { yeastTypes, calculateConversion, getTemperatureAdjustment } from '../ut
 
 const YeastCalculator = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState('active-dry');
   const [toType, setToType] = useState('instant');
   const [temperature, setTemperature] = useState('72');
+
+  // Handle pre-filled values from Quick Start Guide
+  useEffect(() => {
+    const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
+    if (state?.prefill) {
+      setAmount(state.prefill.amount);
+      setFromType(state.prefill.fromType);
+      setToType(state.prefill.toType);
+    }
+  }, [location.state]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
