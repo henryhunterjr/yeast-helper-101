@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, Settings as SettingsIcon } from 'lucide-react';
+import { Calculator, Settings as SettingsIcon, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import YeastInput from './YeastInput';
 import TemperatureInput from './TemperatureInput';
@@ -23,14 +23,24 @@ const YeastCalculator = () => {
           </h2>
           <p className="text-gray-600">Convert between different types of yeast</p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate('/settings')}
-          className="text-gray-600 hover:text-gray-900"
-        >
-          <SettingsIcon className="h-6 w-6" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/help')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <HelpCircle className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/settings')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <SettingsIcon className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
