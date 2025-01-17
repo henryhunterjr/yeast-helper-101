@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
-import { calculateConversion, getTemperatureAdjustment } from '../../utils/yeastCalculations';
+import { calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from '../../utils/yeastCalculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const YeastCalculatorContainer = () => {
@@ -15,6 +15,7 @@ const YeastCalculatorContainer = () => {
   const [fromType, setFromType] = useState('active-dry');
   const [toType, setToType] = useState('instant');
   const [temperature, setTemperature] = useState('72');
+  const [hydration, setHydration] = useState('100');
   const [isLoading, setIsLoading] = useState(false);
 
   // Real-time calculation effect
@@ -28,6 +29,21 @@ const YeastCalculatorContainer = () => {
       return '0';
     }
   }, [amount, fromType, toType]);
+
+  const hydrationAdjustment = useMemo(() => {
+    if (!calculationResult || isNaN(parseFloat(hydration))) return null;
+    
+    try {
+      const { flourAdjustment, waterAdjustment } = calculateHydrationAdjustment(
+        parseFloat(hydration),
+        parseFloat(calculationResult)
+      );
+      return { flourAdjustment, waterAdjustment };
+    } catch (error) {
+      console.error('Hydration calculation error:', error);
+      return null;
+    }
+  }, [calculationResult, hydration]);
 
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
@@ -56,6 +72,8 @@ const YeastCalculatorContainer = () => {
           setAmount={setAmount}
           temperature={temperature}
           setTemperature={setTemperature}
+          hydration={hydration}
+          setHydration={setHydration}
           fromType={fromType}
           setFromType={setFromType}
           toType={toType}
@@ -68,8 +86,10 @@ const YeastCalculatorContainer = () => {
           fromType={fromType}
           toType={toType}
           temperature={temperature}
+          hydration={hydration}
           result={calculationResult}
           temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+          hydrationAdjustment={hydrationAdjustment}
           isLoading={isLoading}
         />
       </div>

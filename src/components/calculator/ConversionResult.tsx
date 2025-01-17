@@ -6,8 +6,13 @@ interface ConversionResultProps {
   fromType: string;
   toType: string;
   temperature: string;
+  hydration: string;
   result: string;
   temperatureAdjustment: string;
+  hydrationAdjustment?: {
+    flourAdjustment: number;
+    waterAdjustment: number;
+  };
   isLoading?: boolean;
 }
 
@@ -16,8 +21,10 @@ const ConversionResult = ({
   fromType, 
   toType, 
   temperature, 
+  hydration,
   result, 
   temperatureAdjustment,
+  hydrationAdjustment,
   isLoading = false
 }: ConversionResultProps) => {
   if (isLoading) {
@@ -31,6 +38,28 @@ const ConversionResult = ({
       </div>
     );
   }
+
+  const getFermentationTime = () => {
+    const temp = parseFloat(temperature);
+    const hyd = parseFloat(hydration);
+    
+    if (isNaN(temp) || isNaN(hyd)) return "Standard fermentation time (4-8 hours)";
+    
+    let baseTime = 6; // Base time in hours
+    
+    // Temperature adjustment
+    const tempFactor = Math.pow(2, (temp - 72) / 10);
+    baseTime /= tempFactor;
+    
+    // Hydration adjustment
+    const hydrationFactor = 1 + (hyd - 100) / 100;
+    baseTime /= hydrationFactor;
+    
+    const minTime = Math.round(baseTime * 0.75);
+    const maxTime = Math.round(baseTime * 1.25);
+    
+    return `Estimated fermentation time: ${minTime}-${maxTime} hours`;
+  };
 
   return (
     <div className="bg-yeast-50 p-4 sm:p-6 rounded-lg">
@@ -46,10 +75,23 @@ const ConversionResult = ({
         </div>
         
         <div className="text-sm text-gray-600">
-          <p className="font-medium">Adjustments for {temperature}°F:</p>
-          <ul className="list-disc pl-4 mt-2 space-y-1">
-            <li className="break-words">{temperatureAdjustment}</li>
+          <p className="font-medium">Adjustments:</p>
+          <ul className="list-disc pl-4 mt-2 space-y-2">
+            <li className="break-words">Temperature ({temperature}°F): {temperatureAdjustment}</li>
             <li>Water temperature: {temperature ? `${Math.round(105 - parseFloat(temperature))}°F` : 'Room temperature'}</li>
+            
+            {hydrationAdjustment && (
+              <>
+                <li>
+                  Hydration ({hydration}%):
+                  <ul className="list-disc pl-4 mt-1 space-y-1">
+                    <li>Adjust flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
+                    <li>Adjust water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
+                  </ul>
+                </li>
+                <li>{getFermentationTime()}</li>
+              </>
+            )}
           </ul>
         </div>
       </div>
