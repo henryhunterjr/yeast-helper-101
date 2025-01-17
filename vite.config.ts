@@ -18,19 +18,7 @@ export default defineConfig(({ mode }) => ({
     cors: true
   },
   plugins: [
-    react({
-      plugins: [['@swc/plugin-react-refresh']],
-      swcOptions: {
-        jsc: {
-          transform: {
-            react: {
-              development: true,
-              refresh: true
-            }
-          }
-        }
-      }
-    }),
+    react(),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
