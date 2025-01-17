@@ -47,10 +47,10 @@ const YeastCalculatorContainer = () => {
   }, [location.state, toast]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl mx-auto p-2 sm:p-6 bg-white rounded-lg shadow-lg">
       <CalculatorHeader />
 
-      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
+      <div className={`grid gap-4 sm:gap-6 ${isMobile ? '' : 'md:grid-cols-2'}`}>
         <YeastInputSection
           amount={amount}
           setAmount={setAmount}

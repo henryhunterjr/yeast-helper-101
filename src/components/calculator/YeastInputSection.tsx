@@ -27,17 +27,17 @@ const YeastInputSection = ({
   isLoading
 }: YeastInputSectionProps) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <YeastInput amount={amount} setAmount={setAmount} />
       <TemperatureInput temperature={temperature} setTemperature={setTemperature} />
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">From</label>
+          <label className="block text-sm font-medium mb-2">From</label>
           <select
             value={fromType}
             onChange={(e) => setFromType(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
+            className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
             disabled={isLoading}
           >
             {Object.entries(yeastTypes).map(([key, name]) => (
@@ -47,11 +47,11 @@ const YeastInputSection = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">To</label>
+          <label className="block text-sm font-medium mb-2">To</label>
           <select
             value={toType}
             onChange={(e) => setToType(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
+            className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
             disabled={isLoading}
           >
             {Object.entries(yeastTypes).map(([key, name]) => (
