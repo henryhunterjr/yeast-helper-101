@@ -1,7 +1,8 @@
-import React from 'react';
-import { BookOpen, ArrowRight, Play, Check, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, ArrowRight, Play, Check, RefreshCw, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
+import { Progress } from '../ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -9,45 +10,97 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../ui/accordion';
+import { TutorialStep } from '@/types/tutorial';
 
-const examples = [
+const tutorialSteps: TutorialStep[] = [
   {
-    title: "Convert Active Dry to Instant",
-    description: "Common conversion for modern recipes",
-    amount: "7",
-    fromType: "active-dry",
-    toType: "instant",
-    expectedResult: "6.23g"
+    id: 1,
+    title: "Basic Conversion",
+    description: "Convert Active Dry to Instant Yeast - the most common conversion",
+    example: {
+      fromType: "active-dry",
+      toType: "instant",
+      amount: 7,
+      temperature: 72
+    }
   },
   {
-    title: "Fresh Yeast to Active Dry",
-    description: "Traditional to modern conversion",
-    amount: "10",
-    fromType: "fresh",
-    toType: "active-dry",
-    expectedResult: "3.33g"
+    id: 2,
+    title: "Temperature Adjustment",
+    description: "See how temperature affects yeast activity",
+    example: {
+      fromType: "active-dry",
+      toType: "instant",
+      amount: 10,
+      temperature: 85
+    }
+  },
+  {
+    id: 3,
+    title: "Recipe Scaling",
+    description: "Scale your recipe up or down",
+    example: {
+      fromType: "fresh",
+      toType: "active-dry",
+      amount: 15,
+      temperature: 72
+    }
+  },
+  {
+    id: 4,
+    title: "Sourdough Conversion",
+    description: "Convert between commercial yeast and sourdough starter",
+    example: {
+      fromType: "active-dry",
+      toType: "sourdough",
+      amount: 5,
+      temperature: 72
+    }
   }
 ];
 
 const QuickStartGuide = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-  const handleTryExample = (amount: string, fromType: string, toType: string, expectedResult: string) => {
+  const progress = (completedSteps.length / tutorialSteps.length) * 100;
+
+  const handleTryExample = (step: TutorialStep) => {
     toast({
-      title: "Example Loaded",
-      description: `Expected result: ${expectedResult}`,
-      duration: 3000,
+      title: `Loading ${step.title}`,
+      description: "Example values have been pre-filled in the calculator",
     });
     
     navigate('/', { 
       state: { 
         prefill: {
-          amount,
-          fromType,
-          toType
+          amount: step.example.amount.toString(),
+          fromType: step.example.fromType,
+          toType: step.example.toType,
+          temperature: step.example.temperature.toString()
         }
       }
+    });
+
+    if (!completedSteps.includes(step.id)) {
+      setCompletedSteps([...completedSteps, step.id]);
+    }
+  };
+
+  const handleNextStep = () => {
+    if (currentStep < tutorialSteps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleReset = () => {
+    setCurrentStep(1);
+    setCompletedSteps([]);
+    toast({
+      title: "Tutorial Reset",
+      description: "Starting fresh from the beginning",
     });
   };
 
@@ -60,81 +113,88 @@ const QuickStartGuide = () => {
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="grid gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <Play className="h-4 w-4 text-yeast-600" />
-                Interactive Examples
-              </h3>
-              <div className="space-y-6">
-                {examples.map((example, index) => (
-                  <div 
-                    key={index}
-                    className="p-4 rounded-lg border border-yeast-200 hover:border-yeast-300 transition-all duration-200"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-yeast-700">{example.title}</h4>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleTryExample(
-                          example.amount,
-                          example.fromType,
-                          example.toType,
-                          example.expectedResult
-                        )}
-                        className="text-sm gap-2"
-                      >
-                        Try This <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <p className="text-sm text-gray-600">{example.description}</p>
-                    <div className="mt-2 text-sm text-yeast-600">
-                      Expected result: {example.expectedResult}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h3 className="font-medium">Your Progress</h3>
+              <p className="text-sm text-gray-500">
+                {completedSteps.length} of {tutorialSteps.length} steps completed
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleReset}
+              className="gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Start Over
+            </Button>
+          </div>
 
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">Basic Steps</h3>
-              <ol className="list-decimal list-inside space-y-4">
-                <li className="transition-all duration-200 hover:bg-yeast-50 p-2 rounded flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span>Enter the amount of yeast you have</span>
-                </li>
-                <li className="transition-all duration-200 hover:bg-yeast-50 p-2 rounded flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span>Select your current yeast type</span>
-                </li>
-                <li className="transition-all duration-200 hover:bg-yeast-50 p-2 rounded flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span>Choose the yeast type you want to convert to</span>
-                </li>
-                <li className="transition-all duration-200 hover:bg-yeast-50 p-2 rounded flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span>Input the room temperature (optional)</span>
-                </li>
-                <li className="transition-all duration-200 hover:bg-yeast-50 p-2 rounded flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  <span>View your conversion result and temperature adjustments</span>
-                </li>
-              </ol>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate('/')}
-                className="mt-4 gap-2"
+          <Progress value={progress} className="h-2" />
+
+          <div className="grid gap-4">
+            {tutorialSteps.map((step) => (
+              <Card
+                key={step.id}
+                className={`transition-all duration-200 ${
+                  currentStep === step.id ? 'ring-2 ring-yeast-500' : ''
+                } ${completedSteps.includes(step.id) ? 'bg-yeast-50' : ''}`}
               >
-                <RefreshCw className="h-4 w-4" />
-                Start Fresh
-              </Button>
-            </CardContent>
-          </Card>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        {completedSteps.includes(step.id) ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Play className="h-4 w-4 text-yeast-600" />
+                        )}
+                        <h4 className="font-medium text-yeast-700">
+                          {step.title}
+                        </h4>
+                      </div>
+                      <p className="text-sm text-gray-600">{step.description}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleTryExample(step)}
+                      className="gap-2 shrink-0"
+                    >
+                      Try This <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {currentStep === step.id && (
+                    <div className="mt-4 p-3 bg-white rounded-lg border border-yeast-200">
+                      <div className="text-sm space-y-2">
+                        <div className="flex justify-between text-gray-600">
+                          <span>Amount:</span>
+                          <span className="font-mono">{step.example.amount}g</span>
+                        </div>
+                        <div className="flex justify-between text-gray-600">
+                          <span>Temperature:</span>
+                          <span className="font-mono">{step.example.temperature}°F</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {currentStep < tutorialSteps.length && (
+            <Button 
+              onClick={handleNextStep}
+              className="w-full gap-2"
+            >
+              Next Step
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </AccordionContent>
     </AccordionItem>
