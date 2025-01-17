@@ -6,6 +6,13 @@ import { useToast } from './ui/use-toast';
 import ThemeSettings from './settings/ThemeSettings';
 import UnitSettings from './settings/UnitSettings';
 import YeastTypeSettings from './settings/YeastTypeSettings';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -40,32 +47,43 @@ const Settings = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-        <h2 className="text-2xl font-bold text-gray-800">Settings</h2>
-      </div>
+    <Dialog>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>
+            Customize your yeast calculator preferences
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="flex items-center gap-4 mb-8">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+              <ArrowLeft className="h-6 w-6" />
+            </Button>
+            <h2 className="text-2xl font-bold text-gray-800">Settings</h2>
+          </div>
 
-      <div className="space-y-8 bg-white rounded-lg shadow-lg p-6">
-        <ThemeSettings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-        <UnitSettings 
-          units={units} 
-          setUnits={setUnits}
-          tempScale={tempScale}
-          setTempScale={setTempScale}
-        />
-        <YeastTypeSettings defaultYeast={defaultYeast} setDefaultYeast={setDefaultYeast} />
+          <div className="space-y-8 bg-white rounded-lg shadow-lg p-6">
+            <ThemeSettings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            <UnitSettings 
+              units={units} 
+              setUnits={setUnits}
+              tempScale={tempScale}
+              setTempScale={setTempScale}
+            />
+            <YeastTypeSettings defaultYeast={defaultYeast} setDefaultYeast={setDefaultYeast} />
 
-        <Button 
-          onClick={handleSave}
-          className="w-full bg-yeast-600 hover:bg-yeast-700 text-white"
-        >
-          Save Settings
-        </Button>
-      </div>
-    </div>
+            <Button 
+              onClick={handleSave}
+              className="w-full bg-yeast-600 hover:bg-yeast-700 text-white"
+            >
+              Save Settings
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
