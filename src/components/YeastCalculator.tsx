@@ -17,10 +17,10 @@ const YeastCalculator = () => {
   const calculateConversion = (amount: string, from: string, to: string): string => {
     if (!amount) return '0';
     const ratios: Record<string, Record<string, number>> = {
-      'active-dry': { 'instant': 0.75, 'fresh': 3, 'sourdough': 4 },
-      'instant': { 'active-dry': 1.33, 'fresh': 4, 'sourdough': 5.33 },
-      'fresh': { 'active-dry': 0.33, 'instant': 0.25, 'sourdough': 1.33 },
-      'sourdough': { 'active-dry': 0.25, 'instant': 0.19, 'fresh': 0.75 }
+      'active-dry': { 'instant': 0.89, 'fresh': 3, 'sourdough': 48 },
+      'instant': { 'active-dry': 1.125, 'fresh': 3.375, 'sourdough': 54 },
+      'fresh': { 'active-dry': 0.333, 'instant': 0.296, 'sourdough': 16 },
+      'sourdough': { 'active-dry': 0.021, 'instant': 0.019, 'fresh': 0.0625 }
     };
     
     if (from === to) return amount;
