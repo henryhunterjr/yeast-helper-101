@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import YeastInput from './YeastInput';
@@ -33,14 +33,10 @@ const YeastCalculator = () => {
     }
   }, [location.state, toast]);
 
-  const handleCalculation = () => {
-    setIsLoading(true);
+  const calculationResult = useMemo(() => {
     try {
-      const result = calculateConversion(amount, fromType, toType);
-      setIsLoading(false);
-      return result;
+      return calculateConversion(amount, fromType, toType);
     } catch (error) {
-      setIsLoading(false);
       toast({
         title: "Calculation Error",
         description: "There was an error performing the calculation. Please check your inputs.",
@@ -48,7 +44,7 @@ const YeastCalculator = () => {
       });
       return null;
     }
-  };
+  }, [amount, fromType, toType, toast]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -95,7 +91,7 @@ const YeastCalculator = () => {
           fromType={fromType}
           toType={toType}
           temperature={temperature}
-          result={handleCalculation()}
+          result={calculationResult || '0'}
           temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
           isLoading={isLoading}
         />
