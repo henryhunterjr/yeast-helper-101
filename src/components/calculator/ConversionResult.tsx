@@ -8,6 +8,7 @@ interface ConversionResultProps {
   temperature: string;
   result: string;
   temperatureAdjustment: string;
+  isLoading?: boolean;
 }
 
 const ConversionResult = ({ 
@@ -16,8 +17,21 @@ const ConversionResult = ({
   toType, 
   temperature, 
   result, 
-  temperatureAdjustment 
+  temperatureAdjustment,
+  isLoading = false
 }: ConversionResultProps) => {
+  if (isLoading) {
+    return (
+      <div className="bg-yeast-50 p-6 rounded-lg">
+        <h3 className="font-semibold mb-4">Calculating...</h3>
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded"></div>
+          <div className="h-12 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-yeast-50 p-6 rounded-lg">
       <h3 className="font-semibold mb-4">Conversion Result</h3>

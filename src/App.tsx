@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import Index from "./pages/Index";
 import Settings from "./components/Settings";
 import HelpAbout from "./components/HelpAbout";
@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const ErrorFallback = ({ error, resetErrorBoundary }) => {
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h2 className="text-xl font-semibold text-red-600 mb-4">Something went wrong</h2>
