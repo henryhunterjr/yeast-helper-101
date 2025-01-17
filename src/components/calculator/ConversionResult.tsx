@@ -1,5 +1,11 @@
 import React from 'react';
 import { yeastTypes } from '../../utils/yeastCalculations';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from 'lucide-react';
 
 interface ConversionResultProps {
   amount: string;
@@ -58,7 +64,7 @@ const ConversionResult = ({
     const minTime = Math.round(baseTime * 0.75);
     const maxTime = Math.round(baseTime * 1.25);
     
-    return `Estimated fermentation time: ${minTime}-${maxTime} hours`;
+    return `${minTime}-${maxTime} hours`;
   };
 
   return (
@@ -75,23 +81,68 @@ const ConversionResult = ({
         </div>
         
         <div className="text-sm text-gray-600">
-          <p className="font-medium">Adjustments:</p>
+          <div className="font-medium flex items-center gap-2">
+            Adjustments
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-4 w-4 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">
+                  These adjustments help optimize your recipe based on temperature and hydration levels.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          
           <ul className="list-disc pl-4 mt-2 space-y-2">
-            <li className="break-words">Temperature ({temperature}°F): {temperatureAdjustment}</li>
-            <li>Water temperature: {temperature ? `${Math.round(105 - parseFloat(temperature))}°F` : 'Room temperature'}</li>
+            <li className="break-words">
+              Temperature ({temperature}°F): {temperatureAdjustment}
+              <div className="text-xs text-gray-500 mt-1">
+                Recommended water temperature: {temperature ? `${Math.round(105 - parseFloat(temperature))}°F` : 'Room temperature'}
+              </div>
+            </li>
             
             {hydrationAdjustment && (
-              <>
-                <li>
-                  Hydration ({hydration}%):
-                  <ul className="list-disc pl-4 mt-1 space-y-1">
-                    <li>Adjust flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
-                    <li>Adjust water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
-                  </ul>
-                </li>
-                <li>{getFermentationTime()}</li>
-              </>
+              <li>
+                <div className="flex items-center gap-2">
+                  Hydration ({hydration}%)
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">
+                        Hydration percentage affects fermentation speed and final texture. 100% means equal parts flour and water.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <ul className="list-disc pl-4 mt-1 space-y-1">
+                  <li>Adjust flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
+                  <li>Adjust water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
+                </ul>
+              </li>
             )}
+            
+            <li>
+              <div className="flex items-center gap-2">
+                Estimated fermentation time
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-4 w-4 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">
+                      This is an approximate range based on temperature and hydration. Watch your dough for actual readiness.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <div className="text-sm font-medium text-yeast-600">
+                {getFermentationTime()}
+              </div>
+            </li>
           </ul>
         </div>
       </div>

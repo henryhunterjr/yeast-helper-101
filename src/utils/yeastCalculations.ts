@@ -14,22 +14,26 @@ const conversionFactors = {
   'instant': {
     'active-dry': 1.33,
     'fresh': 4,
-    'sourdough': 18.67 // 14/0.75
+    'sourdough': 18.67
   },
   'fresh': {
     'active-dry': 0.33,
     'instant': 0.25,
-    'sourdough': 4.67 // 14/3
+    'sourdough': 4.67
   },
   'sourdough': {
-    'active-dry': 0.071, // 1/14
-    'instant': 0.054, // 1/(14/0.75)
-    'fresh': 0.214 // 1/(14/3)
+    'active-dry': 0.071,
+    'instant': 0.054,
+    'fresh': 0.214
   }
 };
 
 const BASE_TEMPERATURE = 72; // °F
 const BASE_HYDRATION = 100; // %
+const MIN_TEMP = 32;
+const MAX_TEMP = 120;
+const MIN_HYDRATION = 50;
+const MAX_HYDRATION = 200;
 
 export const calculateConversion = (
   amount: string,
@@ -46,7 +50,9 @@ export const calculateConversion = (
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
-  if (isNaN(temperature)) return 'Standard proofing time';
+  if (isNaN(temperature) || temperature < MIN_TEMP || temperature > MAX_TEMP) {
+    return 'Temperature out of range (32°F-120°F)';
+  }
   
   const tempDiff = temperature - BASE_TEMPERATURE;
   if (Math.abs(tempDiff) < 5) return 'Standard proofing time';
@@ -65,19 +71,49 @@ export const calculateHydrationAdjustment = (
   hydration: number,
   weight: number
 ): { 
-  adjustedWeight: number;
   flourAdjustment: number;
   waterAdjustment: number;
 } => {
-  const hydrationFactor = 1 + (hydration - BASE_HYDRATION) / 100;
-  const adjustedWeight = weight * hydrationFactor;
-  
-  const flourAdjustment = (adjustedWeight - weight) / 2;
-  const waterAdjustment = flourAdjustment * (hydration / 100);
+  if (isNaN(hydration) || hydration < MIN_HYDRATION || hydration > MAX_HYDRATION) {
+    throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
+  }
+
+  // Calculate flour and water adjustments based on hydration
+  const totalWeight = weight;
+  const flourRatio = 1 / (1 + hydration / 100);
+  const waterRatio = 1 - flourRatio;
   
   return {
-    adjustedWeight,
-    flourAdjustment,
-    waterAdjustment
+    flourAdjustment: totalWeight * flourRatio,
+    waterAdjustment: totalWeight * waterRatio
+  };
+};
+
+export const calculateFermentationTime = (
+  temperature: number,
+  hydration: number
+): { minHours: number; maxHours: number } => {
+  if (isNaN(temperature) || temperature < MIN_TEMP || temperature > MAX_TEMP) {
+    throw new Error(`Temperature must be between ${MIN_TEMP}°F and ${MAX_TEMP}°F`);
+  }
+  if (isNaN(hydration) || hydration < MIN_HYDRATION || hydration > MAX_HYDRATION) {
+    throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
+  }
+
+  // Base fermentation time at 72°F and 100% hydration
+  let baseTime = 6;
+
+  // Temperature adjustment
+  const tempFactor = Math.pow(2, (temperature - BASE_TEMPERATURE) / 10);
+  baseTime /= tempFactor;
+
+  // Hydration adjustment
+  const hydrationFactor = 1 + (hydration - BASE_HYDRATION) / 100;
+  baseTime /= hydrationFactor;
+
+  // Return a range of ±25% around the calculated time
+  return {
+    minHours: Math.max(1, Math.round(baseTime * 0.75)),
+    maxHours: Math.round(baseTime * 1.25)
   };
 };
