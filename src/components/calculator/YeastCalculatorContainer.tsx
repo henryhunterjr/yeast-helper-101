@@ -5,15 +5,29 @@ import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import { calculateConversion, getTemperatureAdjustment } from '../../utils/yeastCalculations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const YeastCalculatorContainer = () => {
   const location = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState('active-dry');
   const [toType, setToType] = useState('instant');
   const [temperature, setTemperature] = useState('72');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Real-time calculation effect
+  const calculationResult = useMemo(() => {
+    if (!amount || isNaN(parseFloat(amount))) return '0';
+    
+    try {
+      return calculateConversion(amount, fromType, toType);
+    } catch (error) {
+      console.error('Calculation error:', error);
+      return '0';
+    }
+  }, [amount, fromType, toType]);
 
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
@@ -32,24 +46,11 @@ const YeastCalculatorContainer = () => {
     }
   }, [location.state, toast]);
 
-  const calculationResult = useMemo(() => {
-    try {
-      return calculateConversion(amount, fromType, toType);
-    } catch (error) {
-      toast({
-        title: "Calculation Error",
-        description: "There was an error performing the calculation. Please check your inputs.",
-        variant: "destructive",
-      });
-      return null;
-    }
-  }, [amount, fromType, toType, toast]);
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
       <CalculatorHeader />
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
         <YeastInputSection
           amount={amount}
           setAmount={setAmount}
@@ -67,7 +68,7 @@ const YeastCalculatorContainer = () => {
           fromType={fromType}
           toType={toType}
           temperature={temperature}
-          result={calculationResult || '0'}
+          result={calculationResult}
           temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
           isLoading={isLoading}
         />
