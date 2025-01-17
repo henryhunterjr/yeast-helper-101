@@ -18,6 +18,7 @@ interface ConversionResultProps {
   hydrationAdjustment?: {
     flourAdjustment: number;
     waterAdjustment: number;
+    showAdjustments: boolean;
   };
   isLoading?: boolean;
 }
@@ -52,12 +53,8 @@ const ConversionResult = ({
     if (isNaN(temp) || isNaN(hyd)) return "Standard fermentation time (4-8 hours)";
     
     let baseTime = 6; // Base time in hours
-    
-    // Temperature adjustment
     const tempFactor = Math.pow(2, (temp - 72) / 10);
     baseTime /= tempFactor;
-    
-    // Hydration adjustment
     const hydrationFactor = 1 + (hyd - 100) / 100;
     baseTime /= hydrationFactor;
     
@@ -103,24 +100,24 @@ const ConversionResult = ({
               </div>
             </li>
             
-            {hydrationAdjustment && (
+            {hydrationAdjustment?.showAdjustments && (
               <li>
                 <div className="flex items-center gap-2">
-                  Hydration ({hydration}%)
+                  Recipe Adjustments
                   <Tooltip>
                     <TooltipTrigger>
                       <Info className="h-4 w-4 text-gray-400" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs">
-                        Hydration percentage affects fermentation speed and final texture. 100% means equal parts flour and water.
+                        When converting to/from sourdough starter, you need to adjust your recipe's flour and water to account for the starter's hydration.
                       </p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
                 <ul className="list-disc pl-4 mt-1 space-y-1">
-                  <li>Adjust flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
-                  <li>Adjust water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
+                  <li>Adjust flour by: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
+                  <li>Adjust water by: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
                 </ul>
               </li>
             )}

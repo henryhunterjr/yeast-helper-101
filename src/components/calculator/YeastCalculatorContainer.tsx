@@ -18,7 +18,6 @@ const YeastCalculatorContainer = () => {
   const [hydration, setHydration] = useState('100');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Real-time calculation effect
   const calculationResult = useMemo(() => {
     if (!amount || isNaN(parseFloat(amount))) return '0';
     
@@ -34,16 +33,17 @@ const YeastCalculatorContainer = () => {
     if (!calculationResult || isNaN(parseFloat(hydration))) return null;
     
     try {
-      const { flourAdjustment, waterAdjustment } = calculateHydrationAdjustment(
+      return calculateHydrationAdjustment(
         parseFloat(hydration),
-        parseFloat(calculationResult)
+        parseFloat(calculationResult),
+        fromType,
+        toType
       );
-      return { flourAdjustment, waterAdjustment };
     } catch (error) {
       console.error('Hydration calculation error:', error);
       return null;
     }
-  }, [calculationResult, hydration]);
+  }, [calculationResult, hydration, fromType, toType]);
 
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };

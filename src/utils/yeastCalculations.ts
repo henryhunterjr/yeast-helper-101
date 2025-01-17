@@ -69,23 +69,40 @@ export const getTemperatureAdjustment = (temperature: number): string => {
 
 export const calculateHydrationAdjustment = (
   hydration: number,
-  weight: number
+  weight: number,
+  fromType: string,
+  toType: string
 ): { 
   flourAdjustment: number;
   waterAdjustment: number;
+  showAdjustments: boolean;
 } => {
   if (isNaN(hydration) || hydration < MIN_HYDRATION || hydration > MAX_HYDRATION) {
     throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
   }
 
-  // Calculate flour and water adjustments based on hydration
-  const totalWeight = weight;
-  const flourRatio = 1 / (1 + hydration / 100);
-  const waterRatio = 1 - flourRatio;
+  // Only show adjustments when converting to/from sourdough
+  const showAdjustments = fromType === 'sourdough' || toType === 'sourdough';
+
+  if (!showAdjustments) {
+    return {
+      flourAdjustment: 0,
+      waterAdjustment: 0,
+      showAdjustments: false
+    };
+  }
+
+  // Calculate adjustments based on sourdough conversion
+  const sourdoughAmount = toType === 'sourdough' ? weight : -weight;
   
+  // For 100% hydration starter, each gram contains 0.5g flour and 0.5g water
+  const flourAdjustment = -sourdoughAmount * 0.5;
+  const waterAdjustment = -sourdoughAmount * 0.5;
+
   return {
-    flourAdjustment: totalWeight * flourRatio,
-    waterAdjustment: totalWeight * waterRatio
+    flourAdjustment,
+    waterAdjustment,
+    showAdjustments: true
   };
 };
 
@@ -100,18 +117,12 @@ export const calculateFermentationTime = (
     throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
   }
 
-  // Base fermentation time at 72°F and 100% hydration
   let baseTime = 6;
-
-  // Temperature adjustment
   const tempFactor = Math.pow(2, (temperature - BASE_TEMPERATURE) / 10);
   baseTime /= tempFactor;
-
-  // Hydration adjustment
   const hydrationFactor = 1 + (hydration - BASE_HYDRATION) / 100;
   baseTime /= hydrationFactor;
 
-  // Return a range of ±25% around the calculated time
   return {
     minHours: Math.max(1, Math.round(baseTime * 0.75)),
     maxHours: Math.round(baseTime * 1.25)
