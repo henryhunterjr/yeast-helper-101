@@ -16,12 +16,14 @@ const queryClient = new QueryClient({
       retry: 3,
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
-      onError: (error: Error) => {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
+      meta: {
+        onError: (error: Error) => {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        },
       },
     },
   },
@@ -29,7 +31,6 @@ const queryClient = new QueryClient({
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   useEffect(() => {
-    // Log errors to help with debugging
     console.error("Application error:", error);
   }, [error]);
 
@@ -51,7 +52,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
 
 const App = () => {
   useEffect(() => {
-    // Handle unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error("Unhandled promise rejection:", event.reason);
       toast({
@@ -71,7 +71,6 @@ const App = () => {
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onReset={() => {
-        // Reset any state that might have caused the error
         queryClient.clear();
       }}
     >

@@ -19,9 +19,17 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react({
-      // Add better error handling for development
-      devTools: true,
-      fastRefresh: true
+      plugins: [['@swc/plugin-react-refresh']],
+      swcOptions: {
+        jsc: {
+          transform: {
+            react: {
+              development: true,
+              refresh: true
+            }
+          }
+        }
+      }
     }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
@@ -30,7 +38,6 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Add better error handling
   build: {
     sourcemap: true,
     rollupOptions: {
