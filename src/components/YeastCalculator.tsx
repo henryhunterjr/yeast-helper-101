@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Calculator } from 'lucide-react';
+import { Calculator, Settings as SettingsIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import YeastInput from './YeastInput';
 import TemperatureInput from './TemperatureInput';
+import { Button } from './ui/button';
 import { yeastTypes, calculateConversion, getTemperatureAdjustment } from '../utils/yeastCalculations';
 
 const YeastCalculator = () => {
+  const navigate = useNavigate();
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState('active-dry');
   const [toType, setToType] = useState('instant');
@@ -12,12 +15,22 @@ const YeastCalculator = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <Calculator className="w-6 h-6 text-yeast-600" />
-          YeastWise Calculator
-        </h2>
-        <p className="text-gray-600">Convert between different types of yeast</p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <Calculator className="w-6 h-6 text-yeast-600" />
+            YeastWise Calculator
+          </h2>
+          <p className="text-gray-600">Convert between different types of yeast</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/settings')}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <SettingsIcon className="h-6 w-6" />
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
