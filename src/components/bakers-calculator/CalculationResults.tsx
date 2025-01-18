@@ -11,11 +11,14 @@ interface CalculationResultsProps {
 }
 
 const CalculationResults = ({ recipe }: CalculationResultsProps) => {
-  const hydration = calculateHydration(
-    recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water')?.weight || 0,
-    recipe.flour
-  );
-
+  const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
+  const starterWaterContribution = recipe.starter ? 
+    (recipe.starter.weight * (recipe.starter.hydration / 100)) / 2 : 0;
+  
+  const totalWater = (waterIngredient?.weight || 0) + starterWaterContribution;
+  const totalFlour = recipe.flour + (recipe.starter ? recipe.starter.weight / 2 : 0);
+  
+  const hydration = calculateHydration(totalWater, totalFlour);
   const totalWeight = getTotalWeight(recipe);
 
   const getIngredientPercentages = () => {
@@ -30,13 +33,13 @@ const CalculationResults = ({ recipe }: CalculationResultsProps) => {
     <Card className="p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Label>Hydration</Label>
+          <Label>Total Hydration</Label>
           <Tooltip>
             <TooltipTrigger>
               <HelpCircle className="h-4 w-4 text-muted-foreground" />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Hydration is the ratio of water weight to flour weight</p>
+              <p>Includes water from starter and main dough</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -52,6 +55,22 @@ const CalculationResults = ({ recipe }: CalculationResultsProps) => {
           </div>
         ))}
       </div>
+
+      {recipe.starter && (
+        <div className="space-y-2 pt-2 border-t">
+          <Label>Starter Breakdown</Label>
+          <div className="text-sm space-y-1">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Flour from starter</span>
+              <span className="font-mono">{(recipe.starter.weight / 2).toFixed(1)} {recipe.unit}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Water from starter</span>
+              <span className="font-mono">{starterWaterContribution.toFixed(1)} {recipe.unit}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center justify-between pt-2 border-t">
         <Label>Total Weight</Label>

@@ -27,8 +27,8 @@ export const validateIngredient = (
   if (name === 'salt' && (percentage < TYPICAL_RANGES.salt.min || percentage > TYPICAL_RANGES.salt.max)) {
     return { isValid: true, message: TYPICAL_RANGES.salt.warning };
   }
-  if (name === 'yeast' && (percentage < TYPICAL_RANGES.yeast.min || percentage > TYPICAL_RANGES.yeast.max)) {
-    return { isValid: true, message: TYPICAL_RANGES.yeast.warning };
+  if (name === 'starter' && (percentage < TYPICAL_RANGES.starter.min || percentage > TYPICAL_RANGES.starter.max)) {
+    return { isValid: true, message: TYPICAL_RANGES.starter.warning };
   }
 
   return { isValid: true };
@@ -38,16 +38,27 @@ export const getTotalWeight = (recipe: Recipe): number => {
   return recipe.flour + recipe.ingredients.reduce((sum, ing) => sum + ing.weight, 0);
 };
 
-export const scaleRecipe = (recipe: Recipe, newFlourWeight: number): Recipe => {
-  const scaleFactor = newFlourWeight / recipe.flour;
+export const calculateWaterFromHydration = (flour: number, hydration: number): number => {
+  return (flour * hydration) / 100;
+};
+
+export const calculateFlourFromHydration = (water: number, hydration: number): number => {
+  return (water * 100) / hydration;
+};
+
+export const calculateStarterContributions = (
+  starterWeight: number,
+  starterHydration: number
+): { flour: number; water: number } => {
+  const totalParts = 1 + starterHydration / 100;
+  const flourPart = 1 / totalParts;
+  
+  const flourContribution = starterWeight * flourPart;
+  const waterContribution = starterWeight * (1 - flourPart);
+
   return {
-    ...recipe,
-    flour: newFlourWeight,
-    ingredients: recipe.ingredients.map(ing => ({
-      ...ing,
-      weight: Number((ing.weight * scaleFactor).toFixed(2)),
-      percentage: ing.percentage, // Percentages stay the same
-    })),
+    flour: flourContribution,
+    water: waterContribution,
   };
 };
 
