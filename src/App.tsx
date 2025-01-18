@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+import { ErrorBoundary } from "react-error-boundary";
 import Index from "./pages/Index";
 import Settings from "./components/Settings";
 import HelpAbout from "./components/HelpAbout";
@@ -30,7 +30,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = ({ error }: { error: Error }) => {
   useEffect(() => {
     console.error("Application error:", error);
   }, [error]);
@@ -42,10 +42,10 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         {error.message}
       </pre>
       <button
-        onClick={resetErrorBoundary}
+        onClick={() => window.location.reload()}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
-        Try again
+        Refresh Page
       </button>
     </div>
   );
@@ -69,28 +69,21 @@ const App = () => {
   }, []);
 
   return (
-    <React.StrictMode>
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => {
-          queryClient.clear();
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/help" element={<HelpAbout />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </React.StrictMode>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<HelpAbout />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
