@@ -68,8 +68,6 @@ const App = () => {
     };
   }, []);
 
-  const basename = import.meta.env.MODE === 'production' ? '/yeastwise' : '/';
-
   return (
     <React.StrictMode>
       <ErrorBoundary
@@ -82,7 +80,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter basename={basename}>
+            <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/settings" element={<Settings />} />
