@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/yeastwise/' : '/',
   server: {
     host: "0.0.0.0",
     port: 8080,
@@ -14,9 +15,6 @@ export default defineConfig(({ mode }) => ({
         secure: false,
         ws: true
       }
-    },
-    headers: {
-      'Permissions-Policy': 'vr=(), ambient-light-sensor=(), battery=()'
     }
   },
   plugins: [
