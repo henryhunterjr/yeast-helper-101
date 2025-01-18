@@ -2,16 +2,15 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from 'lucide-react';
 import { Recipe } from '@/types/recipe';
 import PercentageInput from './PercentageInput';
 import { Slider } from "@/components/ui/slider";
 
 interface IngredientInputsProps {
   recipe: Recipe;
-  onFlourChange: (value: number) => void;
-  onIngredientChange: (id: string, weight: number) => void;
-  onStarterChange: (weight: number, hydration: number) => void;
+  onFlourChange: (value: number | null) => void;
+  onIngredientChange: (id: string, weight: number | null) => void;
+  onStarterChange: (weight: number | null, hydration: number) => void;
   onHydrationTargetChange: (value: number) => void;
   onReset: () => void;
 }
@@ -24,6 +23,30 @@ const IngredientInputs = ({
   onHydrationTargetChange,
   onReset,
 }: IngredientInputsProps) => {
+  const handleFlourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      onFlourChange(null);
+    } else {
+      const numValue = Number(value);
+      if (!isNaN(numValue)) {
+        onFlourChange(numValue);
+      }
+    }
+  };
+
+  const handleStarterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      onStarterChange(null, recipe.starter?.hydration || 100);
+    } else {
+      const numValue = Number(value);
+      if (!isNaN(numValue)) {
+        onStarterChange(numValue, recipe.starter?.hydration || 100);
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -31,10 +54,11 @@ const IngredientInputs = ({
         <Input
           id="flour"
           type="number"
-          value={recipe.flour}
-          onChange={(e) => onFlourChange(Number(e.target.value))}
+          value={recipe.flour || ''}
+          onChange={handleFlourChange}
           min="0"
           step="1"
+          placeholder="Enter flour weight"
         />
       </div>
 
@@ -69,10 +93,11 @@ const IngredientInputs = ({
               <Input
                 id="starter-weight"
                 type="number"
-                value={recipe.starter?.weight}
-                onChange={(e) => onStarterChange(Number(e.target.value), recipe.starter?.hydration || 100)}
+                value={recipe.starter?.weight || ''}
+                onChange={handleStarterChange}
                 min="0"
                 step="1"
+                placeholder="Enter starter weight"
               />
             </div>
             <div>

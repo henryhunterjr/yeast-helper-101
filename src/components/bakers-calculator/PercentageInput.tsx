@@ -12,7 +12,7 @@ interface PercentageInputProps {
   unit: 'g' | 'oz';
   percentage: number;
   flourWeight: number;
-  onChange: (weight: number) => void;
+  onChange: (weight: number | null) => void;
   readOnly?: boolean;
 }
 
@@ -28,13 +28,13 @@ const PercentageInput = ({
   const { toast } = useToast();
 
   const handleWeightChange = (value: string) => {
-    const numValue = parseFloat(value);
-    
     if (value === '') {
-      onChange(0);
+      onChange(null);
       return;
     }
 
+    const numValue = parseFloat(value);
+    
     if (isNaN(numValue) || numValue < 0) {
       toast({
         title: "Invalid Input",
