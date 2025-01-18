@@ -67,7 +67,8 @@ const ConversionResult = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Main Conversion Result */}
       <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
@@ -90,6 +91,7 @@ const ConversionResult = ({
         </div>
       </Card>
 
+      {/* Proofing and Water Temperature Information */}
       <div className="grid gap-4 sm:grid-cols-2">
         <ProofingTimeDisplay 
           temperature={temperature} 
@@ -101,6 +103,7 @@ const ConversionResult = ({
         />
       </div>
 
+      {/* Hydration Adjustments */}
       {hydrationAdjustment?.showAdjustments && (
         <Card className="p-6 bg-gradient-to-r from-yeast-50 to-white border border-yeast-200">
           <h3 className="font-medium mb-3 text-yeast-800">Hydration Adjustments</h3>
