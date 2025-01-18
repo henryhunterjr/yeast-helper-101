@@ -22,11 +22,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react({
-      // Add proper preload directives
-      jsxImportSource: '@emotion/react',
-      babel: {
-        plugins: ['@emotion/babel-plugin']
-      }
+      jsxImportSource: '@emotion/react'
     }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
