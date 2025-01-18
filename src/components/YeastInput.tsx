@@ -2,17 +2,22 @@ import React from 'react';
 import { Scale } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { convertToTeaspoons, convertFromTeaspoons, tspToGramConversion } from '../utils/yeastTypes';
 
 interface YeastInputProps {
   amount: string;
   setAmount: (value: string) => void;
+  yeastType: string;
 }
 
-const YeastInput = ({ amount, setAmount }: YeastInputProps) => {
+const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
   const { toast } = useToast();
   const MIN_AMOUNT = 0.1;
   const MAX_AMOUNT = 1000;
   const [units, setUnits] = React.useState('metric');
+  const [useTsp, setUseTsp] = React.useState(false);
 
   React.useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
@@ -47,56 +52,108 @@ const YeastInput = ({ amount, setAmount }: YeastInputProps) => {
       return;
     }
 
-    // Convert limits based on current unit
-    const minLimit = units === 'imperial' ? MIN_AMOUNT / 28.3495 : MIN_AMOUNT;
-    const maxLimit = units === 'imperial' ? MAX_AMOUNT / 28.3495 : MAX_AMOUNT;
+    let finalValue = numValue;
+    
+    // Convert from teaspoons if necessary
+    if (useTsp) {
+      const gramsValue = convertFromTeaspoons(numValue, yeastType as keyof typeof tspToGramConversion);
+      if (gramsValue === null) {
+        toast({
+          title: "Invalid Conversion",
+          description: "This type of yeast cannot be measured in teaspoons",
+          variant: "destructive",
+        });
+        return;
+      }
+      finalValue = gramsValue;
+    }
 
-    if (numValue < minLimit) {
+    // Convert to metric if using imperial
+    if (units === 'imperial' && !useTsp) {
+      finalValue = convertToMetric(numValue);
+    }
+
+    // Check limits
+    if (finalValue < MIN_AMOUNT) {
       toast({
         title: "Amount Too Small",
-        description: `Minimum amount is ${minLimit.toFixed(3)}${units === 'imperial' ? 'oz' : 'g'}`,
+        description: `Minimum amount is ${MIN_AMOUNT}g`,
         variant: "destructive",
       });
       return;
     }
 
-    if (numValue > maxLimit) {
+    if (finalValue > MAX_AMOUNT) {
       toast({
         title: "Amount Too Large",
-        description: `Maximum amount is ${maxLimit.toFixed(2)}${units === 'imperial' ? 'oz' : 'g'}`,
+        description: `Maximum amount is ${MAX_AMOUNT}g`,
         variant: "destructive",
       });
       return;
     }
 
-    // Store the value in metric internally
-    const metricValue = units === 'imperial' ? convertToMetric(numValue) : numValue;
-    setAmount(metricValue.toString());
+    setAmount(finalValue.toString());
   };
 
-  const displayValue = units === 'imperial' ? 
-    (amount ? convertToImperial(parseFloat(amount)).toFixed(3) : '') : 
-    amount;
+  const displayValue = () => {
+    if (!amount) return '';
+    
+    const numAmount = parseFloat(amount);
+    
+    if (useTsp) {
+      const tspValue = convertToTeaspoons(numAmount, yeastType as keyof typeof tspToGramConversion);
+      return tspValue?.toString() || '';
+    }
+    
+    return units === 'imperial' ? convertToImperial(numAmount).toFixed(3) : amount;
+  };
+
+  const getUnitLabel = () => {
+    if (useTsp) return 'tsp';
+    return units === 'imperial' ? 'ounces' : 'grams';
+  };
+
+  const canUseTsp = tspToGramConversion[yeastType as keyof typeof tspToGramConversion] !== null;
 
   return (
-    <div className="w-full">
-      <label className="block text-sm font-medium mb-2">
-        Amount ({units === 'imperial' ? 'ounces' : 'grams'})
-      </label>
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between">
+        <label className="block text-sm font-medium">
+          Amount ({getUnitLabel()})
+        </label>
+        {canUseTsp && (
+          <div className="flex items-center space-x-2">
+            <Switch
+              checked={useTsp}
+              onCheckedChange={setUseTsp}
+              id="tsp-toggle"
+            />
+            <Label htmlFor="tsp-toggle">Use teaspoons</Label>
+          </div>
+        )}
+      </div>
       <div className="relative">
         <Scale className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
         <Input
           type="number"
           inputMode="decimal"
-          value={displayValue}
+          value={displayValue()}
           onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
-          placeholder={`Enter amount (${units === 'imperial' ? '0.004-35.27oz' : '0.1-1000g'})`}
-          step={units === 'imperial' ? '0.001' : '0.1'}
-          min={units === 'imperial' ? MIN_AMOUNT / 28.3495 : MIN_AMOUNT}
-          max={units === 'imperial' ? MAX_AMOUNT / 28.3495 : MAX_AMOUNT}
+          placeholder={`Enter amount`}
+          step={useTsp ? '0.25' : (units === 'imperial' ? '0.001' : '0.1')}
         />
       </div>
+      {amount && (
+        <p className="text-sm text-gray-500">
+          {useTsp ? 
+            `${amount}g` :
+            units === 'imperial' ? 
+              `${amount}g` : 
+              convertToTeaspoons(parseFloat(amount), yeastType as keyof typeof tspToGramConversion)?.toFixed(2) + ' tsp'
+          }
+        </p>
+      )}
     </div>
   );
 };

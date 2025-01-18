@@ -3,7 +3,7 @@ import YeastInput from '../YeastInput';
 import TemperatureInput from '../TemperatureInput';
 import { Input } from "@/components/ui/input";
 import { Droplets } from 'lucide-react';
-import { yeastTypes } from '../../utils/yeastCalculations';
+import { yeastTypes } from '../../utils/yeastTypes';
 import {
   Tooltip,
   TooltipContent,
@@ -43,10 +43,13 @@ const YeastInputSection = ({
 }: YeastInputSectionProps) => {
   return (
     <div className="space-y-8">
-      {/* Primary Conversion Section */}
       {!hideMainInputs && (
         <div className="space-y-6">
-          <YeastInput amount={amount} setAmount={setAmount} />
+          <YeastInput 
+            amount={amount} 
+            setAmount={setAmount}
+            yeastType={fromType}
+          />
           
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -80,7 +83,6 @@ const YeastInputSection = ({
         </div>
       )}
 
-      {/* Secondary Adjustments Section */}
       {showAdjustments && (
         <div className="space-y-6">
           <TemperatureInput temperature={temperature} setTemperature={setTemperature} />

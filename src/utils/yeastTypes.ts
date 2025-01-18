@@ -2,31 +2,50 @@ export const yeastTypes = {
   'active-dry': 'Active Dry Yeast',
   'instant': 'Instant Yeast',
   'fresh': 'Fresh Yeast',
-  'sourdough': 'Sourdough Starter'
+  'sourdough': 'Sourdough Starter',
+  'bread-machine': 'Bread Machine Yeast'
 } as const;
 
 export const conversionFactors = {
   'active-dry': {
     'instant': 0.75,
     'fresh': 2.5,
-    'sourdough': 13.0
+    'sourdough': 13.0,
+    'bread-machine': 0.75
   },
   'instant': {
     'active-dry': 1.33,
     'fresh': 3.33,
-    'sourdough': 16.0
+    'sourdough': 16.0,
+    'bread-machine': 1.0
   },
   'fresh': {
-    'active-dry': 0.4, // 1/2.5
-    'instant': 0.3, // 1/3.33
-    'sourdough': 4.0
+    'active-dry': 0.4,
+    'instant': 0.3,
+    'sourdough': 4.0,
+    'bread-machine': 0.225 // 0.3 × 0.75
   },
   'sourdough': {
-    'active-dry': 0.0769, // 1/13
-    'instant': 0.0625, // 1/16
-    'fresh': 0.25 // 1/4
+    'active-dry': 0.0769,
+    'instant': 0.0625,
+    'fresh': 0.25,
+    'bread-machine': 0.0625
+  },
+  'bread-machine': {
+    'active-dry': 1.33,
+    'instant': 1.0,
+    'fresh': 4.44,
+    'sourdough': 16.0
   }
 };
+
+export const tspToGramConversion = {
+  'active-dry': 3.1,
+  'instant': 3.3,
+  'fresh': 10,
+  'bread-machine': 3.3,
+  'sourdough': null // Sourdough is always measured in grams
+} as const;
 
 export const getWaterTemperature = (
   roomTemp: number,
@@ -77,4 +96,16 @@ export const calculateHydrationWithStarter = (
   const totalWater = waterWeight + starterWater;
   
   return (totalWater / totalFlour) * 100;
+};
+
+export const convertToTeaspoons = (grams: number, yeastType: keyof typeof yeastTypes): number | null => {
+  const conversionFactor = tspToGramConversion[yeastType];
+  if (!conversionFactor) return null;
+  return Number((grams / conversionFactor).toFixed(2));
+};
+
+export const convertFromTeaspoons = (tsp: number, yeastType: keyof typeof yeastTypes): number | null => {
+  const conversionFactor = tspToGramConversion[yeastType];
+  if (!conversionFactor) return null;
+  return Number((tsp * conversionFactor).toFixed(2));
 };
