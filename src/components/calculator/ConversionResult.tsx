@@ -1,17 +1,11 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { Info } from "lucide-react";
 import { UnitType, YeastType } from '@/utils/yeastTypes';
 import HydrationAdjustments from './adjustments/HydrationAdjustments';
 import TemperatureAdjustments from './adjustments/TemperatureAdjustments';
 import ResultDisplay from './conversion-result/ResultDisplay';
 import ActionButtons from './conversion-result/ActionButtons';
 import ProofingTimeDisplay from './conversion-result/ProofingTimeDisplay';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ConversionResultProps {
   amount: string;

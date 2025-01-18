@@ -4,7 +4,7 @@ import {
   convertGramsToOunces,
   UnitType,
   YeastType,
-  yeastTypes
+  formatMeasurement
 } from '@/utils/yeastTypes';
 
 interface ResultDisplayProps {
@@ -16,31 +16,28 @@ interface ResultDisplayProps {
 }
 
 const ResultDisplay = ({ amount, result, fromType, toType, unit }: ResultDisplayProps) => {
-  const formatResult = (value: string, unit: UnitType, yeastType: YeastType): string => {
+  const formatValue = (value: string, yeastType: string) => {
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return value;
 
-    if (unit === 'tsp') {
-      const tspValue = convertToTeaspoons(numValue, yeastType);
-      if (tspValue !== null) {
-        return `${tspValue.toFixed(2)} tsp`;
-      }
+    switch (unit) {
+      case 'tsp':
+        const tspValue = convertToTeaspoons(numValue, yeastType as YeastType);
+        return tspValue !== null ? `${tspValue.toFixed(2)} tsp` : `${numValue.toFixed(2)} g`;
+      case 'oz':
+        return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
+      default:
+        return `${numValue.toFixed(2)} g`;
     }
-
-    if (unit === 'oz') {
-      return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
-    }
-
-    return `${numValue.toFixed(2)} g`;
   };
 
   return (
     <div className="space-y-2">
       <p className="text-xl font-mono break-words text-yeast-700">
-        {formatResult(amount, unit, fromType as YeastType)} {yeastTypes[fromType as YeastType]} =
+        {formatValue(amount, fromType)} {fromType} =
       </p>
       <p className="text-3xl font-bold text-yeast-800 font-mono break-words">
-        {formatResult(result, unit, toType as YeastType)} {yeastTypes[toType as YeastType]}
+        {formatValue(result, toType)} {toType}
       </p>
     </div>
   );
