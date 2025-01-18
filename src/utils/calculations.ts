@@ -1,5 +1,5 @@
 import { validateAmount, validateTemperature, validateHydration, BASE_TEMPERATURE, BASE_HYDRATION } from './validations';
-import { conversionFactors } from './yeastTypes';
+import { conversionFactors, getWaterTemperature, getFermentationTimeRange, calculateHydrationWithStarter } from './yeastTypes';
 
 export const calculateConversion = (
   amount: string,
@@ -54,6 +54,7 @@ export const calculateHydrationAdjustment = (
   flourAdjustment: number;
   waterAdjustment: number;
   showAdjustments: boolean;
+  recommendedWaterTemp?: number;
 } => {
   const hydrationError = validateHydration(hydration);
   if (hydrationError) throw new Error(hydrationError);
@@ -72,6 +73,9 @@ export const calculateHydrationAdjustment = (
   const flourAdjustment = -sourdoughAmount * 0.5;
   const waterAdjustment = -sourdoughAmount * 0.5;
 
+  // Calculate recommended water temperature
+  const recommendedWaterTemp = getWaterTemperature(BASE_TEMPERATURE);
+
   if (Math.abs(flourAdjustment) > 1000 || Math.abs(waterAdjustment) > 1000) {
     throw new Error('Adjustment amounts exceed maximum allowed values');
   }
@@ -79,7 +83,8 @@ export const calculateHydrationAdjustment = (
   return {
     flourAdjustment,
     waterAdjustment,
-    showAdjustments: true
+    showAdjustments: true,
+    recommendedWaterTemp
   };
 };
 
@@ -93,14 +98,27 @@ export const calculateFermentationTime = (
   const hydrationError = validateHydration(hydration);
   if (hydrationError) throw new Error(hydrationError);
 
-  let baseTime = 6;
-  const tempFactor = Math.pow(2, (temperature - BASE_TEMPERATURE) / 10);
-  baseTime /= tempFactor;
-  const hydrationFactor = 1 + (hydration - BASE_HYDRATION) / 100;
-  baseTime /= hydrationFactor;
+  return getFermentationTimeRange(temperature, hydration);
+};
 
-  return {
-    minHours: Math.max(1, Math.round(baseTime * 0.75)),
-    maxHours: Math.round(baseTime * 1.25)
-  };
+export const getDoughReadinessIndicators = (
+  hydration: number,
+  temperature: number
+): string[] => {
+  const indicators = [
+    "Dough should increase in volume by 50-100%",
+    "Perform the poke test: gently poke the dough with a floured finger"
+  ];
+
+  if (hydration > 75) {
+    indicators.push("Dough will be more slack and may spread more");
+  }
+
+  if (temperature < 68) {
+    indicators.push("Cold temperature may require longer proofing time");
+  } else if (temperature > 76) {
+    indicators.push("Watch carefully as warmer temperatures speed up fermentation");
+  }
+
+  return indicators;
 };
