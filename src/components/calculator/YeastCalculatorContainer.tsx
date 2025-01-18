@@ -4,6 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
+import FavoritesList from '../favorites/FavoritesList';
 import { calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from '../../utils/yeastCalculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -64,38 +65,47 @@ const YeastCalculatorContainer = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-2 sm:p-6">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <CalculatorHeader />
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <CalculatorHeader />
 
-        <div className="p-4 sm:p-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
-          <div className="space-y-6">
-            <YeastInputSection
-              amount={amount}
-              setAmount={setAmount}
-              temperature={temperature}
-              setTemperature={setTemperature}
-              hydration={hydration}
-              setHydration={setHydration}
-              fromType={fromType}
-              setFromType={setFromType}
-              toType={toType}
-              setToType={setToType}
-              isLoading={isLoading}
-            />
+          <div className="p-4 sm:p-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+            <div className="space-y-6">
+              <YeastInputSection
+                amount={amount}
+                setAmount={setAmount}
+                temperature={temperature}
+                setTemperature={setTemperature}
+                hydration={hydration}
+                setHydration={setHydration}
+                fromType={fromType}
+                setFromType={setFromType}
+                toType={toType}
+                setToType={setToType}
+                isLoading={isLoading}
+              />
+            </div>
+
+            <div className="space-y-6">
+              <ConversionResult
+                amount={amount}
+                fromType={fromType}
+                toType={toType}
+                temperature={temperature}
+                hydration={hydration}
+                result={calculationResult}
+                temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+                hydrationAdjustment={hydrationAdjustment}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
+        </div>
 
-          <div className="space-y-6">
-            <ConversionResult
-              amount={amount}
-              fromType={fromType}
-              toType={toType}
-              temperature={temperature}
-              hydration={hydration}
-              result={calculationResult}
-              temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
-              hydrationAdjustment={hydrationAdjustment}
-              isLoading={isLoading}
-            />
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-4 sm:p-6">
+            <h2 className="text-lg font-semibold mb-4">Saved Favorites</h2>
+            <FavoritesList />
           </div>
         </div>
       </div>
