@@ -1,21 +1,17 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save, Info } from "lucide-react";
+import { Save } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { 
-  yeastTypes, 
   convertToTeaspoons, 
   convertGramsToOunces,
   UnitType,
   YeastType
 } from '@/utils/yeastTypes';
 import { saveFavorite } from '@/utils/favoritesStorage';
+import HydrationAdjustments from './adjustments/HydrationAdjustments';
+import TemperatureAdjustments from './adjustments/TemperatureAdjustments';
 
 interface ConversionResultProps {
   amount: string;
@@ -52,6 +48,7 @@ const ConversionResult = ({
   unit
 }: ConversionResultProps) => {
   const { toast } = useToast();
+  const waterTemp = Math.round(105 - parseFloat(temperature));
 
   if (isLoading) {
     return <div className="animate-pulse">Loading...</div>;
@@ -105,8 +102,6 @@ const ConversionResult = ({
     }
   };
 
-  const waterTemp = Math.round(105 - parseFloat(temperature));
-
   return (
     <div className="space-y-6">
       <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
@@ -132,52 +127,17 @@ const ConversionResult = ({
       </Card>
 
       {hydrationAdjustment?.showAdjustments && (
-        <Card className="p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-sm">Hydration Adjustments</h3>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">
-                  Required flour and water adjustments for {hydration}% hydration starter
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <div className="text-sm text-gray-700 space-y-1">
-            <p className="font-medium">Flour: {hydrationAdjustment.flourAdjustment > 0 ? '+' : ''}{hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
-            <p className="font-medium">Water: {hydrationAdjustment.waterAdjustment > 0 ? '+' : ''}{hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
-            <p className="text-xs text-gray-500 mt-2">
-              Based on {hydration}% hydration starter
-            </p>
-          </div>
-        </Card>
+        <HydrationAdjustments 
+          hydrationAdjustment={hydrationAdjustment}
+          hydration={hydration}
+        />
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-sm">Temperature Adjustments</h3>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">
-                  Temperature affects fermentation speed. Adjustments help maintain optimal conditions.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <div className="text-sm text-gray-700">
-            <p className="font-semibold">{temperatureAdjustment}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              Recommended water temperature: {waterTemp}°F
-            </p>
-          </div>
-        </Card>
+        <TemperatureAdjustments
+          temperatureAdjustment={temperatureAdjustment}
+          waterTemp={waterTemp}
+        />
 
         {fermentationTime && (
           <Card className="p-4 space-y-2">
