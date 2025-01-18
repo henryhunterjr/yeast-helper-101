@@ -8,7 +8,8 @@ import {
   convertGramsToOunces,
   UnitType,
   YeastType,
-  yeastTypes
+  yeastTypes,
+  tspToGramConversion
 } from '@/utils/yeastTypes';
 import { saveFavorite } from '@/utils/favoritesStorage';
 import HydrationAdjustments from './adjustments/HydrationAdjustments';
@@ -62,45 +63,22 @@ const ConversionResult = ({
     return <div className="animate-pulse">Loading...</div>;
   }
 
-  const getUnitAbbreviation = (unit: UnitType) => {
-    switch (unit) {
-      case 'tsp':
-        return ' tsp';
-      case 'oz':
-        return ' oz';
-      default:
-        return ' g';
-    }
-  };
-
   const formatResult = (value: string, unit: UnitType, yeastType: YeastType): string => {
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return value;
 
-    let displayValue: number;
-    let displayUnit = unit;
-
-    switch (unit) {
-      case 'tsp':
-        const tspValue = convertToTeaspoons(numValue, yeastType);
-        if (tspValue !== null) {
-          displayValue = tspValue;
-          displayUnit = 'tsp';
-        } else {
-          displayValue = numValue;
-          displayUnit = 'g';
-        }
-        break;
-      case 'oz':
-        displayValue = convertGramsToOunces(numValue);
-        displayUnit = 'oz';
-        break;
-      default:
-        displayValue = numValue;
-        displayUnit = 'g';
+    if (unit === 'tsp' && tspToGramConversion[yeastType] !== 0) {
+      const tspValue = convertToTeaspoons(numValue, yeastType);
+      if (tspValue !== null) {
+        return `${tspValue.toFixed(2)} tsp`;
+      }
     }
-    
-    return `${displayValue.toFixed(2)}${getUnitAbbreviation(displayUnit)}`;
+
+    if (unit === 'oz') {
+      return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
+    }
+
+    return `${numValue.toFixed(2)} g`;
   };
 
   const handleSave = () => {
