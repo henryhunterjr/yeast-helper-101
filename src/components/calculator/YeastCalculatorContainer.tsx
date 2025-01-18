@@ -7,6 +7,7 @@ import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import FavoritesList from '../favorites/FavoritesList';
+import { UnitType } from '@/utils/yeastTypes';
 import { 
   calculateConversion, 
   getTemperatureAdjustment, 
@@ -24,6 +25,7 @@ const YeastCalculatorContainer = () => {
   const [hydration, setHydration] = useState('100');
   const [isLoading, setIsLoading] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
+  const [unit, setUnit] = useState<UnitType>('g');
 
   const result = useMemo(() => {
     if (!amount || isNaN(parseFloat(amount))) return '';
@@ -104,6 +106,8 @@ const YeastCalculatorContainer = () => {
               setToType={setToType}
               isLoading={isLoading}
               showAdjustments={false}
+              unit={unit}
+              setUnit={setUnit}
             />
 
             {showResults && (
@@ -118,6 +122,7 @@ const YeastCalculatorContainer = () => {
                 hydrationAdjustment={hydrationAdjustment}
                 fermentationTime={fermentationTime}
                 isLoading={isLoading}
+                unit={unit}
               />
             )}
 
@@ -152,6 +157,8 @@ const YeastCalculatorContainer = () => {
                   isLoading={isLoading}
                   showAdjustments={true}
                   hideMainInputs={true}
+                  unit={unit}
+                  setUnit={setUnit}
                 />
               </CollapsibleContent>
             </Collapsible>
