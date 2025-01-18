@@ -1,34 +1,41 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HelpCircle } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from "@/components/ui/button";
+import { Settings, HelpCircle } from 'lucide-react';
+import AboutUsButton from '../about/AboutUsButton';
 
 const CalculatorHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <img 
-            src="/lovable-uploads/65c95981-4fac-4d91-8751-e6804d8412e6.png" 
-            alt="Baking Great Bread at Home Logo" 
-            className="w-16 h-16 object-cover rounded-full"
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-yeast-800">Yeast Converter</h1>
-            <p className="text-sm text-gray-600">Convert between different types of yeast</p>
-          </div>
+    <div className="bg-yeast-50 p-4 sm:p-6 border-b">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-yeast-800">
+          YeastWise Calculator
+        </h1>
+        <div className="flex gap-2">
+          <AboutUsButton />
+          <Button
+            variant="outline"
+            onClick={() => navigate('/help')}
+            className="gap-2"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Help
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/settings')}
+            className="gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate('/help')}
-          className="text-yeast-600 hover:text-yeast-700"
-        >
-          <HelpCircle className="h-6 w-6" />
-        </Button>
       </div>
+      <p className="mt-2 text-gray-600 text-sm sm:text-base">
+        Convert between different types of yeast for perfect bread baking results
+      </p>
     </div>
   );
 };
