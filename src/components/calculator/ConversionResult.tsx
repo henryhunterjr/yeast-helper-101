@@ -31,6 +31,7 @@ const ConversionResult = ({
   temperature,
   hydration,
   result,
+  temperatureAdjustment,
   hydrationAdjustment,
   isLoading,
 }: ConversionResultProps) => {
@@ -62,56 +63,54 @@ const ConversionResult = ({
     }
   };
 
+  const showResults = amount && parseFloat(amount) > 0;
+
   return (
     <div className="space-y-6 mt-6">
-      {/* Main Conversion Result */}
-      {amount && parseFloat(amount) > 0 && (
-        <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
-            <Button 
-              onClick={handleSave}
-              variant="secondary"
-              className="gap-2 hover:bg-yeast-200"
-            >
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <p className="text-xl font-mono break-words text-yeast-700">
-              {amount}g {yeastTypes[fromType]} =
-            </p>
-            <p className="text-3xl font-bold text-yeast-800 font-mono break-words animate-in fade-in-50 duration-300">
-              {result}g {yeastTypes[toType]}
-            </p>
-          </div>
-        </Card>
-      )}
+      {showResults && (
+        <>
+          <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
+              <Button 
+                onClick={handleSave}
+                variant="secondary"
+                className="gap-2 hover:bg-yeast-200"
+              >
+                <Save className="h-4 w-4" />
+                Save
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xl font-mono break-words text-yeast-700">
+                {amount}g {yeastTypes[fromType]} =
+              </p>
+              <p className="text-3xl font-bold text-yeast-800 font-mono break-words animate-in fade-in-50 duration-300">
+                {result}g {yeastTypes[toType]}
+              </p>
+            </div>
+          </Card>
 
-      {/* Proofing and Water Temperature Information */}
-      {amount && parseFloat(amount) > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ProofingTimeDisplay 
-            temperature={temperature} 
-            hydration={hydration}
-          />
-          
-          <WaterTempDisplay 
-            roomTemp={temperature}
-          />
-        </div>
-      )}
-
-      {/* Hydration Adjustments */}
-      {hydrationAdjustment?.showAdjustments && amount && parseFloat(amount) > 0 && (
-        <Card className="p-6 bg-gradient-to-r from-yeast-50 to-white border border-yeast-200">
-          <h3 className="font-medium mb-3 text-yeast-800">Hydration Adjustments</h3>
-          <div className="space-y-2 text-yeast-700">
-            <p>Flour Adjustment: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
-            <p>Water Adjustment: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ProofingTimeDisplay 
+              temperature={temperature} 
+              hydration={hydration}
+            />
+            <WaterTempDisplay 
+              roomTemp={temperature}
+            />
           </div>
-        </Card>
+
+          {hydrationAdjustment?.showAdjustments && (
+            <Card className="p-6 bg-gradient-to-r from-yeast-50 to-white border border-yeast-200">
+              <h3 className="font-medium mb-3 text-yeast-800">Hydration Adjustments</h3>
+              <div className="space-y-2 text-yeast-700">
+                <p>Flour Adjustment: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
+                <p>Water Adjustment: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
+              </div>
+            </Card>
+          )}
+        </>
       )}
     </div>
   );

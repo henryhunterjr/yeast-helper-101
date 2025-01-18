@@ -1,35 +1,20 @@
 import React from 'react';
+import { Card } from "@/components/ui/card";
+import { Info } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info } from 'lucide-react';
-import { Card } from "@/components/ui/card";
+import { getWaterTemperature } from '@/utils/yeastTypes';
 
 interface WaterTempDisplayProps {
   roomTemp: string;
-  flourTemp?: string;
-  starterTemp?: string;
-  desiredDoughTemp?: string;
 }
 
-const WaterTempDisplay = ({ 
-  roomTemp, 
-  flourTemp = roomTemp, 
-  starterTemp = roomTemp,
-  desiredDoughTemp = "72"
-}: WaterTempDisplayProps) => {
-  const calculateWaterTemp = () => {
-    const desired = parseFloat(desiredDoughTemp);
-    const room = parseFloat(roomTemp);
-    const flour = parseFloat(flourTemp);
-    const starter = parseFloat(starterTemp);
-    
-    return Math.round((desired * 4) - (flour + room + starter));
-  };
-
-  const waterTemp = calculateWaterTemp();
+const WaterTempDisplay = ({ roomTemp }: WaterTempDisplayProps) => {
+  const temp = parseFloat(roomTemp);
+  const waterTemp = getWaterTemperature(temp);
 
   return (
     <Card className="p-4 space-y-2">
@@ -41,17 +26,17 @@ const WaterTempDisplay = ({
           </TooltipTrigger>
           <TooltipContent>
             <p className="max-w-xs">
-              Water temperature is calculated to achieve your desired dough temperature,
-              taking into account room, flour, and starter temperatures.
+              Water temperature is calculated to achieve optimal dough temperature,
+              taking into account room temperature.
             </p>
           </TooltipContent>
         </Tooltip>
       </div>
       
       <div className="text-sm text-gray-700">
-        <p>Use {waterTemp}°F water</p>
+        <p className="font-semibold">{waterTemp}°F</p>
         <p className="text-xs text-gray-500 mt-1">
-          For {desiredDoughTemp}°F final dough temperature
+          For optimal dough temperature
         </p>
       </div>
     </Card>

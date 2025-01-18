@@ -1,12 +1,12 @@
 import React from 'react';
+import { Card } from "@/components/ui/card";
+import { Info } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info } from 'lucide-react';
-import { Card } from "@/components/ui/card";
-import { calculateFermentationTime } from '@/utils/yeastCalculations';
+import { getFermentationTimeRange } from '@/utils/yeastTypes';
 
 interface ProofingTimeDisplayProps {
   temperature: string;
@@ -17,17 +17,7 @@ const ProofingTimeDisplay = ({ temperature, hydration }: ProofingTimeDisplayProp
   const temp = parseFloat(temperature);
   const hyd = parseFloat(hydration);
   
-  const { minHours, maxHours } = calculateFermentationTime(temp, hyd);
-  
-  const getTemperatureMessage = () => {
-    const baseTemp = 72;
-    if (Math.abs(temp - baseTemp) < 3) return "";
-    
-    const difference = temp > baseTemp ? "faster" : "slower";
-    const percentage = Math.abs(Math.round(((temp - baseTemp) / baseTemp) * 100));
-    
-    return ` (${difference} at ${temp}°F)`;
-  };
+  const { minHours, maxHours } = getFermentationTimeRange(temp, hyd);
 
   return (
     <Card className="p-4 space-y-2">
@@ -47,14 +37,12 @@ const ProofingTimeDisplay = ({ temperature, hydration }: ProofingTimeDisplayProp
       </div>
       
       <div className="text-sm text-gray-700">
-        <p>
-          {minHours}-{maxHours} hours{getTemperatureMessage()}
+        <p className="font-semibold">
+          {minHours}-{maxHours} hours
         </p>
-        {hydration && (
-          <p className="text-xs text-gray-500 mt-1">
-            Based on {hydration}% hydration at {temperature}°F
-          </p>
-        )}
+        <p className="text-xs text-gray-500 mt-1">
+          Based on {hydration}% hydration at {temperature}°F
+        </p>
       </div>
     </Card>
   );
