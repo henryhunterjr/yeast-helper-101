@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save, Info } from "lucide-react";
+import { Save, RotateCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { 
   convertToTeaspoons, 
@@ -38,6 +38,7 @@ interface ConversionResultProps {
   } | null;
   isLoading: boolean;
   unit: UnitType;
+  onReset: () => void;
 }
 
 const ConversionResult = ({
@@ -51,7 +52,8 @@ const ConversionResult = ({
   hydrationAdjustment,
   fermentationTime,
   isLoading,
-  unit
+  unit,
+  onReset
 }: ConversionResultProps) => {
   const { toast } = useToast();
   const waterTemp = Math.round(105 - parseFloat(temperature));
@@ -63,11 +65,11 @@ const ConversionResult = ({
   const getUnitAbbreviation = (unit: UnitType) => {
     switch (unit) {
       case 'tsp':
-        return 'tsp';
+        return ' tsp';
       case 'oz':
-        return 'oz';
+        return ' oz';
       default:
-        return 'g';
+        return ' g';
     }
   };
 
@@ -76,13 +78,14 @@ const ConversionResult = ({
     if (isNaN(numValue)) return value;
 
     let displayValue: number;
-    let displayUnit = getUnitAbbreviation(unit);
+    let displayUnit = unit;
 
     switch (unit) {
       case 'tsp':
         const tspValue = convertToTeaspoons(numValue, yeastType);
         if (tspValue !== null) {
           displayValue = tspValue;
+          displayUnit = 'tsp';
         } else {
           displayValue = numValue;
           displayUnit = 'g';
@@ -90,12 +93,14 @@ const ConversionResult = ({
         break;
       case 'oz':
         displayValue = convertGramsToOunces(numValue);
+        displayUnit = 'oz';
         break;
       default:
         displayValue = numValue;
+        displayUnit = 'g';
     }
     
-    return `${displayValue.toFixed(2)}${displayUnit}`;
+    return `${displayValue.toFixed(2)}${getUnitAbbreviation(displayUnit)}`;
   };
 
   const handleSave = () => {
@@ -125,14 +130,26 @@ const ConversionResult = ({
       <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
-          <Button 
-            onClick={handleSave}
-            variant="secondary"
-            className="gap-2 hover:bg-yeast-200"
-          >
-            <Save className="h-4 w-4" />
-            Save
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={onReset}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset
+            </Button>
+            <Button 
+              onClick={handleSave}
+              variant="secondary"
+              size="sm"
+              className="gap-2 hover:bg-yeast-200"
+            >
+              <Save className="h-4 w-4" />
+              Save
+            </Button>
+          </div>
         </div>
         <div className="space-y-2">
           <p className="text-xl font-mono break-words text-yeast-700">
