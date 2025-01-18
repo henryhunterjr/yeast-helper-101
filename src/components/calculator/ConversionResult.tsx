@@ -1,8 +1,8 @@
 import React from 'react';
-import ConversionSummary from './conversion/ConversionSummary';
-import AdjustmentDetails from './conversion/AdjustmentDetails';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { Card } from "@/components/ui/card";
+import ProofingTimeDisplay from './conversion/ProofingTimeDisplay';
+import WaterTempDisplay from './conversion/WaterTempDisplay';
+import { yeastTypes } from '@/utils/yeastCalculations';
 
 interface ConversionResultProps {
   amount: string;
@@ -17,84 +17,56 @@ interface ConversionResultProps {
     waterAdjustment: number;
     showAdjustments: boolean;
   };
-  isLoading?: boolean;
-  error?: string;
+  isLoading: boolean;
 }
 
-const ConversionResult = ({ 
-  amount, 
-  fromType, 
-  toType, 
-  temperature, 
+const ConversionResult = ({
+  amount,
+  fromType,
+  toType,
+  temperature,
   hydration,
-  result, 
-  temperatureAdjustment,
+  result,
   hydrationAdjustment,
-  isLoading = false,
-  error
+  isLoading,
 }: ConversionResultProps) => {
-  const getFermentationTime = () => {
-    const temp = parseFloat(temperature);
-    const hyd = parseFloat(hydration);
-    
-    if (isNaN(temp) || isNaN(hyd)) return "Standard fermentation time (4-8 hours)";
-    
-    let baseTime = 6; // Base time in hours
-    const tempFactor = Math.pow(2, (temp - 72) / 10);
-    baseTime /= tempFactor;
-    const hydrationFactor = 1 + (hyd - 100) / 100;
-    baseTime /= hydrationFactor;
-    
-    const minTime = Math.round(baseTime * 0.75);
-    const maxTime = Math.round(baseTime * 1.25);
-    
-    return `${minTime}-${maxTime} hours`;
-  };
-
   if (isLoading) {
-    return (
-      <div className="bg-yeast-50 p-4 sm:p-6 rounded-lg">
-        <h3 className="font-semibold mb-4">Calculating...</h3>
-        <ConversionSummary
-          amount={amount}
-          fromType={fromType}
-          toType={toType}
-          result={result}
-          isLoading={true}
-        />
-      </div>
-    );
+    return <div className="animate-pulse">Loading...</div>;
   }
 
-  if (error) {
-    return (
-      <div className="bg-yeast-50 p-4 sm:p-6 rounded-lg">
-        <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </div>
-    );
+  if (!amount || parseFloat(amount) === 0) {
+    return null;
   }
 
   return (
-    <div className="bg-yeast-50 p-4 sm:p-6 rounded-lg">
-      <h3 className="font-semibold mb-4 text-base sm:text-lg">Conversion Result</h3>
-      <div className="space-y-4">
-        <ConversionSummary
-          amount={amount}
-          fromType={fromType}
-          toType={toType}
-          result={result}
+    <div className="space-y-4">
+      <Card className="p-4">
+        <h3 className="font-medium mb-2">Conversion Result</h3>
+        <p className="text-lg">
+          {amount}g {yeastTypes[fromType as keyof typeof yeastTypes]} = {result}g {yeastTypes[toType as keyof typeof yeastTypes]}
+        </p>
+      </Card>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ProofingTimeDisplay 
+          temperature={temperature} 
+          hydration={hydration}
         />
         
-        <AdjustmentDetails
-          temperature={temperature}
-          temperatureAdjustment={temperatureAdjustment}
-          hydrationAdjustment={hydrationAdjustment}
-          fermentationTime={getFermentationTime()}
+        <WaterTempDisplay 
+          roomTemp={temperature}
         />
       </div>
+
+      {hydrationAdjustment?.showAdjustments && (
+        <Card className="p-4">
+          <h3 className="font-medium mb-2">Hydration Adjustments</h3>
+          <div className="space-y-1">
+            <p>Flour Adjustment: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
+            <p>Water Adjustment: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
