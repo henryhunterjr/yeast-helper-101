@@ -1,10 +1,11 @@
 import { validateAmount, validateTemperature, validateHydration, BASE_TEMPERATURE, BASE_HYDRATION } from './validations';
-import { conversionFactors, getWaterTemperature, getFermentationTimeRange } from './yeastTypes';
+import { conversionFactors, getWaterTemperature, getFermentationTimeRange, convertFromTeaspoons, convertToTeaspoons } from './yeastTypes';
 
 export const calculateConversion = (
   amount: string,
   fromType: string,
-  toType: string
+  toType: string,
+  useTsp: boolean = false
 ): string => {
   const numAmount = parseFloat(amount);
   
@@ -13,16 +14,35 @@ export const calculateConversion = (
   
   if (fromType === toType) return amount;
 
+  // If using teaspoons, first convert to grams
+  let amountInGrams = numAmount;
+  if (useTsp) {
+    const converted = convertFromTeaspoons(numAmount, fromType as any);
+    if (converted === null) {
+      throw new Error('Cannot convert from teaspoons for this yeast type');
+    }
+    amountInGrams = converted;
+  }
+
   const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
   if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
 
-  const result = numAmount * factor;
+  const result = amountInGrams * factor;
   if (result < 0.1) {
     throw new Error(`Resulting amount (${result.toFixed(3)}g) is too small. Minimum is 0.1g`);
   }
 
   if (result > 1000) {
     throw new Error(`Resulting amount (${result.toFixed(2)}g) is too large. Maximum is 1000g`);
+  }
+
+  // If using teaspoons, convert the result back to teaspoons
+  if (useTsp) {
+    const tspResult = convertToTeaspoons(result, toType as any);
+    if (tspResult === null) {
+      throw new Error('Cannot convert to teaspoons for this yeast type');
+    }
+    return tspResult.toFixed(2);
   }
 
   return result.toFixed(2);

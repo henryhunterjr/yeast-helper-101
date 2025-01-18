@@ -51,12 +51,12 @@ const YeastCalculatorContainer = () => {
   const result = useMemo(() => {
     if (!amount || isNaN(parseFloat(amount))) return '';
     try {
-      return calculateConversion(amount, fromType, toType);
+      return calculateConversion(amount, fromType, toType, useTsp);
     } catch (error) {
       console.error('Calculation error:', error);
       return '';
     }
-  }, [amount, fromType, toType]);
+  }, [amount, fromType, toType, useTsp]);
 
   const temperatureAdjustment = useMemo(() => {
     if (!temperature || isNaN(parseFloat(temperature))) return '';

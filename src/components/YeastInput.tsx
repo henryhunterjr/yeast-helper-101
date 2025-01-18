@@ -55,6 +55,7 @@ const YeastInput = ({
       return;
     }
 
+    // Validate the input value in the current unit (tsp or grams)
     if (parsedValue < MIN_AMOUNT) {
       toast({
         title: "Amount Too Small",
@@ -73,17 +74,8 @@ const YeastInput = ({
       return;
     }
 
-    // If using teaspoons, convert to grams for internal storage
-    if (useTsp) {
-      const gramsValue = convertFromTeaspoons(parsedValue, yeastType as any);
-      if (gramsValue !== null) {
-        setAmount(gramsValue.toString());
-      } else {
-        setAmount(value);
-      }
-    } else {
-      setAmount(value);
-    }
+    // Store the value as-is, without conversion
+    setAmount(value);
   };
 
   const getUnitLabel = () => {
@@ -97,8 +89,7 @@ const YeastInput = ({
     if (isNaN(parsedAmount)) return '';
     
     if (useTsp) {
-      const tspValue = convertToTeaspoons(parsedAmount, yeastType as any);
-      return tspValue !== null ? `${tspValue.toFixed(2)} tsp` : `${parsedAmount} g`;
+      return `${parsedAmount.toFixed(2)} tsp`;
     } else {
       const value = unit === 'oz' ? 
         convertGramsToOunces(parsedAmount) : 
@@ -109,13 +100,6 @@ const YeastInput = ({
 
   const getInputValue = () => {
     if (!amount) return '';
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) return '';
-
-    if (useTsp) {
-      const tspValue = convertToTeaspoons(parsedAmount, yeastType as any);
-      return tspValue !== null ? tspValue.toString() : '';
-    }
     return amount;
   };
 
