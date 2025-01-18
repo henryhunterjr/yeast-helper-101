@@ -1,17 +1,23 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
+import { Save, Info } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { 
   convertToTeaspoons, 
   convertGramsToOunces,
   UnitType,
-  YeastType
+  YeastType,
+  yeastTypes
 } from '@/utils/yeastTypes';
 import { saveFavorite } from '@/utils/favoritesStorage';
 import HydrationAdjustments from './adjustments/HydrationAdjustments';
 import TemperatureAdjustments from './adjustments/TemperatureAdjustments';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ConversionResultProps {
   amount: string;
@@ -118,10 +124,10 @@ const ConversionResult = ({
         </div>
         <div className="space-y-2">
           <p className="text-xl font-mono break-words text-yeast-700">
-            {formatResult(amount, unit, fromType as YeastType)} {yeastTypes[fromType]} =
+            {formatResult(amount, unit, fromType as YeastType)} {yeastTypes[fromType as YeastType]} =
           </p>
           <p className="text-3xl font-bold text-yeast-800 font-mono break-words">
-            {formatResult(result, unit, toType as YeastType)} {yeastTypes[toType]}
+            {formatResult(result, unit, toType as YeastType)} {yeastTypes[toType as YeastType]}
           </p>
         </div>
       </Card>
