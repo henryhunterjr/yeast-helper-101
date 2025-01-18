@@ -1,6 +1,8 @@
 import React from 'react';
 import ConversionSummary from './conversion/ConversionSummary';
 import AdjustmentDetails from './conversion/AdjustmentDetails';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 
 interface ConversionResultProps {
   amount: string;
@@ -16,6 +18,7 @@ interface ConversionResultProps {
     showAdjustments: boolean;
   };
   isLoading?: boolean;
+  error?: string;
 }
 
 const ConversionResult = ({ 
@@ -27,7 +30,8 @@ const ConversionResult = ({
   result, 
   temperatureAdjustment,
   hydrationAdjustment,
-  isLoading = false
+  isLoading = false,
+  error
 }: ConversionResultProps) => {
   const getFermentationTime = () => {
     const temp = parseFloat(temperature);
@@ -58,6 +62,17 @@ const ConversionResult = ({
           result={result}
           isLoading={true}
         />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-yeast-50 p-4 sm:p-6 rounded-lg">
+        <Alert variant="destructive">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       </div>
     );
   }

@@ -34,25 +34,66 @@ const MIN_TEMP = 32;
 const MAX_TEMP = 120;
 const MIN_HYDRATION = 50;
 const MAX_HYDRATION = 200;
+const MIN_AMOUNT = 0.1;
+const MAX_AMOUNT = 1000;
+
+export const validateAmount = (amount: number): string | null => {
+  if (isNaN(amount)) return "Please enter a valid number";
+  if (amount < MIN_AMOUNT) return `Minimum amount is ${MIN_AMOUNT}g`;
+  if (amount > MAX_AMOUNT) return `Maximum amount is ${MAX_AMOUNT}g`;
+  return null;
+};
+
+export const validateTemperature = (temp: number): string | null => {
+  if (isNaN(temp)) return "Please enter a valid temperature";
+  if (temp < MIN_TEMP) return `Minimum temperature is ${MIN_TEMP}°F`;
+  if (temp > MAX_TEMP) return `Maximum temperature is ${MAX_TEMP}°F`;
+  return null;
+};
+
+export const validateHydration = (hydration: number): string | null => {
+  if (isNaN(hydration)) return "Please enter a valid hydration percentage";
+  if (hydration < MIN_HYDRATION) return `Minimum hydration is ${MIN_HYDRATION}%`;
+  if (hydration > MAX_HYDRATION) return `Maximum hydration is ${MAX_HYDRATION}%`;
+  return null;
+};
 
 export const calculateConversion = (
   amount: string,
   fromType: string,
   toType: string
 ): string => {
-  if (!amount || isNaN(parseFloat(amount))) return '0';
+  const numAmount = parseFloat(amount);
+  
+  // Input validation
+  const amountError = validateAmount(numAmount);
+  if (amountError) throw new Error(amountError);
+  
+  // Same type conversion
   if (fromType === toType) return amount;
 
+  // Check if conversion is possible
   const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
-  if (!factor) return '0';
+  if (!factor) throw new Error(`Cannot convert from ${yeastTypes[fromType as keyof typeof yeastTypes]} to ${yeastTypes[toType as keyof typeof yeastTypes]}`);
 
-  return (parseFloat(amount) * factor).toFixed(2);
+  // Handle very small amounts
+  const result = numAmount * factor;
+  if (result < MIN_AMOUNT) {
+    throw new Error(`Resulting amount (${result.toFixed(3)}g) is too small. Minimum is ${MIN_AMOUNT}g`);
+  }
+
+  // Handle very large amounts
+  if (result > MAX_AMOUNT) {
+    throw new Error(`Resulting amount (${result.toFixed(2)}g) is too large. Maximum is ${MAX_AMOUNT}g`);
+  }
+
+  return result.toFixed(2);
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
-  if (isNaN(temperature) || temperature < MIN_TEMP || temperature > MAX_TEMP) {
-    return 'Temperature out of range (32°F-120°F)';
-  }
+  // Validate temperature
+  const tempError = validateTemperature(temperature);
+  if (tempError) throw new Error(tempError);
   
   const tempDiff = temperature - BASE_TEMPERATURE;
   if (Math.abs(tempDiff) < 5) return 'Standard proofing time';
@@ -77,9 +118,9 @@ export const calculateHydrationAdjustment = (
   waterAdjustment: number;
   showAdjustments: boolean;
 } => {
-  if (isNaN(hydration) || hydration < MIN_HYDRATION || hydration > MAX_HYDRATION) {
-    throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
-  }
+  // Validate hydration
+  const hydrationError = validateHydration(hydration);
+  if (hydrationError) throw new Error(hydrationError);
 
   // Only show adjustments when converting to/from sourdough
   const showAdjustments = fromType === 'sourdough' || toType === 'sourdough';
@@ -99,6 +140,11 @@ export const calculateHydrationAdjustment = (
   const flourAdjustment = -sourdoughAmount * 0.5;
   const waterAdjustment = -sourdoughAmount * 0.5;
 
+  // Validate final adjustments
+  if (Math.abs(flourAdjustment) > MAX_AMOUNT || Math.abs(waterAdjustment) > MAX_AMOUNT) {
+    throw new Error('Adjustment amounts exceed maximum allowed values');
+  }
+
   return {
     flourAdjustment,
     waterAdjustment,
@@ -110,12 +156,12 @@ export const calculateFermentationTime = (
   temperature: number,
   hydration: number
 ): { minHours: number; maxHours: number } => {
-  if (isNaN(temperature) || temperature < MIN_TEMP || temperature > MAX_TEMP) {
-    throw new Error(`Temperature must be between ${MIN_TEMP}°F and ${MAX_TEMP}°F`);
-  }
-  if (isNaN(hydration) || hydration < MIN_HYDRATION || hydration > MAX_HYDRATION) {
-    throw new Error(`Hydration must be between ${MIN_HYDRATION}% and ${MAX_HYDRATION}%`);
-  }
+  // Validate inputs
+  const tempError = validateTemperature(temperature);
+  if (tempError) throw new Error(tempError);
+  
+  const hydrationError = validateHydration(hydration);
+  if (hydrationError) throw new Error(hydrationError);
 
   let baseTime = 6;
   const tempFactor = Math.pow(2, (temperature - BASE_TEMPERATURE) / 10);

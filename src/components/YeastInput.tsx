@@ -1,6 +1,7 @@
 import React from 'react';
 import { Scale } from 'lucide-react';
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 
 interface YeastInputProps {
   amount: string;
@@ -8,6 +9,48 @@ interface YeastInputProps {
 }
 
 const YeastInput = ({ amount, setAmount }: YeastInputProps) => {
+  const { toast } = useToast();
+  const MIN_AMOUNT = 0.1;
+  const MAX_AMOUNT = 1000;
+
+  const handleAmountChange = (value: string) => {
+    const numValue = parseFloat(value);
+    
+    if (value === '') {
+      setAmount('');
+      return;
+    }
+
+    if (isNaN(numValue)) {
+      toast({
+        title: "Invalid Input",
+        description: "Please enter a valid number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (numValue < MIN_AMOUNT) {
+      toast({
+        title: "Amount Too Small",
+        description: `Minimum amount is ${MIN_AMOUNT}g`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (numValue > MAX_AMOUNT) {
+      toast({
+        title: "Amount Too Large",
+        description: `Maximum amount is ${MAX_AMOUNT}g`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setAmount(value);
+  };
+
   return (
     <div className="w-full">
       <label className="block text-sm font-medium mb-2">Amount (grams)</label>
@@ -17,11 +60,12 @@ const YeastInput = ({ amount, setAmount }: YeastInputProps) => {
           type="number"
           inputMode="decimal"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
-          placeholder="Enter amount"
+          placeholder="Enter amount (0.1-1000g)"
           step="0.1"
-          min="0"
+          min={MIN_AMOUNT}
+          max={MAX_AMOUNT}
         />
       </div>
     </div>
