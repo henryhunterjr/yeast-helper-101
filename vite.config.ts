@@ -14,10 +14,20 @@ export default defineConfig(({ mode }) => ({
         secure: false,
         ws: true
       }
+    },
+    headers: {
+      // Add permissions policy to handle feature warnings
+      'Permissions-Policy': 'vr=(), ambient-light-sensor=(), battery=()'
     }
   },
   plugins: [
-    react(),
+    react({
+      // Add proper preload directives
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin']
+      }
+    }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
@@ -34,5 +44,8 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
 }));
