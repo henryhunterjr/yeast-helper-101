@@ -97,6 +97,31 @@ const ConversionResult = ({
         </div>
       </Card>
 
+      {hydrationAdjustment?.showAdjustments && (
+        <Card className="p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-sm">Hydration Adjustments</h3>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-4 w-4 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">
+                  Required flour and water adjustments for {hydration}% hydration starter
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="text-sm text-gray-700 space-y-1">
+            <p className="font-medium">Flour: {hydrationAdjustment.flourAdjustment > 0 ? '+' : ''}{hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
+            <p className="font-medium">Water: {hydrationAdjustment.waterAdjustment > 0 ? '+' : ''}{hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
+            <p className="text-xs text-gray-500 mt-2">
+              Based on {hydration}% hydration starter
+            </p>
+          </div>
+        </Card>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="p-4 space-y-2">
           <div className="flex items-center justify-between">
@@ -146,28 +171,6 @@ const ConversionResult = ({
           </Card>
         )}
       </div>
-
-      {hydrationAdjustment?.showAdjustments && (
-        <Card className="p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-sm">Hydration Adjustments</h3>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">
-                  Adjustments needed to maintain proper hydration when converting to/from sourdough starter.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <div className="text-sm text-gray-700">
-            <p>Flour Adjustment: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</p>
-            <p>Water Adjustment: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</p>
-          </div>
-        </Card>
-      )}
     </div>
   );
 };

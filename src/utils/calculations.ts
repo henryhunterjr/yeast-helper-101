@@ -1,5 +1,5 @@
 import { validateAmount, validateTemperature, validateHydration, BASE_TEMPERATURE, BASE_HYDRATION } from './validations';
-import { conversionFactors, getWaterTemperature, getFermentationTimeRange, calculateHydrationWithStarter } from './yeastTypes';
+import { conversionFactors, getWaterTemperature, getFermentationTimeRange } from './yeastTypes';
 
 export const calculateConversion = (
   amount: string,
@@ -69,9 +69,24 @@ export const calculateHydrationAdjustment = (
     };
   }
 
+  // Calculate flour and water adjustments based on hydration percentage
+  let flourRatio: number;
+  let waterRatio: number;
+
+  if (hydration === 100) {
+    // For 100% hydration, equal parts flour and water
+    flourRatio = 0.5;
+    waterRatio = 0.5;
+  } else {
+    // For other hydration levels, calculate the ratios
+    const totalParts = 1 + (hydration / 100);
+    flourRatio = 1 / totalParts;
+    waterRatio = (hydration / 100) / totalParts;
+  }
+
   const sourdoughAmount = toType === 'sourdough' ? weight : -weight;
-  const flourAdjustment = -sourdoughAmount * 0.5;
-  const waterAdjustment = -sourdoughAmount * 0.5;
+  const flourAdjustment = sourdoughAmount * flourRatio;
+  const waterAdjustment = sourdoughAmount * waterRatio;
 
   // Calculate recommended water temperature
   const recommendedWaterTemp = getWaterTemperature(BASE_TEMPERATURE);
@@ -81,8 +96,8 @@ export const calculateHydrationAdjustment = (
   }
 
   return {
-    flourAdjustment,
-    waterAdjustment,
+    flourAdjustment: Number(flourAdjustment.toFixed(2)),
+    waterAdjustment: Number(waterAdjustment.toFixed(2)),
     showAdjustments: true,
     recommendedWaterTemp
   };
