@@ -57,6 +57,17 @@ const ConversionResult = ({
     return <div className="animate-pulse">Loading...</div>;
   }
 
+  const getUnitAbbreviation = (unit: UnitType) => {
+    switch (unit) {
+      case 'tsp':
+        return 'tsp';
+      case 'oz':
+        return 'oz';
+      default:
+        return 'g';
+    }
+  };
+
   const formatResult = (value: string, unit: UnitType, yeastType: YeastType) => {
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return value;
@@ -64,11 +75,11 @@ const ConversionResult = ({
     switch (unit) {
       case 'tsp':
         const tspValue = convertToTeaspoons(numValue, yeastType);
-        return tspValue ? `${tspValue.toFixed(2)} tsp` : `${numValue.toFixed(2)} g`;
+        return tspValue ? `${tspValue.toFixed(2)} ${getUnitAbbreviation(unit)}` : `${numValue.toFixed(2)} g`;
       case 'oz':
-        return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
+        return `${convertGramsToOunces(numValue).toFixed(2)} ${getUnitAbbreviation(unit)}`;
       default:
-        return `${numValue.toFixed(2)} g`;
+        return `${numValue.toFixed(2)} ${getUnitAbbreviation(unit)}`;
     }
   };
 
