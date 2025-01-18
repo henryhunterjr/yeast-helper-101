@@ -1,56 +1,48 @@
 import React from 'react';
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, Info } from "lucide-react";
 
 const TroubleshootingGuide = () => {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Troubleshooting Guide</h2>
+      <h2 className="text-2xl font-bold text-yeast-800">Understanding Warnings & Troubleshooting</h2>
       
-      <Alert>
-        <AlertDescription>
-          Most common issues can be resolved by checking your measurements and environmental conditions.
-        </AlertDescription>
-      </Alert>
+      <Card>
+        <CardContent className="pt-6 space-y-4">
+          <h3 className="text-lg font-semibold mb-3 text-yeast-700">Common Warnings Explained</h3>
+          
+          <Alert variant="warning" className="mb-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <span className="font-medium">High Hydration Warning</span>
+              <p className="text-sm mt-1">
+                Appears when water content exceeds 75%. While not necessarily an error, high hydration doughs require special handling techniques.
+              </p>
+            </AlertDescription>
+          </Alert>
 
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="dough-issues">
-          <AccordionTrigger>Dough Not Rising Properly</AccordionTrigger>
-          <AccordionContent>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              <li>Check room temperature (ideal: 68-76°F)</li>
-              <li>Verify yeast is fresh and properly stored</li>
-              <li>Ensure water temperature is correct (95-105°F)</li>
-              <li>Check salt measurements (too much can inhibit yeast)</li>
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              <span className="font-medium">Salt Range Warning</span>
+              <p className="text-sm mt-1">
+                Shown when salt percentage is outside 1.8-2.2%. Adjust based on your recipe's needs and taste preferences.
+              </p>
+            </AlertDescription>
+          </Alert>
 
-        <AccordionItem value="conversion-issues">
-          <AccordionTrigger>Conversion Results Seem Incorrect</AccordionTrigger>
-          <AccordionContent>
+          <div className="mt-6">
+            <h4 className="font-medium text-yeast-700 mb-2">Tips for Success</h4>
             <ul className="list-disc list-inside space-y-2 text-gray-600">
-              <li>Double-check input measurements</li>
-              <li>Verify yeast types selected</li>
-              <li>Consider environmental factors</li>
-              <li>Check hydration levels (should be 65-80%)</li>
+              <li>Start with lower hydration (65%) if you're new to bread baking</li>
+              <li>Double-check your measurements when warnings appear</li>
+              <li>Consider ambient temperature and humidity when adjusting hydration</li>
+              <li>Use baker's percentages to easily scale recipes up or down</li>
             </ul>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="temperature">
-          <AccordionTrigger>Temperature Adjustment Problems</AccordionTrigger>
-          <AccordionContent>
-            <ul className="list-disc list-inside space-y-2 text-gray-600">
-              <li>Use accurate room temperature readings</li>
-              <li>Adjust water temperature accordingly</li>
-              <li>Consider seasonal variations</li>
-              <li>Account for kitchen environment</li>
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

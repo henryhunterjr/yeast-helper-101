@@ -1,22 +1,31 @@
 import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 
 const AboutSection = () => {
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">About Yeast Converter</h2>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-yeast-800">About YeastWise</h2>
       <p className="text-gray-600">
-        The Yeast Converter is a tool designed to help bakers convert between different types of yeast,
-        taking into account temperature adjustments and providing accurate measurements for your recipes.
+        YeastWise is your companion for precise bread baking calculations. Our tools help you convert between different types of yeast and calculate baker's percentages for perfect results every time.
       </p>
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-semibold mb-2">Features:</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-600">
-          <li>Convert between Active Dry, Instant, Fresh, and Sourdough Starter</li>
-          <li>Temperature-based proofing time adjustments</li>
-          <li>Water temperature recommendations</li>
-          <li>Simple and intuitive interface</li>
-        </ul>
-      </div>
+      
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-lg font-semibold mb-3 text-yeast-700">What are Baker's Percentages?</h3>
+          <p className="text-gray-600 mb-4">
+            Baker's percentages are a professional method for expressing recipe ingredients as a percentage of the total flour weight. The flour is always considered 100%, and all other ingredients are expressed as a percentage relative to the flour weight.
+          </p>
+          <div className="bg-yeast-50 p-4 rounded-lg mb-4">
+            <p className="font-medium text-yeast-800 mb-2">Example:</p>
+            <ul className="list-disc list-inside space-y-1 text-gray-600">
+              <li>Flour: 1000g (100%)</li>
+              <li>Water: 650g (65%)</li>
+              <li>Salt: 20g (2%)</li>
+              <li>Yeast: 10g (1%)</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
