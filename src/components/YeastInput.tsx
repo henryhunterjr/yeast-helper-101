@@ -78,17 +78,7 @@ const YeastInput = ({
 
   const getDisplayValue = () => {
     if (!amount) return '';
-    const numAmount = parseFloat(amount);
-    
-    if (useTsp) {
-      return convertFromTeaspoons(numAmount, yeastType as any).toFixed(2);
-    }
-    
-    if (unit === 'oz') {
-      return convertGramsToOunces(numAmount).toFixed(3);
-    }
-    
-    return numAmount.toFixed(1);
+    return amount;
   };
 
   const getUnitLabel = () => {
