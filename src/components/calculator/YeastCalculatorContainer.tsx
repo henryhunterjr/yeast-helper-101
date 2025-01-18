@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
@@ -18,6 +20,7 @@ const YeastCalculatorContainer = () => {
   const [temperature, setTemperature] = useState('72');
   const [hydration, setHydration] = useState('100');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
 
   const calculationResult = useMemo(() => {
     if (!amount || isNaN(parseFloat(amount))) return '0';
@@ -69,7 +72,8 @@ const YeastCalculatorContainer = () => {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <CalculatorHeader />
 
-          <div className="p-4 sm:p-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+          <div className="p-4 sm:p-6 space-y-6">
+            {/* Primary Conversion Section */}
             <div className="space-y-6">
               <YeastInputSection
                 amount={amount}
@@ -83,10 +87,10 @@ const YeastCalculatorContainer = () => {
                 toType={toType}
                 setToType={setToType}
                 isLoading={isLoading}
+                showAdjustments={false}
               />
-            </div>
 
-            <div className="space-y-6">
+              {/* Conversion Result */}
               <ConversionResult
                 amount={amount}
                 fromType={fromType}
@@ -98,10 +102,47 @@ const YeastCalculatorContainer = () => {
                 hydrationAdjustment={hydrationAdjustment}
                 isLoading={isLoading}
               />
+
+              {/* Collapsible Adjustments Section */}
+              <Collapsible
+                open={isAdjustmentsOpen}
+                onOpenChange={setIsAdjustmentsOpen}
+                className="w-full space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Additional Adjustments</h3>
+                  <CollapsibleTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
+                    {isAdjustmentsOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </CollapsibleTrigger>
+                </div>
+                
+                <CollapsibleContent className="space-y-6">
+                  <YeastInputSection
+                    amount={amount}
+                    setAmount={setAmount}
+                    temperature={temperature}
+                    setTemperature={setTemperature}
+                    hydration={hydration}
+                    setHydration={setHydration}
+                    fromType={fromType}
+                    setFromType={setFromType}
+                    toType={toType}
+                    setToType={setToType}
+                    isLoading={isLoading}
+                    showAdjustments={true}
+                    hideMainInputs={true}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           </div>
         </div>
 
+        {/* Favorites Section */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-4 sm:p-6">
             <h2 className="text-lg font-semibold mb-4">Saved Favorites</h2>
