@@ -3,7 +3,7 @@ import YeastInput from '../YeastInput';
 import TemperatureInput from '../TemperatureInput';
 import { Input } from "@/components/ui/input";
 import { Droplets } from 'lucide-react';
-import { yeastTypes } from '../../utils/yeastTypes';
+import { UnitType } from '@/utils/yeastTypes';
 import {
   Tooltip,
   TooltipContent,
@@ -24,6 +24,8 @@ interface YeastInputSectionProps {
   isLoading: boolean;
   showAdjustments?: boolean;
   hideMainInputs?: boolean;
+  unit: UnitType;
+  setUnit: (value: UnitType) => void;
 }
 
 const YeastInputSection = ({
@@ -38,8 +40,10 @@ const YeastInputSection = ({
   toType,
   setToType,
   isLoading,
-  showAdjustments = true,
+  showAdjustments = false,
   hideMainInputs = false,
+  unit,
+  setUnit,
 }: YeastInputSectionProps) => {
   return (
     <div className="space-y-8">
@@ -60,9 +64,10 @@ const YeastInputSection = ({
                 className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
                 disabled={isLoading}
               >
-                {Object.entries(yeastTypes).map(([key, name]) => (
-                  <option key={key} value={key}>{name}</option>
-                ))}
+                <option value="active-dry">Active Dry Yeast</option>
+                <option value="instant">Instant Yeast</option>
+                <option value="fresh">Fresh Yeast</option>
+                <option value="sourdough">Sourdough Starter</option>
               </select>
             </div>
 
@@ -74,9 +79,10 @@ const YeastInputSection = ({
                 className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
                 disabled={isLoading}
               >
-                {Object.entries(yeastTypes).map(([key, name]) => (
-                  <option key={key} value={key}>{name}</option>
-                ))}
+                <option value="active-dry">Active Dry Yeast</option>
+                <option value="instant">Instant Yeast</option>
+                <option value="fresh">Fresh Yeast</option>
+                <option value="sourdough">Sourdough Starter</option>
               </select>
             </div>
           </div>
