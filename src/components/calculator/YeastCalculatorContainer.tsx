@@ -27,6 +27,14 @@ const YeastCalculatorContainer = () => {
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
 
+  const handleReset = () => {
+    setAmount('');
+    setFromType('active-dry');
+    setToType('instant');
+    setTemperature('72');
+    setHydration('100');
+  };
+
   const result = useMemo(() => {
     if (!amount || isNaN(parseFloat(amount))) return '';
     try {
@@ -123,6 +131,7 @@ const YeastCalculatorContainer = () => {
                 fermentationTime={fermentationTime}
                 isLoading={isLoading}
                 unit={unit}
+                onReset={handleReset}
               />
             )}
 

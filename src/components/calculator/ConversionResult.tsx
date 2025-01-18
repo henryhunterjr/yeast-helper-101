@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, Info } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { 
   convertToTeaspoons, 
