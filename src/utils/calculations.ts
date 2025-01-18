@@ -14,38 +14,38 @@ export const calculateConversion = (
   
   if (fromType === toType) return amount;
 
-  // If using teaspoons, first convert to grams
-  let amountInGrams = numAmount;
+  // When using teaspoons, we'll work with the teaspoon values directly
   if (useTsp) {
-    const converted = convertFromTeaspoons(numAmount, fromType as any);
-    if (converted === null) {
-      throw new Error('Cannot convert from teaspoons for this yeast type');
+    const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
+    if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
+    
+    // Convert directly using the conversion factor
+    const result = numAmount * factor;
+    
+    // Validate result bounds
+    if (result < 0.1) {
+      throw new Error(`Resulting amount (${result.toFixed(3)} tsp) is too small. Minimum is 0.1 tsp`);
     }
-    amountInGrams = converted;
-  }
-
-  const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
-  if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
-
-  const result = amountInGrams * factor;
-  if (result < 0.1) {
-    throw new Error(`Resulting amount (${result.toFixed(3)}g) is too small. Minimum is 0.1g`);
-  }
-
-  if (result > 1000) {
-    throw new Error(`Resulting amount (${result.toFixed(2)}g) is too large. Maximum is 1000g`);
-  }
-
-  // If using teaspoons, convert the result back to teaspoons
-  if (useTsp) {
-    const tspResult = convertToTeaspoons(result, toType as any);
-    if (tspResult === null) {
-      throw new Error('Cannot convert to teaspoons for this yeast type');
+    if (result > 1000) {
+      throw new Error(`Resulting amount (${result.toFixed(2)} tsp) is too large. Maximum is 1000 tsp`);
     }
-    return tspResult.toFixed(2);
-  }
+    
+    return result.toFixed(2);
+  } else {
+    // For gram calculations, use the original logic
+    const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
+    if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
 
-  return result.toFixed(2);
+    const result = numAmount * factor;
+    if (result < 0.1) {
+      throw new Error(`Resulting amount (${result.toFixed(3)}g) is too small. Minimum is 0.1g`);
+    }
+    if (result > 1000) {
+      throw new Error(`Resulting amount (${result.toFixed(2)}g) is too large. Maximum is 1000g`);
+    }
+
+    return result.toFixed(2);
+  }
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {

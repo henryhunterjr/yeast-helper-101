@@ -10,14 +10,16 @@ export type YeastType = keyof typeof yeastTypes;
 
 export type UnitType = 'g' | 'tsp' | 'oz';
 
+// Teaspoon conversion factors (relative to grams)
 export const tspToGramConversion: Record<YeastType, number> = {
   'active-dry': 3.1,
   'instant': 3.3,
   'fresh': 10,
   'bread-machine': 3.3,
-  'sourdough': 0 // Not applicable for sourdough
-};
+  'sourdough': null
+} as const;
 
+// Direct conversion factors between yeast types (for both grams and teaspoons)
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
     'instant': 0.75,
@@ -90,13 +92,13 @@ export const getFermentationTimeRange = (
 
 export const convertToTeaspoons = (grams: number, yeastType: YeastType): number | null => {
   const conversionFactor = tspToGramConversion[yeastType];
-  if (conversionFactor === 0) return null; // For sourdough or unsupported types
+  if (conversionFactor === null) return null; // For sourdough or unsupported types
   return grams / conversionFactor;
 };
 
 export const convertFromTeaspoons = (teaspoons: number, yeastType: YeastType): number | null => {
   const conversionFactor = tspToGramConversion[yeastType];
-  if (conversionFactor === 0) return null; // For sourdough or unsupported types
+  if (conversionFactor === null) return null; // For sourdough or unsupported types
   return teaspoons * conversionFactor;
 };
 
