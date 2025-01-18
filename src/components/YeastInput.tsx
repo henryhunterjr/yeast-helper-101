@@ -81,6 +81,21 @@ const YeastInput = ({
     return unit === 'oz' ? 'ounces' : 'grams';
   };
 
+  const getDisplayAmount = () => {
+    if (!amount) return '';
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) return '';
+    
+    if (useTsp) {
+      return `${parsedAmount} tsp`;
+    } else {
+      const value = unit === 'oz' ? 
+        convertGramsToOunces(parsedAmount) : 
+        parsedAmount;
+      return `${value.toFixed(2)} ${unit}`;
+    }
+  };
+
   const canUseTsp = tspToGramConversion[yeastType as any] !== null;
 
   return (
@@ -114,7 +129,7 @@ const YeastInput = ({
       </div>
       {amount && (
         <p className="text-sm text-gray-500">
-          {formatMeasurement(parseFloat(amount), unit, yeastType as any)}
+          {getDisplayAmount()}
         </p>
       )}
     </div>
