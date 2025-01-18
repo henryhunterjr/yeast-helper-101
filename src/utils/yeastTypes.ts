@@ -8,6 +8,16 @@ export const yeastTypes = {
 
 export type YeastType = keyof typeof yeastTypes;
 
+export type UnitType = 'g' | 'tsp' | 'oz';
+
+export const tspToGramConversion: Record<YeastType, number> = {
+  'active-dry': 3.1,
+  'instant': 3.3,
+  'fresh': 10,
+  'bread-machine': 3.3,
+  'sourdough': 0 // Not applicable for sourdough
+};
+
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
     'instant': 0.75,
@@ -46,14 +56,6 @@ export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   }
 };
 
-export const tspToGramConversion: Record<YeastType, number> = {
-  'active-dry': 3.1,
-  'instant': 3.3,
-  'fresh': 10,
-  'bread-machine': 3.3,
-  'sourdough': 0 // Not applicable for sourdough
-};
-
 export const convertToTeaspoons = (grams: number, yeastType: YeastType): number | null => {
   const conversionFactor = tspToGramConversion[yeastType];
   if (conversionFactor === 0) return null; // For sourdough or unsupported types
@@ -66,30 +68,39 @@ export const convertFromTeaspoons = (teaspoons: number, yeastType: YeastType): n
   return teaspoons * conversionFactor;
 };
 
-export const getWaterTemperature = (roomTemp: number): number => {
-  const targetDoughTemp = 78; // Ideal dough temperature in °F
-  const frictionFactor = 25; // Average friction factor from mixing
-  const flourTemp = roomTemp; // Assume flour is at room temperature
-  
-  return (targetDoughTemp * 4) - (roomTemp + flourTemp + frictionFactor);
+export const convertGramsToOunces = (grams: number): number => {
+  return grams / 28.35;
 };
 
-export const getFermentationTimeRange = (
-  temperature: number,
-  hydration: number
-): { minHours: number; maxHours: number } => {
-  // Base fermentation times at 72°F and 100% hydration
-  let baseMin = 3;
-  let baseMax = 4;
+export const convertOuncesToGrams = (ounces: number): number => {
+  return ounces * 28.35;
+};
 
-  // Temperature adjustment
-  const tempFactor = Math.pow(0.8, (temperature - 72) / 10);
-  
-  // Hydration adjustment
-  const hydrationFactor = (hydration / 100);
+export const formatMeasurement = (value: number, unit: UnitType, yeastType: YeastType): string => {
+  switch (unit) {
+    case 'g':
+      return `${value.toFixed(2)}g`;
+    case 'tsp':
+      const tspValue = convertToTeaspoons(value, yeastType);
+      return tspValue ? `${tspValue.toFixed(2)} tsp` : `${value.toFixed(2)}g`;
+    case 'oz':
+      return `${convertGramsToOunces(value).toFixed(2)} oz`;
+    default:
+      return `${value.toFixed(2)}g`;
+  }
+};
 
-  return {
-    minHours: Math.round(baseMin * tempFactor / hydrationFactor),
-    maxHours: Math.round(baseMax * tempFactor / hydrationFactor)
-  };
+export const parseInputValue = (value: string, unit: UnitType, yeastType: YeastType): number => {
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return 0;
+
+  switch (unit) {
+    case 'tsp':
+      const gramsValue = convertFromTeaspoons(numValue, yeastType);
+      return gramsValue ?? numValue;
+    case 'oz':
+      return convertOuncesToGrams(numValue);
+    default:
+      return numValue;
+  }
 };

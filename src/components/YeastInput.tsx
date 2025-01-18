@@ -4,7 +4,16 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { convertToTeaspoons, convertFromTeaspoons, tspToGramConversion } from '../utils/yeastTypes';
+import { 
+  convertToTeaspoons, 
+  convertFromTeaspoons, 
+  convertGramsToOunces,
+  convertOuncesToGrams,
+  tspToGramConversion,
+  formatMeasurement,
+  parseInputValue,
+  UnitType
+} from '../utils/yeastTypes';
 
 interface YeastInputProps {
   amount: string;
@@ -16,34 +25,26 @@ const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
   const { toast } = useToast();
   const MIN_AMOUNT = 0.1;
   const MAX_AMOUNT = 1000;
-  const [units, setUnits] = React.useState('metric');
+  const [units, setUnits] = React.useState<UnitType>('g');
   const [useTsp, setUseTsp] = React.useState(false);
 
   React.useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setUnits(settings.units);
+      setUnits(settings.units === 'imperial' ? 'oz' : 'g');
     }
   }, []);
 
-  const convertToMetric = (imperialValue: number): number => {
-    return imperialValue * 28.3495; // Convert ounces to grams
-  };
-
-  const convertToImperial = (metricValue: number): number => {
-    return metricValue / 28.3495; // Convert grams to ounces
-  };
-
   const handleAmountChange = (value: string) => {
-    const numValue = parseFloat(value);
-    
     if (value === '') {
       setAmount('');
       return;
     }
 
-    if (isNaN(numValue)) {
+    const parsedValue = parseInputValue(value, units, yeastType as any);
+    
+    if (isNaN(parsedValue)) {
       toast({
         title: "Invalid Input",
         description: "Please enter a valid number",
@@ -52,29 +53,8 @@ const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
       return;
     }
 
-    let finalValue = numValue;
-    
-    // Convert from teaspoons if necessary
-    if (useTsp) {
-      const gramsValue = convertFromTeaspoons(numValue, yeastType as keyof typeof tspToGramConversion);
-      if (gramsValue === null) {
-        toast({
-          title: "Invalid Conversion",
-          description: "This type of yeast cannot be measured in teaspoons",
-          variant: "destructive",
-        });
-        return;
-      }
-      finalValue = gramsValue;
-    }
-
-    // Convert to metric if using imperial
-    if (units === 'imperial' && !useTsp) {
-      finalValue = convertToMetric(numValue);
-    }
-
-    // Check limits
-    if (finalValue < MIN_AMOUNT) {
+    // Check limits in grams
+    if (parsedValue < MIN_AMOUNT) {
       toast({
         title: "Amount Too Small",
         description: `Minimum amount is ${MIN_AMOUNT}g`,
@@ -83,7 +63,7 @@ const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
       return;
     }
 
-    if (finalValue > MAX_AMOUNT) {
+    if (parsedValue > MAX_AMOUNT) {
       toast({
         title: "Amount Too Large",
         description: `Maximum amount is ${MAX_AMOUNT}g`,
@@ -92,28 +72,30 @@ const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
       return;
     }
 
-    setAmount(finalValue.toString());
+    setAmount(parsedValue.toString());
   };
 
   const displayValue = () => {
     if (!amount) return '';
-    
     const numAmount = parseFloat(amount);
     
-    if (useTsp) {
-      const tspValue = convertToTeaspoons(numAmount, yeastType as keyof typeof tspToGramConversion);
-      return tspValue?.toString() || '';
+    switch (units) {
+      case 'tsp':
+        const tspValue = convertToTeaspoons(numAmount, yeastType as any);
+        return tspValue?.toString() || '';
+      case 'oz':
+        return convertGramsToOunces(numAmount).toFixed(3);
+      default:
+        return amount;
     }
-    
-    return units === 'imperial' ? convertToImperial(numAmount).toFixed(3) : amount;
   };
 
   const getUnitLabel = () => {
     if (useTsp) return 'tsp';
-    return units === 'imperial' ? 'ounces' : 'grams';
+    return units === 'oz' ? 'ounces' : 'grams';
   };
 
-  const canUseTsp = tspToGramConversion[yeastType as keyof typeof tspToGramConversion] !== null;
+  const canUseTsp = tspToGramConversion[yeastType as any] !== null;
 
   return (
     <div className="w-full space-y-4">
@@ -141,17 +123,12 @@ const YeastInput = ({ amount, setAmount, yeastType }: YeastInputProps) => {
           onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
           placeholder={`Enter amount`}
-          step={useTsp ? '0.25' : (units === 'imperial' ? '0.001' : '0.1')}
+          step={useTsp ? '0.25' : (units === 'oz' ? '0.001' : '0.1')}
         />
       </div>
       {amount && (
         <p className="text-sm text-gray-500">
-          {useTsp ? 
-            `${amount}g` :
-            units === 'imperial' ? 
-              `${amount}g` : 
-              convertToTeaspoons(parseFloat(amount), yeastType as keyof typeof tspToGramConversion)?.toFixed(2) + ' tsp'
-          }
+          {formatMeasurement(parseFloat(amount), units, yeastType as any)}
         </p>
       )}
     </div>
