@@ -8,7 +8,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { yeastTypes } from '@/utils/yeastCalculations';
+import { 
+  yeastTypes, 
+  convertToTeaspoons, 
+  convertGramsToOunces,
+  UnitType,
+  YeastType
+} from '@/utils/yeastTypes';
 import { saveFavorite } from '@/utils/favoritesStorage';
 
 interface ConversionResultProps {
@@ -29,6 +35,7 @@ interface ConversionResultProps {
     maxHours: number;
   } | null;
   isLoading: boolean;
+  unit: UnitType;
 }
 
 const ConversionResult = ({
@@ -42,12 +49,28 @@ const ConversionResult = ({
   hydrationAdjustment,
   fermentationTime,
   isLoading,
+  unit
 }: ConversionResultProps) => {
   const { toast } = useToast();
 
   if (isLoading) {
     return <div className="animate-pulse">Loading...</div>;
   }
+
+  const formatResult = (value: string, unit: UnitType, yeastType: YeastType) => {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return value;
+
+    switch (unit) {
+      case 'tsp':
+        const tspValue = convertToTeaspoons(numValue, yeastType);
+        return tspValue ? `${tspValue.toFixed(2)} tsp` : `${numValue.toFixed(2)} g`;
+      case 'oz':
+        return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
+      default:
+        return `${numValue.toFixed(2)} g`;
+    }
+  };
 
   const handleSave = () => {
     try {
@@ -89,10 +112,10 @@ const ConversionResult = ({
         </div>
         <div className="space-y-2">
           <p className="text-xl font-mono break-words text-yeast-700">
-            {amount}g {yeastTypes[fromType]} =
+            {formatResult(amount, unit, fromType as YeastType)} {yeastTypes[fromType]} =
           </p>
           <p className="text-3xl font-bold text-yeast-800 font-mono break-words">
-            {result}g {yeastTypes[toType]}
+            {formatResult(result, unit, toType as YeastType)} {yeastTypes[toType]}
           </p>
         </div>
       </Card>
