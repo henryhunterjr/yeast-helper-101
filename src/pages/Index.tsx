@@ -16,7 +16,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yeast-50 to-white flex flex-col">
-      <div className="flex-grow py-12">
+      <div className="flex-grow py-4 sm:py-12 px-4 sm:px-6">
         <YeastCalculator />
       </div>
       <TutorialButton />
