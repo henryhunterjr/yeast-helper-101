@@ -3,19 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Plus, Trash2, HelpCircle } from 'lucide-react';
-import { Recipe, Ingredient, DEFAULT_PERCENTAGES, TYPICAL_RANGES } from '@/types/recipe';
+import { TooltipProvider, TooltipContent, TooltipTrigger, Tooltip } from "@/components/ui/tooltip";
+import { Plus, HelpCircle } from 'lucide-react';
+import { Recipe, Ingredient } from '@/types/recipe';
 import { 
-  calculateBakersPercentage, 
-  calculateHydration, 
-  validateIngredient,
+  calculateHydration,
   getTotalWeight,
-  scaleRecipe 
-} from '@/utils/recipeCalculations';
-import IngredientRow from './IngredientRow';
+} from '@/utils/bakersCalculatorHelpers';
 import UnitToggle from './UnitToggle';
+import PercentageInput from './PercentageInput';
 
 const BakersCalculator = () => {
   const [recipe, setRecipe] = useState<Recipe>({
@@ -43,11 +39,6 @@ const BakersCalculator = () => {
 
   const handleFlourChange = (value: number) => {
     if (value <= 0) {
-      toast({
-        title: "Invalid flour weight",
-        description: "Flour weight must be greater than 0",
-        variant: "destructive",
-      });
       return;
     }
 
@@ -56,32 +47,21 @@ const BakersCalculator = () => {
       flour: value,
       ingredients: prev.ingredients.map((ing) => ({
         ...ing,
-        percentage: calculateBakersPercentage(ing.weight, value),
+        percentage: (ing.weight / value) * 100,
       })),
     }));
   };
 
-  const handleIngredientChange = (id: string, field: 'name' | 'weight', value: string | number) => {
+  const handleIngredientChange = (id: string, weight: number) => {
     setRecipe((prev) => ({
       ...prev,
       ingredients: prev.ingredients.map((ing) => {
         if (ing.id === id) {
-          const updatedIng = {
+          return {
             ...ing,
-            [field]: value,
+            weight,
+            percentage: (weight / prev.flour) * 100,
           };
-          if (field === 'weight') {
-            updatedIng.percentage = calculateBakersPercentage(Number(value), prev.flour);
-            const validation = validateIngredient(updatedIng, prev.flour);
-            if (validation.message) {
-              toast({
-                title: "Notice",
-                description: validation.message,
-                variant: "default",  // Changed from "warning" to "default"
-              });
-            }
-          }
-          return updatedIng;
         }
         return ing;
       }),
@@ -100,13 +80,6 @@ const BakersCalculator = () => {
     setRecipe((prev) => ({
       ...prev,
       ingredients: [...prev.ingredients, newIngredient],
-    }));
-  };
-
-  const removeIngredient = (id: string) => {
-    setRecipe((prev) => ({
-      ...prev,
-      ingredients: prev.ingredients.filter((ing) => ing.id !== id),
     }));
   };
 
@@ -185,15 +158,15 @@ const BakersCalculator = () => {
 
             <div className="space-y-2">
               {recipe.ingredients.map((ingredient) => (
-                <IngredientRow
+                <PercentageInput
                   key={ingredient.id}
-                  ingredient={ingredient}
+                  name={ingredient.name}
+                  weight={ingredient.weight}
                   unit={recipe.unit}
-                  onChangeField={(field, value) => 
-                    handleIngredientChange(ingredient.id, field, value)
-                  }
-                  onRemove={() => removeIngredient(ingredient.id)}
-                  isRemovable={ingredient.isCustom}
+                  percentage={ingredient.percentage || 0}
+                  flourWeight={recipe.flour}
+                  onChange={(weight) => handleIngredientChange(ingredient.id, weight)}
+                  readOnly={!ingredient.isCustom}
                 />
               ))}
             </div>
