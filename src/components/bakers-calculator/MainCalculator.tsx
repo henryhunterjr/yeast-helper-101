@@ -138,6 +138,24 @@ const MainCalculator = () => {
     }
   };
 
+  const handleReset = () => {
+    setRecipe({
+      flour: 1000,
+      ingredients: [
+        { id: '1', name: 'Water', weight: 650, percentage: 65 },
+        { id: '2', name: 'Salt', weight: 20, percentage: 2 },
+        { id: '3', name: 'Starter', weight: 200, percentage: 20 },
+      ],
+      unit: 'g',
+      hydrationTarget: 75,
+      starter: {
+        weight: 200,
+        hydration: 100,
+        percentage: 20
+      }
+    });
+  };
+
   return (
     <TooltipProvider>
       <Card className="p-6 max-w-2xl mx-auto">
@@ -158,6 +176,7 @@ const MainCalculator = () => {
             onIngredientChange={handleIngredientChange}
             onStarterChange={updateRecipeBasedOnStarter}
             onHydrationTargetChange={updateRecipeBasedOnHydration}
+            onReset={handleReset}
           />
 
           <CalculationResults recipe={recipe} />
