@@ -9,6 +9,13 @@ const CalculatorHeader = () => {
 
   return (
     <div className="bg-yeast-50 p-4 sm:p-6 border-b">
+      <div className="flex flex-col items-center sm:items-start mb-4">
+        <img 
+          src="/lovable-uploads/8f3090b9-c87f-4a4b-8aa7-2444ba74de79.png" 
+          alt="YeastWise Logo" 
+          className="h-16 mb-4"
+        />
+      </div>
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-yeast-800">
           YeastWise Calculator
