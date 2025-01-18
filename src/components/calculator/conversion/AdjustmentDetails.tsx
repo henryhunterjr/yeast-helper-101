@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info } from 'lucide-react';
+import { Card } from "@/components/ui/card";
 
 interface AdjustmentDetailsProps {
   temperature: string;
@@ -24,9 +25,9 @@ const AdjustmentDetails = ({
   fermentationTime,
 }: AdjustmentDetailsProps) => {
   return (
-    <div className="text-sm text-gray-600">
+    <div className="space-y-4">
       <div className="font-medium flex items-center gap-2">
-        Adjustments
+        <h3 className="text-lg">Recipe Adjustments</h3>
         <Tooltip>
           <TooltipTrigger>
             <Info className="h-4 w-4 text-gray-400" />
@@ -39,55 +40,44 @@ const AdjustmentDetails = ({
         </Tooltip>
       </div>
       
-      <ul className="list-disc pl-4 mt-2 space-y-2">
-        <li className="break-words">
-          Temperature ({temperature}°F): {temperatureAdjustment}
-          <div className="text-xs text-gray-500 mt-1">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card className="p-4">
+          <h4 className="font-medium mb-2">Temperature Adjustments</h4>
+          <p className="text-sm text-gray-600 break-words">
+            {temperature}°F: {temperatureAdjustment}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
             Recommended water temperature: {temperature ? `${Math.round(105 - parseFloat(temperature))}°F` : 'Room temperature'}
-          </div>
-        </li>
+          </p>
+        </Card>
         
         {hydrationAdjustment?.showAdjustments && (
-          <li>
-            <div className="flex items-center gap-2">
-              Recipe Adjustments
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-4 w-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">
-                    When converting to/from sourdough starter, you need to adjust your recipe's flour and water to account for the starter's hydration.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <ul className="list-disc pl-4 mt-1 space-y-1">
-              <li>Adjust flour by: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
-              <li>Adjust water by: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
+          <Card className="p-4">
+            <h4 className="font-medium mb-2">Hydration Adjustments</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>Flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
+              <li>Water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
             </ul>
-          </li>
+          </Card>
         )}
-        
-        <li>
-          <div className="flex items-center gap-2">
-            Estimated fermentation time
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">
-                  This is an approximate range based on temperature and hydration. Watch your dough for actual readiness.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <div className="text-sm font-medium text-yeast-600">
-            {fermentationTime}
-          </div>
-        </li>
-      </ul>
+      </div>
+      
+      <Card className="p-4">
+        <h4 className="font-medium mb-2">Fermentation Time</h4>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-gray-600">{fermentationTime}</p>
+          <Tooltip>
+            <TooltipTrigger>
+              <Info className="h-4 w-4 text-gray-400" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs">
+                This is an approximate range based on temperature and hydration. Watch your dough for actual readiness.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </Card>
     </div>
   );
 };

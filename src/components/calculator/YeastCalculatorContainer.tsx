@@ -63,35 +63,41 @@ const YeastCalculatorContainer = () => {
   }, [location.state, toast]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-2 sm:p-6 bg-white rounded-lg shadow-lg">
-      <CalculatorHeader />
+    <div className="w-full max-w-4xl mx-auto p-2 sm:p-6">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <CalculatorHeader />
 
-      <div className={`grid gap-4 sm:gap-6 ${isMobile ? '' : 'md:grid-cols-2'}`}>
-        <YeastInputSection
-          amount={amount}
-          setAmount={setAmount}
-          temperature={temperature}
-          setTemperature={setTemperature}
-          hydration={hydration}
-          setHydration={setHydration}
-          fromType={fromType}
-          setFromType={setFromType}
-          toType={toType}
-          setToType={setToType}
-          isLoading={isLoading}
-        />
+        <div className="p-4 sm:p-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+          <div className="space-y-6">
+            <YeastInputSection
+              amount={amount}
+              setAmount={setAmount}
+              temperature={temperature}
+              setTemperature={setTemperature}
+              hydration={hydration}
+              setHydration={setHydration}
+              fromType={fromType}
+              setFromType={setFromType}
+              toType={toType}
+              setToType={setToType}
+              isLoading={isLoading}
+            />
+          </div>
 
-        <ConversionResult
-          amount={amount}
-          fromType={fromType}
-          toType={toType}
-          temperature={temperature}
-          hydration={hydration}
-          result={calculationResult}
-          temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
-          hydrationAdjustment={hydrationAdjustment}
-          isLoading={isLoading}
-        />
+          <div className="space-y-6">
+            <ConversionResult
+              amount={amount}
+              fromType={fromType}
+              toType={toType}
+              temperature={temperature}
+              hydration={hydration}
+              result={calculationResult}
+              temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+              hydrationAdjustment={hydrationAdjustment}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

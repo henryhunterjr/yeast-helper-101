@@ -27,10 +27,10 @@ const ConversionSummary = ({
 
   return (
     <div className="bg-white p-3 sm:p-4 rounded shadow-sm">
-      <p className="text-base sm:text-lg font-mono break-words">
+      <p className="text-base sm:text-lg md:text-xl font-mono break-words">
         {amount || '0'}g {yeastTypes[fromType]} =
       </p>
-      <p className="text-xl sm:text-2xl font-bold text-yeast-600 font-mono break-words">
+      <p className="text-xl sm:text-2xl md:text-3xl font-bold text-yeast-600 font-mono break-words">
         {result}g {yeastTypes[toType]}
       </p>
     </div>
