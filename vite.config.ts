@@ -16,7 +16,6 @@ export default defineConfig(({ mode }) => ({
       }
     },
     headers: {
-      // Add permissions policy to handle feature warnings
       'Permissions-Policy': 'vr=(), ambient-light-sensor=(), battery=()'
     }
   },
