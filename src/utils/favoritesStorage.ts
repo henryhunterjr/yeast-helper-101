@@ -20,6 +20,10 @@ export const saveFavorite = (favorite: Omit<StoredFavorite, 'id' | 'timestamp'>)
   };
   
   localStorage.setItem(STORAGE_KEY, JSON.stringify([newFavorite, ...favorites]));
+  
+  // Dispatch custom event to notify components about the update
+  window.dispatchEvent(new Event('favoritesUpdated'));
+  
   return newFavorite;
 };
 
@@ -34,6 +38,9 @@ export const deleteFavorite = (id: string): void => {
     STORAGE_KEY,
     JSON.stringify(favorites.filter(f => f.id !== id))
   );
+  
+  // Dispatch custom event to notify components about the update
+  window.dispatchEvent(new Event('favoritesUpdated'));
 };
 
 export const updateFavoriteNotes = (id: string, notes: string): void => {
@@ -42,4 +49,7 @@ export const updateFavoriteNotes = (id: string, notes: string): void => {
     f.id === id ? { ...f, notes } : f
   );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
+  
+  // Dispatch custom event to notify components about the update
+  window.dispatchEvent(new Event('favoritesUpdated'));
 };

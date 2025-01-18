@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -14,18 +14,36 @@ import { getFavorites, deleteFavorite, updateFavoriteNotes, StoredFavorite } fro
 import { yeastTypes } from '@/utils/yeastCalculations';
 import { useNavigate } from 'react-router-dom';
 
+// Create a custom event for favorite updates
+export const FAVORITES_UPDATED_EVENT = 'favoritesUpdated';
+
 const FavoritesList = () => {
   const [favorites, setFavorites] = React.useState<StoredFavorite[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  const refreshFavorites = () => {
     setFavorites(getFavorites());
+  };
+
+  useEffect(() => {
+    refreshFavorites();
+
+    // Listen for favorites updates
+    const handleFavoritesUpdate = () => {
+      refreshFavorites();
+    };
+
+    window.addEventListener(FAVORITES_UPDATED_EVENT, handleFavoritesUpdate);
+
+    return () => {
+      window.removeEventListener(FAVORITES_UPDATED_EVENT, handleFavoritesUpdate);
+    };
   }, []);
 
   const handleDelete = (id: string) => {
     deleteFavorite(id);
-    setFavorites(getFavorites());
+    refreshFavorites();
     toast({
       title: "Favorite deleted",
       description: "The conversion has been removed from favorites.",
