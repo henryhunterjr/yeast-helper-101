@@ -54,6 +54,18 @@ export const tspToGramConversion: Record<YeastType, number> = {
   'sourdough': 0 // Not applicable for sourdough
 };
 
+export const convertToTeaspoons = (grams: number, yeastType: YeastType): number | null => {
+  const conversionFactor = tspToGramConversion[yeastType];
+  if (conversionFactor === 0) return null; // For sourdough or unsupported types
+  return grams / conversionFactor;
+};
+
+export const convertFromTeaspoons = (teaspoons: number, yeastType: YeastType): number | null => {
+  const conversionFactor = tspToGramConversion[yeastType];
+  if (conversionFactor === 0) return null; // For sourdough or unsupported types
+  return teaspoons * conversionFactor;
+};
+
 export const getWaterTemperature = (roomTemp: number): number => {
   const targetDoughTemp = 78; // Ideal dough temperature in °F
   const frictionFactor = 25; // Average friction factor from mixing
