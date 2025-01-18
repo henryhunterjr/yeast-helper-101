@@ -66,10 +66,79 @@ const MainCalculator = () => {
     });
   };
 
-  const updateRecipeBasedOnWater = (waterWeight: number) => {
+  const updateRecipeBasedOnWater = (waterWeight: number | null) => {
+    if (waterWeight === null) {
+      setRecipe(prev => ({
+        ...prev,
+        flour: 0,
+        ingredients: prev.ingredients.map(ing => ({
+          ...ing,
+          weight: 0,
+        })),
+        starter: {
+          ...prev.starter,
+          weight: 0,
+        }
+      }));
+      return;
+    }
+
     const hydrationTarget = recipe.hydrationTarget || 75;
     const flourWeight = (waterWeight * 100) / hydrationTarget;
-    updateRecipeBasedOnFlour(flourWeight);
+    const saltWeight = (flourWeight * 2) / 100;
+    const starterWeight = (flourWeight * 20) / 100;
+
+    setRecipe(prev => ({
+      ...prev,
+      flour: flourWeight,
+      ingredients: [
+        { id: '1', name: 'Water', weight: waterWeight, percentage: hydrationTarget },
+        { id: '2', name: 'Salt', weight: saltWeight, percentage: 2 },
+        { id: '3', name: 'Starter', weight: starterWeight, percentage: 20 },
+      ],
+      starter: {
+        ...prev.starter,
+        weight: starterWeight,
+        percentage: 20
+      }
+    }));
+  };
+
+  const updateRecipeBasedOnStarter = (weight: number | null, hydration: number) => {
+    if (weight === null) {
+      setRecipe(prev => ({
+        ...prev,
+        starter: {
+          ...prev.starter,
+          weight: 0,
+          hydration,
+        },
+        ingredients: prev.ingredients.map(ing => 
+          ing.name === 'Starter' ? { ...ing, weight: 0 } : ing
+        ),
+      }));
+      return;
+    }
+
+    const flourWeight = (weight * 100) / 20; // Starter is 20% of flour weight
+    const hydrationTarget = recipe.hydrationTarget || 75;
+    const waterWeight = (flourWeight * hydrationTarget) / 100;
+    const saltWeight = (flourWeight * 2) / 100;
+
+    setRecipe((prev) => ({
+      ...prev,
+      flour: flourWeight,
+      starter: {
+        weight,
+        hydration,
+        percentage: 20
+      },
+      ingredients: [
+        { id: '1', name: 'Water', weight: waterWeight, percentage: hydrationTarget },
+        { id: '2', name: 'Salt', weight: saltWeight, percentage: 2 },
+        { id: '3', name: 'Starter', weight: weight, percentage: 20 },
+      ],
+    }));
   };
 
   const updateRecipeBasedOnHydration = (hydration: number) => {
@@ -101,55 +170,12 @@ const MainCalculator = () => {
     });
   };
 
-  const updateRecipeBasedOnStarter = (weight: number | null, hydration: number) => {
-    if (weight === null) {
-      setRecipe(prev => ({
-        ...prev,
-        starter: {
-          ...prev.starter,
-          weight: 0,
-          hydration,
-        },
-        ingredients: prev.ingredients.map(ing => 
-          ing.name === 'Starter' ? { ...ing, weight: 0 } : ing
-        ),
-      }));
-      return;
-    }
-
-    setRecipe((prev) => {
-      const starterPercentage = prev.flour ? (weight / prev.flour) * 100 : 20;
-      return {
-        ...prev,
-        starter: {
-          weight,
-          hydration,
-          percentage: starterPercentage
-        },
-        ingredients: prev.ingredients.map((ing) => {
-          if (ing.name === 'Starter') {
-            return {
-              ...ing,
-              weight,
-              percentage: starterPercentage,
-            };
-          }
-          return ing;
-        }),
-      };
-    });
-  };
-
   const handleIngredientChange = (id: string, weight: number | null) => {
     const ingredient = recipe.ingredients.find(ing => ing.id === id);
     if (!ingredient) return;
 
     if (ingredient.name === 'Water') {
-      if (weight === null) {
-        updateRecipeBasedOnFlour(null);
-      } else {
-        updateRecipeBasedOnWater(weight);
-      }
+      updateRecipeBasedOnWater(weight);
     } else if (ingredient.name === 'Starter') {
       updateRecipeBasedOnStarter(weight, recipe.starter?.hydration || 100);
     }

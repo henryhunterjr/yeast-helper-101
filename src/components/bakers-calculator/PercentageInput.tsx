@@ -48,7 +48,7 @@ const PercentageInput = ({
       id: '', 
       name, 
       weight: numValue, 
-      percentage: (numValue / flourWeight) * 100 
+      percentage: flourWeight ? (numValue / flourWeight) * 100 : percentage 
     }, flourWeight);
 
     if (validation.message) {
