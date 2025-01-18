@@ -12,6 +12,7 @@ import {
 } from '@/utils/bakersCalculatorHelpers';
 import UnitToggle from './UnitToggle';
 import PercentageInput from './PercentageInput';
+import ResultsDisplay from './ResultsDisplay';
 
 const BakersCalculator = () => {
   const [recipe, setRecipe] = useState<Recipe>({
@@ -95,6 +96,14 @@ const BakersCalculator = () => {
     });
   };
 
+  const getIngredientPercentages = () => {
+    const percentages: { [key: string]: number } = {};
+    recipe.ingredients.forEach((ing) => {
+      percentages[ing.name] = ing.percentage || 0;
+    });
+    return percentages;
+  };
+
   return (
     <TooltipProvider>
       <Card className="p-6 max-w-2xl mx-auto">
@@ -124,37 +133,24 @@ const BakersCalculator = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="flour">Flour Weight ({recipe.unit})</Label>
-                <Input
-                  id="flour"
-                  type="number"
-                  value={recipe.flour}
-                  onChange={(e) => handleFlourChange(Number(e.target.value))}
-                  min="0"
-                  step="1"
-                />
-              </div>
-              <div>
-                <Label>Hydration</Label>
-                <Input
-                  type="number"
-                  value={hydration.toFixed(1)}
-                  readOnly
-                  className="bg-gray-50"
-                />
-              </div>
-              <div>
-                <Label>Total Weight ({recipe.unit})</Label>
-                <Input
-                  type="number"
-                  value={totalWeight.toFixed(1)}
-                  readOnly
-                  className="bg-gray-50"
-                />
-              </div>
+            <div>
+              <Label htmlFor="flour">Flour Weight ({recipe.unit})</Label>
+              <Input
+                id="flour"
+                type="number"
+                value={recipe.flour}
+                onChange={(e) => handleFlourChange(Number(e.target.value))}
+                min="0"
+                step="1"
+              />
             </div>
+
+            <ResultsDisplay
+              percentages={getIngredientPercentages()}
+              hydration={hydration}
+              totalWeight={totalWeight}
+              unit={recipe.unit}
+            />
 
             <div className="space-y-2">
               {recipe.ingredients.map((ingredient) => (
