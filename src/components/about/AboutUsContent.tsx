@@ -28,7 +28,7 @@ const AboutUsContent = () => {
         <p className="text-gray-700">
           With tens of thousands of members globally, our Facebook group is a hub for sharing recipes, tips, and baking experiences. We believe in the simplicity of ingredients and cherish the natural magic of flour, water, salt, and yeast. Whether you're a beginner or a seasoned baker, you'll find a supportive environment to enhance your skills.
         </p>
-        <Button variant="outline" className="mt-2" onClick={() => window.open("https://www.facebook.com/groups/bakinggreatbread", "_blank")}>
+        <Button variant="outline" className="mt-2" onClick={() => window.open("https://www.facebook.com/groups/1082865755403754", "_blank")}>
           Join our Facebook Group <ExternalLink className="ml-2 h-4 w-4" />
         </Button>
       </section>

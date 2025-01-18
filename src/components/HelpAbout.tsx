@@ -12,14 +12,22 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { X } from 'lucide-react';
 
 const HelpAbout = () => {
   const navigate = useNavigate();
 
   return (
-    <Dialog open>
-      <DialogContent className="sm:max-w-[725px]">
+    <Dialog open onOpenChange={() => navigate('/')}>
+      <DialogContent className="sm:max-w-[725px] max-h-[90vh]">
+        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
+        
         <DialogHeader>
           <DialogTitle>Help & About</DialogTitle>
           <DialogDescription>
@@ -27,23 +35,25 @@ const HelpAbout = () => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="hover:bg-gray-100"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Calculator
-          </Button>
+        <ScrollArea className="h-[60vh] pr-4">
+          <div className="space-y-6">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/')}
+              className="hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Calculator
+            </Button>
 
-          <div className="space-y-8">
-            <AboutSection />
-            <QuickStartGuide />
-            <ConversionReference />
-            <TroubleshootingGuide />
+            <div className="space-y-8">
+              <AboutSection />
+              <QuickStartGuide />
+              <ConversionReference />
+              <TroubleshootingGuide />
+            </div>
           </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
