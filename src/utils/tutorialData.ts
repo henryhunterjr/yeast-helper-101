@@ -12,7 +12,7 @@ export const tutorialSteps: TutorialStep[] = [
   {
     id: 1,
     title: "Welcome to YeastWise!",
-    description: "Let's walk through how to use this yeast conversion calculator. We'll show you all the features to help you bake better bread.",
+    description: "Let's learn how to convert between different types of yeast and get perfect results every time. We'll cover all features including hydration and temperature adjustments.",
     position: {
       top: '50%',
       left: '50%'
@@ -21,7 +21,7 @@ export const tutorialSteps: TutorialStep[] = [
   {
     id: 2,
     title: "Enter Your Yeast Amount",
-    description: "Start by entering the amount of yeast you want to convert. Use grams for precise measurements.",
+    description: "Start by entering the amount of yeast you want to convert. Use grams for the most accurate results.",
     position: {
       top: '30%',
       left: '25%'
@@ -29,8 +29,8 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 3,
-    title: "Room Temperature",
-    description: "Set your room temperature - this helps calculate fermentation time adjustments.",
+    title: "Choose Your Yeast Types",
+    description: "Select which type of yeast you're converting from and to. We support instant, active dry, fresh yeast, and sourdough starter.",
     position: {
       top: '40%',
       left: '25%'
@@ -38,8 +38,8 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 4,
-    title: "Starter Hydration",
-    description: "For sourdough conversions, specify your starter's hydration percentage.",
+    title: "Temperature Matters",
+    description: "Enter your room temperature to get accurate fermentation time estimates and water temperature adjustments.",
     position: {
       top: '50%',
       left: '25%'
@@ -47,8 +47,8 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 5,
-    title: "Select Yeast Types",
-    description: "Choose which type of yeast you're converting from and to.",
+    title: "Starter Hydration",
+    description: "When working with sourdough starter, specify its hydration percentage. This helps calculate the correct flour and water adjustments.",
     position: {
       top: '60%',
       left: '25%'
@@ -56,8 +56,8 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 6,
-    title: "View Results",
-    description: "See your conversion result and recommended adjustments based on temperature and hydration.",
+    title: "Understanding Results",
+    description: "Your conversion results include the exact amount needed, plus any required flour and water adjustments for maintaining proper hydration.",
     position: {
       top: '40%',
       left: '75%'
@@ -65,10 +65,19 @@ export const tutorialSteps: TutorialStep[] = [
   },
   {
     id: 7,
-    title: "Save Favorites",
-    description: "Save your commonly used conversions for quick access later.",
+    title: "Temperature Adjustments",
+    description: "Check the recommended water temperature and estimated proofing time based on your room temperature.",
     position: {
       top: '50%',
+      left: '75%'
+    }
+  },
+  {
+    id: 8,
+    title: "Save Your Favorites",
+    description: "Save frequently used conversions for quick access. They'll appear in your favorites list below the calculator.",
+    position: {
+      top: '60%',
       left: '75%'
     }
   }
