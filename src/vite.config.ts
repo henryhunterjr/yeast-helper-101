@@ -14,9 +14,6 @@ export default defineConfig(({ mode }) => ({
         secure: false,
         ws: true
       }
-    },
-    headers: {
-      'Permissions-Policy': 'vr=(), ambient-light-sensor=(), battery=()'
     }
   },
   plugins: [

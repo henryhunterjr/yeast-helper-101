@@ -47,8 +47,8 @@ const Settings = () => {
   }, []);
 
   return (
-    <Dialog>
-      <DialogContent>
+    <Dialog open>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
@@ -56,31 +56,22 @@ const Settings = () => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-            <h2 className="text-2xl font-bold text-gray-800">Settings</h2>
-          </div>
+        <div className="space-y-8">
+          <ThemeSettings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+          <UnitSettings 
+            units={units} 
+            setUnits={setUnits}
+            tempScale={tempScale}
+            setTempScale={setTempScale}
+          />
+          <YeastTypeSettings defaultYeast={defaultYeast} setDefaultYeast={setDefaultYeast} />
 
-          <div className="space-y-8 bg-white rounded-lg shadow-lg p-6">
-            <ThemeSettings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            <UnitSettings 
-              units={units} 
-              setUnits={setUnits}
-              tempScale={tempScale}
-              setTempScale={setTempScale}
-            />
-            <YeastTypeSettings defaultYeast={defaultYeast} setDefaultYeast={setDefaultYeast} />
-
-            <Button 
-              onClick={handleSave}
-              className="w-full bg-yeast-600 hover:bg-yeast-700 text-white"
-            >
-              Save Settings
-            </Button>
-          </div>
+          <Button 
+            onClick={handleSave}
+            className="w-full"
+          >
+            Save Settings
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

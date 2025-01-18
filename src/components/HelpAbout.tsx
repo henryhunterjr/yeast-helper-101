@@ -18,8 +18,8 @@ const HelpAbout = () => {
   const navigate = useNavigate();
 
   return (
-    <Dialog>
-      <DialogContent>
+    <Dialog open>
+      <DialogContent className="sm:max-w-[725px]">
         <DialogHeader>
           <DialogTitle>Help & About</DialogTitle>
           <DialogDescription>
@@ -27,17 +27,17 @@ const HelpAbout = () => {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="space-y-6">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="mb-6 hover:bg-gray-100"
+            className="hover:bg-gray-100"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Calculator
           </Button>
 
-          <div className="space-y-12">
+          <div className="space-y-8">
             <AboutSection />
             <QuickStartGuide />
             <ConversionReference />
