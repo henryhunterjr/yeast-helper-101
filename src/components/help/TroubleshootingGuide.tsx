@@ -12,7 +12,7 @@ const TroubleshootingGuide = () => {
         <CardContent className="pt-6 space-y-4">
           <h3 className="text-lg font-semibold mb-3 text-yeast-700">Common Warnings Explained</h3>
           
-          <Alert variant="warning" className="mb-4">
+          <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               <span className="font-medium">High Hydration Warning</span>
