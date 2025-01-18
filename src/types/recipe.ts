@@ -21,7 +21,12 @@ export const DEFAULT_PERCENTAGES = {
 } as const;
 
 export const TYPICAL_RANGES = {
-  water: { min: 50, max: 100 },
-  salt: { min: 1.5, max: 2.5 },
-  yeast: { min: 0.5, max: 2 },
+  water: { min: 50, max: 100, warning: 'Hydration is outside typical range (50-100%)' },
+  salt: { min: 1.5, max: 2.5, warning: 'Salt percentage is outside typical range (1.5-2.5%)' },
+  yeast: { min: 0.5, max: 2, warning: 'Yeast percentage is outside typical range (0.5-2%)' },
+} as const;
+
+export const UNIT_CONVERSION = {
+  gToOz: 0.03527396,
+  ozToG: 28.3495,
 } as const;

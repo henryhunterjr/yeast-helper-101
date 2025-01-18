@@ -1,7 +1,8 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Trash2, AlertCircle } from 'lucide-react';
 import { Ingredient } from '@/types/recipe';
 
 interface IngredientRowProps {
@@ -19,6 +20,8 @@ const IngredientRow = ({
   onRemove,
   isRemovable = false,
 }: IngredientRowProps) => {
+  const showWarning = ingredient.name.toLowerCase() === 'water' && ingredient.percentage! > 100;
+
   return (
     <div className="flex items-center gap-4">
       <Input
@@ -38,8 +41,18 @@ const IngredientRow = ({
         min="0"
         step="1"
       />
-      <div className="w-20 text-right">
-        {ingredient.percentage?.toFixed(1)}%
+      <div className="w-24 text-right flex items-center justify-end gap-2">
+        <span>{ingredient.percentage?.toFixed(1)}%</span>
+        {showWarning && (
+          <Tooltip>
+            <TooltipTrigger>
+              <AlertCircle className="h-4 w-4 text-yellow-500" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>High hydration detected. This may result in a very wet dough.</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
       {isRemovable && (
         <Button
