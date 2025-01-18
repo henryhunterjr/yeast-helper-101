@@ -26,6 +26,19 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
+  const [useTsp, setUseTsp] = useState(false);
+
+  useEffect(() => {
+    if (useTsp) {
+      setUnit('tsp');
+    } else {
+      const savedSettings = localStorage.getItem('yeastwise-settings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        setUnit(settings.units === 'imperial' ? 'oz' : 'g');
+      }
+    }
+  }, [useTsp]);
 
   const handleReset = () => {
     setAmount('');
@@ -116,6 +129,8 @@ const YeastCalculatorContainer = () => {
               showAdjustments={false}
               unit={unit}
               setUnit={setUnit}
+              useTsp={useTsp}
+              setUseTsp={setUseTsp}
             />
 
             {showResults && (
@@ -168,6 +183,8 @@ const YeastCalculatorContainer = () => {
                   hideMainInputs={true}
                   unit={unit}
                   setUnit={setUnit}
+                  useTsp={useTsp}
+                  setUseTsp={setUseTsp}
                 />
               </CollapsibleContent>
             </Collapsible>
