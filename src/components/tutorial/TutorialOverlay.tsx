@@ -20,13 +20,14 @@ const TutorialOverlay = () => {
   if (!step) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50">
+    <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
       <div 
-        className="absolute p-6 bg-white rounded-lg shadow-xl max-w-md"
+        className="absolute p-4 sm:p-6 bg-white rounded-lg shadow-xl max-w-[90%] w-[400px] mx-auto left-1/2 -translate-x-1/2 my-4 sm:my-8"
         style={{
-          top: step.position?.top || '50%',
-          left: step.position?.left || '50%',
-          transform: 'translate(-50%, -50%)'
+          top: typeof window !== 'undefined' && window.innerWidth < 640 ? '50%' : (step.position?.top || '50%'),
+          transform: typeof window !== 'undefined' && window.innerWidth < 640 
+            ? 'translate(-50%, -50%)' 
+            : `translate(-50%, ${step.position?.top ? '0' : '-50%'})`
         }}
       >
         <button
