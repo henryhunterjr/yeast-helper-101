@@ -56,6 +56,38 @@ export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   }
 };
 
+export const getWaterTemperature = (roomTemp: number): number => {
+  // Target dough temperature is typically around 75-78°F (24-26°C)
+  const targetTemp = 76;
+  return Math.round(2 * targetTemp - roomTemp);
+};
+
+export const getFermentationTimeRange = (
+  temperature: number,
+  hydration: number
+): { minHours: number; maxHours: number } => {
+  // Base fermentation time at 75°F and 65% hydration
+  let baseMin = 3;
+  let baseMax = 4;
+
+  // Temperature adjustment
+  const tempDiff = temperature - 75;
+  const tempFactor = Math.pow(0.8, tempDiff / 10);
+
+  // Hydration adjustment
+  const hydrationDiff = hydration - 65;
+  const hydrationFactor = Math.pow(0.9, hydrationDiff / 10);
+
+  // Apply adjustments
+  const adjustedMin = baseMin * tempFactor * hydrationFactor;
+  const adjustedMax = baseMax * tempFactor * hydrationFactor;
+
+  return {
+    minHours: Math.round(adjustedMin),
+    maxHours: Math.round(adjustedMax)
+  };
+};
+
 export const convertToTeaspoons = (grams: number, yeastType: YeastType): number | null => {
   const conversionFactor = tspToGramConversion[yeastType];
   if (conversionFactor === 0) return null; // For sourdough or unsupported types
