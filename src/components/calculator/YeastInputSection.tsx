@@ -26,6 +26,8 @@ interface YeastInputSectionProps {
   hideMainInputs?: boolean;
   unit: UnitType;
   setUnit: (value: UnitType) => void;
+  useTsp: boolean;
+  setUseTsp: (value: boolean) => void;
 }
 
 const YeastInputSection = ({
@@ -44,6 +46,8 @@ const YeastInputSection = ({
   hideMainInputs = false,
   unit,
   setUnit,
+  useTsp,
+  setUseTsp,
 }: YeastInputSectionProps) => {
   return (
     <div className="space-y-8">
@@ -53,6 +57,10 @@ const YeastInputSection = ({
             amount={amount} 
             setAmount={setAmount}
             yeastType={fromType}
+            unit={unit}
+            setUnit={setUnit}
+            useTsp={useTsp}
+            setUseTsp={setUseTsp}
           />
           
           <div className="grid grid-cols-2 gap-4">
