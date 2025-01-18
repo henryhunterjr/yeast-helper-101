@@ -69,7 +69,7 @@ const YeastCalculatorContainer = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-2 sm:p-6">
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-b from-white to-yeast-50 rounded-lg shadow-lg overflow-hidden border border-yeast-100">
           <CalculatorHeader />
 
           <div className="p-4 sm:p-6 space-y-6">
@@ -143,9 +143,9 @@ const YeastCalculatorContainer = () => {
         </div>
 
         {/* Favorites Section */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-yeast-100">
           <div className="p-4 sm:p-6">
-            <h2 className="text-lg font-semibold mb-4">Saved Favorites</h2>
+            <h2 className="text-lg font-semibold mb-4 text-yeast-800">Saved Favorites</h2>
             <FavoritesList />
           </div>
         </div>
