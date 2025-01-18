@@ -11,8 +11,8 @@ const ValidationSystem = ({ warnings }: ValidationSystemProps) => {
   return (
     <div className="space-y-2">
       {warnings.map((warning, index) => (
-        <Alert key={index} variant="warning">
-          <AlertDescription>{warning}</AlertDescription>
+        <Alert key={index} variant="default" className="bg-yellow-50 border-yellow-200">
+          <AlertDescription className="text-yellow-700">{warning}</AlertDescription>
         </Alert>
       ))}
     </div>
