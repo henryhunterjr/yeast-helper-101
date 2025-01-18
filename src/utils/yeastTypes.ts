@@ -9,22 +9,22 @@ export const conversionFactors = {
   'active-dry': {
     'instant': 0.75,
     'fresh': 2.5,
-    'sourdough': 6.0
+    'sourdough': 13.0
   },
   'instant': {
     'active-dry': 1.33,
     'fresh': 3.33,
-    'sourdough': 8.0
+    'sourdough': 16.0
   },
   'fresh': {
-    'active-dry': 0.4,
-    'instant': 0.3,
-    'sourdough': 2.4
+    'active-dry': 0.4, // 1/2.5
+    'instant': 0.3, // 1/3.33
+    'sourdough': 4.0
   },
   'sourdough': {
-    'active-dry': 0.167,
-    'instant': 0.125,
-    'fresh': 0.417
+    'active-dry': 0.0769, // 1/13
+    'instant': 0.0625, // 1/16
+    'fresh': 0.25 // 1/4
   }
 };
 
@@ -34,6 +34,7 @@ export const getWaterTemperature = (
   starterTemp: number = roomTemp,
   desiredDoughTemp: number = 72
 ): number => {
+  // Water Temp = (Desired Dough Temp × 4) − (Flour Temp + Room Temp + Starter Temp)
   return (desiredDoughTemp * 4) - (flourTemp + roomTemp + starterTemp);
 };
 
