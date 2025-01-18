@@ -76,14 +76,13 @@ const ConversionResult = ({
     if (isNaN(numValue)) return value;
 
     let displayValue: number;
-    let displayUnit = unit;
+    let displayUnit = getUnitAbbreviation(unit);
 
     switch (unit) {
       case 'tsp':
         const tspValue = convertToTeaspoons(numValue, yeastType);
         if (tspValue !== null) {
           displayValue = tspValue;
-          displayUnit = 'tsp';
         } else {
           displayValue = numValue;
           displayUnit = 'g';
@@ -96,7 +95,7 @@ const ConversionResult = ({
         displayValue = numValue;
     }
     
-    return `${displayValue.toFixed(2)} ${getUnitAbbreviation(displayUnit)}`;
+    return `${displayValue.toFixed(2)}${displayUnit}`;
   };
 
   const handleSave = () => {
