@@ -9,10 +9,12 @@ import { Recipe, Ingredient } from '@/types/recipe';
 import { 
   calculateHydration,
   getTotalWeight,
+  validateIngredient,
 } from '@/utils/bakersCalculatorHelpers';
 import UnitToggle from './UnitToggle';
 import PercentageInput from './PercentageInput';
 import ResultsDisplay from './ResultsDisplay';
+import ValidationWarnings from './ValidationWarnings';
 
 const BakersCalculator = () => {
   const [recipe, setRecipe] = useState<Recipe>({
@@ -27,14 +29,37 @@ const BakersCalculator = () => {
 
   const [hydration, setHydration] = useState<number>(65);
   const [totalWeight, setTotalWeight] = useState<number>(0);
+  const [warnings, setWarnings] = useState<string[]>([]);
 
   useEffect(() => {
-    const waterIngredient = recipe.ingredients.find(
-      (ing) => ing.name.toLowerCase() === 'water'
-    );
-    if (waterIngredient) {
-      setHydration(calculateHydration(waterIngredient.weight, recipe.flour));
+    const newWarnings: string[] = [];
+    
+    // Validate flour weight
+    if (recipe.flour <= 0) {
+      newWarnings.push('Flour weight must be greater than 0');
     }
+
+    // Validate each ingredient
+    recipe.ingredients.forEach(ingredient => {
+      const validation = validateIngredient(ingredient, recipe.flour);
+      if (validation.message) {
+        newWarnings.push(validation.message);
+      }
+    });
+
+    // Check hydration level
+    const currentHydration = calculateHydration(
+      recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water')?.weight || 0,
+      recipe.flour
+    );
+    if (currentHydration > 100) {
+      newWarnings.push('High hydration detected. This may result in a very wet dough.');
+    } else if (currentHydration < 50) {
+      newWarnings.push('Low hydration detected. This may result in a very dry dough.');
+    }
+
+    setWarnings(newWarnings);
+    setHydration(currentHydration);
     setTotalWeight(getTotalWeight(recipe));
   }, [recipe]);
 
@@ -131,6 +156,8 @@ const BakersCalculator = () => {
               onChange={(unit) => setRecipe((prev) => ({ ...prev, unit }))}
             />
           </div>
+
+          <ValidationWarnings warnings={warnings} />
 
           <div className="space-y-4">
             <div>
