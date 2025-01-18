@@ -1,19 +1,12 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Save, RotateCcw, Info } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { 
-  convertToTeaspoons, 
-  convertGramsToOunces,
-  UnitType,
-  YeastType,
-  yeastTypes,
-  tspToGramConversion
-} from '@/utils/yeastTypes';
-import { saveFavorite } from '@/utils/favoritesStorage';
+import { Info } from "lucide-react";
+import { UnitType, YeastType } from '@/utils/yeastTypes';
 import HydrationAdjustments from './adjustments/HydrationAdjustments';
 import TemperatureAdjustments from './adjustments/TemperatureAdjustments';
+import ResultDisplay from './conversion-result/ResultDisplay';
+import ActionButtons from './conversion-result/ActionButtons';
+import ProofingTimeDisplay from './conversion-result/ProofingTimeDisplay';
 import {
   Tooltip,
   TooltipContent,
@@ -56,87 +49,33 @@ const ConversionResult = ({
   unit,
   onReset
 }: ConversionResultProps) => {
-  const { toast } = useToast();
   const waterTemp = Math.round(105 - parseFloat(temperature));
 
   if (isLoading) {
     return <div className="animate-pulse">Loading...</div>;
   }
 
-  const formatResult = (value: string, unit: UnitType, yeastType: YeastType): string => {
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) return value;
-
-    if (unit === 'tsp' && tspToGramConversion[yeastType] !== 0) {
-      const tspValue = convertToTeaspoons(numValue, yeastType);
-      if (tspValue !== null) {
-        return `${tspValue.toFixed(2)} tsp`;
-      }
-    }
-
-    if (unit === 'oz') {
-      return `${convertGramsToOunces(numValue).toFixed(2)} oz`;
-    }
-
-    return `${numValue.toFixed(2)} g`;
-  };
-
-  const handleSave = () => {
-    try {
-      saveFavorite({
-        fromType,
-        toType,
-        amount: parseFloat(amount),
-        temperature: parseFloat(temperature),
-        result: parseFloat(result),
-      });
-      toast({
-        title: "Saved!",
-        description: "Conversion has been added to your favorites.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save conversion.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
-          <div className="flex gap-2">
-            <Button 
-              onClick={onReset}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Reset
-            </Button>
-            <Button 
-              onClick={handleSave}
-              variant="secondary"
-              size="sm"
-              className="gap-2 hover:bg-yeast-200"
-            >
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
-          </div>
+          <ActionButtons
+            onReset={onReset}
+            fromType={fromType}
+            toType={toType}
+            amount={amount}
+            temperature={temperature}
+            result={result}
+          />
         </div>
-        <div className="space-y-2">
-          <p className="text-xl font-mono break-words text-yeast-700">
-            {formatResult(amount, unit, fromType as YeastType)} {yeastTypes[fromType as YeastType]} =
-          </p>
-          <p className="text-3xl font-bold text-yeast-800 font-mono break-words">
-            {formatResult(result, unit, toType as YeastType)} {yeastTypes[toType as YeastType]}
-          </p>
-        </div>
+        <ResultDisplay
+          amount={amount}
+          result={result}
+          fromType={fromType}
+          toType={toType}
+          unit={unit}
+        />
       </Card>
 
       {hydrationAdjustment?.showAdjustments && (
@@ -153,29 +92,11 @@ const ConversionResult = ({
         />
 
         {fermentationTime && (
-          <Card className="p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-sm">Proofing Time Range</h3>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-4 w-4 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">
-                    Estimated fermentation time based on temperature and hydration levels.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="text-sm text-gray-700">
-              <p className="font-semibold">
-                {fermentationTime.minHours}-{fermentationTime.maxHours} hours
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                At {temperature}°F with {hydration}% hydration
-              </p>
-            </div>
-          </Card>
+          <ProofingTimeDisplay
+            fermentationTime={fermentationTime}
+            temperature={temperature}
+            hydration={hydration}
+          />
         )}
       </div>
     </div>
