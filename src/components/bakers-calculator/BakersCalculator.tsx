@@ -75,9 +75,9 @@ const BakersCalculator = () => {
             const validation = validateIngredient(updatedIng, prev.flour);
             if (validation.message) {
               toast({
-                title: "Warning",
+                title: "Notice",
                 description: validation.message,
-                variant: "warning",
+                variant: "default",  // Changed from "warning" to "default"
               });
             }
           }
