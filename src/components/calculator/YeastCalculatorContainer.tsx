@@ -7,7 +7,12 @@ import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import FavoritesList from '../favorites/FavoritesList';
-import { calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from '../../utils/yeastCalculations';
+import { 
+  calculateConversion, 
+  getTemperatureAdjustment, 
+  calculateHydrationAdjustment,
+  calculateFermentationTime
+} from '../../utils/yeastCalculations';
 
 const YeastCalculatorContainer = () => {
   const location = useLocation();
@@ -46,6 +51,29 @@ const YeastCalculatorContainer = () => {
       return null;
     }
   }, [calculationResult, hydration, fromType, toType]);
+
+  const fermentationTime = useMemo(() => {
+    if (!temperature || isNaN(parseFloat(temperature))) return null;
+    try {
+      return calculateFermentationTime(
+        parseFloat(temperature),
+        parseFloat(hydration)
+      );
+    } catch (error) {
+      console.error('Fermentation time calculation error:', error);
+      return null;
+    }
+  }, [temperature, hydration]);
+
+  const temperatureAdjustment = useMemo(() => {
+    if (!temperature || isNaN(parseFloat(temperature))) return '';
+    try {
+      return getTemperatureAdjustment(parseFloat(temperature));
+    } catch (error) {
+      console.error('Temperature adjustment calculation error:', error);
+      return '';
+    }
+  }, [temperature]);
 
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
@@ -86,17 +114,20 @@ const YeastCalculatorContainer = () => {
               showAdjustments={false}
             />
 
-            <ConversionResult
-              amount={amount}
-              fromType={fromType}
-              toType={toType}
-              temperature={temperature}
-              hydration={hydration}
-              result={calculationResult}
-              temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
-              hydrationAdjustment={hydrationAdjustment}
-              isLoading={isLoading}
-            />
+            {amount && parseFloat(amount) > 0 && (
+              <ConversionResult
+                amount={amount}
+                fromType={fromType}
+                toType={toType}
+                temperature={temperature}
+                hydration={hydration}
+                result={calculationResult}
+                temperatureAdjustment={temperatureAdjustment}
+                hydrationAdjustment={hydrationAdjustment}
+                fermentationTime={fermentationTime}
+                isLoading={isLoading}
+              />
+            )}
 
             <Collapsible
               open={isAdjustmentsOpen}
