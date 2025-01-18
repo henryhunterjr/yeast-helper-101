@@ -44,7 +44,7 @@ const YeastInput = ({
       return;
     }
 
-    const parsedValue = parseInputValue(value, unit, yeastType as any);
+    const parsedValue = parseFloat(value);
     
     if (isNaN(parsedValue)) {
       toast({
@@ -73,12 +73,7 @@ const YeastInput = ({
       return;
     }
 
-    setAmount(parsedValue.toString());
-  };
-
-  const getDisplayValue = () => {
-    if (!amount) return '';
-    return amount;
+    setAmount(value);
   };
 
   const getUnitLabel = () => {
@@ -110,7 +105,7 @@ const YeastInput = ({
         <Input
           type="number"
           inputMode="decimal"
-          value={getDisplayValue()}
+          value={amount}
           onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
           placeholder={`Enter amount in ${getUnitLabel()}`}
