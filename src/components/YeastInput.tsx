@@ -58,7 +58,7 @@ const YeastInput = ({
     if (parsedValue < MIN_AMOUNT) {
       toast({
         title: "Amount Too Small",
-        description: `Minimum amount is ${MIN_AMOUNT}${unit}`,
+        description: `Minimum amount is ${MIN_AMOUNT}${useTsp ? ' tsp' : unit}`,
         variant: "destructive",
       });
       return;
@@ -67,13 +67,23 @@ const YeastInput = ({
     if (parsedValue > MAX_AMOUNT) {
       toast({
         title: "Amount Too Large",
-        description: `Maximum amount is ${MAX_AMOUNT}${unit}`,
+        description: `Maximum amount is ${MAX_AMOUNT}${useTsp ? ' tsp' : unit}`,
         variant: "destructive",
       });
       return;
     }
 
-    setAmount(value);
+    // If using teaspoons, convert to grams for internal storage
+    if (useTsp) {
+      const gramsValue = convertFromTeaspoons(parsedValue, yeastType as any);
+      if (gramsValue !== null) {
+        setAmount(gramsValue.toString());
+      } else {
+        setAmount(value);
+      }
+    } else {
+      setAmount(value);
+    }
   };
 
   const getUnitLabel = () => {
@@ -87,13 +97,26 @@ const YeastInput = ({
     if (isNaN(parsedAmount)) return '';
     
     if (useTsp) {
-      return `${parsedAmount} tsp`;
+      const tspValue = convertToTeaspoons(parsedAmount, yeastType as any);
+      return tspValue !== null ? `${tspValue.toFixed(2)} tsp` : `${parsedAmount} g`;
     } else {
       const value = unit === 'oz' ? 
         convertGramsToOunces(parsedAmount) : 
         parsedAmount;
       return `${value.toFixed(2)} ${unit}`;
     }
+  };
+
+  const getInputValue = () => {
+    if (!amount) return '';
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) return '';
+
+    if (useTsp) {
+      const tspValue = convertToTeaspoons(parsedAmount, yeastType as any);
+      return tspValue !== null ? tspValue.toString() : '';
+    }
+    return amount;
   };
 
   const canUseTsp = tspToGramConversion[yeastType as any] !== null;
@@ -120,7 +143,7 @@ const YeastInput = ({
         <Input
           type="number"
           inputMode="decimal"
-          value={amount}
+          value={getInputValue()}
           onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
           placeholder={`Enter amount in ${getUnitLabel()}`}
