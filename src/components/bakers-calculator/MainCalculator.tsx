@@ -26,10 +26,22 @@ const MainCalculator = () => {
     }
   });
 
-  const [warnings, setWarnings] = useState<string[]>([]);
+  useEffect(() => {
+    updateRecipeBasedOnFlour(recipe.flour);
+  }, [recipe.flour]);
 
-  const handleFlourChange = (value: number) => {
-    if (value <= 0) {
+  useEffect(() => {
+    updateRecipeBasedOnHydration(recipe.hydrationTarget || 75);
+  }, [recipe.hydrationTarget]);
+
+  useEffect(() => {
+    if (recipe.starter) {
+      updateRecipeBasedOnStarter(recipe.starter.weight, recipe.starter.hydration);
+    }
+  }, [recipe.starter?.weight, recipe.starter?.hydration]);
+
+  const updateRecipeBasedOnFlour = (flourWeight: number) => {
+    if (flourWeight <= 0) {
       toast({
         title: "Invalid Input",
         description: "Flour weight must be greater than 0",
@@ -39,65 +51,30 @@ const MainCalculator = () => {
     }
 
     setRecipe((prev) => {
-      const newRecipe = {
+      const hydrationTarget = prev.hydrationTarget || 75;
+      const waterWeight = (flourWeight * hydrationTarget) / 100;
+      const saltWeight = (flourWeight * 2) / 100; // 2% salt
+      const starterWeight = (flourWeight * 20) / 100; // 20% starter
+
+      return {
         ...prev,
-        flour: value,
-        ingredients: prev.ingredients.map((ing) => ({
-          ...ing,
-          percentage: (ing.weight / value) * 100,
-        })),
-      };
-
-      if (prev.starter) {
-        newRecipe.starter = {
+        flour: flourWeight,
+        ingredients: [
+          { id: '1', name: 'Water', weight: waterWeight, percentage: hydrationTarget },
+          { id: '2', name: 'Salt', weight: saltWeight, percentage: 2 },
+          { id: '3', name: 'Starter', weight: starterWeight, percentage: 20 },
+        ],
+        starter: {
           ...prev.starter,
-          percentage: (prev.starter.weight / value) * 100,
-        };
-      }
-
-      return newRecipe;
+          weight: starterWeight,
+          percentage: 20
+        }
+      };
     });
   };
 
-  const handleIngredientChange = (id: string, weight: number) => {
-    setRecipe((prev) => ({
-      ...prev,
-      ingredients: prev.ingredients.map((ing) => {
-        if (ing.id === id) {
-          return {
-            ...ing,
-            weight,
-            percentage: (weight / prev.flour) * 100,
-          };
-        }
-        return ing;
-      }),
-    }));
-  };
-
-  const handleStarterChange = (weight: number, hydration: number) => {
-    setRecipe((prev) => ({
-      ...prev,
-      starter: {
-        weight,
-        hydration,
-        percentage: (weight / prev.flour) * 100,
-      },
-      ingredients: prev.ingredients.map((ing) => {
-        if (ing.name === 'Starter') {
-          return {
-            ...ing,
-            weight,
-            percentage: (weight / prev.flour) * 100,
-          };
-        }
-        return ing;
-      }),
-    }));
-  };
-
-  const handleHydrationTargetChange = (value: number) => {
-    if (value < 0 || value > 100) {
+  const updateRecipeBasedOnHydration = (hydration: number) => {
+    if (hydration < 0 || hydration > 100) {
       toast({
         title: "Invalid Hydration",
         description: "Hydration must be between 0% and 100%",
@@ -107,16 +84,16 @@ const MainCalculator = () => {
     }
 
     setRecipe((prev) => {
-      const waterWeight = (prev.flour * value) / 100;
+      const waterWeight = (prev.flour * hydration) / 100;
       return {
         ...prev,
-        hydrationTarget: value,
+        hydrationTarget: hydration,
         ingredients: prev.ingredients.map((ing) => {
           if (ing.name === 'Water') {
             return {
               ...ing,
               weight: waterWeight,
-              percentage: value,
+              percentage: hydration,
             };
           }
           return ing;
@@ -125,22 +102,40 @@ const MainCalculator = () => {
     });
   };
 
-  const resetCalculator = () => {
-    setRecipe({
-      flour: 1000,
-      ingredients: [
-        { id: '1', name: 'Water', weight: 650, percentage: 65 },
-        { id: '2', name: 'Salt', weight: 20, percentage: 2 },
-        { id: '3', name: 'Starter', weight: 200, percentage: 20 },
-      ],
-      unit: 'g',
-      hydrationTarget: 75,
-      starter: {
-        weight: 200,
-        hydration: 100,
-        percentage: 20
-      }
+  const updateRecipeBasedOnStarter = (weight: number, hydration: number) => {
+    setRecipe((prev) => {
+      const starterPercentage = (weight / prev.flour) * 100;
+      return {
+        ...prev,
+        starter: {
+          weight,
+          hydration,
+          percentage: starterPercentage
+        },
+        ingredients: prev.ingredients.map((ing) => {
+          if (ing.name === 'Starter') {
+            return {
+              ...ing,
+              weight,
+              percentage: starterPercentage,
+            };
+          }
+          return ing;
+        }),
+      };
     });
+  };
+
+  const handleIngredientChange = (id: string, weight: number) => {
+    const ingredient = recipe.ingredients.find(ing => ing.id === id);
+    if (!ingredient) return;
+
+    if (ingredient.name === 'Water') {
+      const newHydration = (weight / recipe.flour) * 100;
+      updateRecipeBasedOnHydration(newHydration);
+    } else if (ingredient.name === 'Starter') {
+      updateRecipeBasedOnStarter(weight, recipe.starter?.hydration || 100);
+    }
   };
 
   return (
@@ -155,15 +150,14 @@ const MainCalculator = () => {
             />
           </div>
 
-          <ValidationSystem warnings={warnings} />
+          <ValidationSystem warnings={[]} />
 
           <IngredientInputs
             recipe={recipe}
-            onFlourChange={handleFlourChange}
+            onFlourChange={updateRecipeBasedOnFlour}
             onIngredientChange={handleIngredientChange}
-            onStarterChange={handleStarterChange}
-            onHydrationTargetChange={handleHydrationTargetChange}
-            onReset={resetCalculator}
+            onStarterChange={updateRecipeBasedOnStarter}
+            onHydrationTargetChange={updateRecipeBasedOnHydration}
           />
 
           <CalculationResults recipe={recipe} />
