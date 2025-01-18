@@ -33,6 +33,11 @@ const Settings = () => {
       title: "Settings saved",
       description: "Your preferences have been updated",
     });
+    navigate('/');
+  };
+
+  const handleClose = () => {
+    navigate('/');
   };
 
   React.useEffect(() => {
@@ -47,7 +52,7 @@ const Settings = () => {
   }, []);
 
   return (
-    <Dialog open>
+    <Dialog open onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
