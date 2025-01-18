@@ -1,12 +1,12 @@
 export const yeastTypes = {
-  ACTIVE_DRY: 'active-dry',
-  INSTANT: 'instant',
-  FRESH: 'fresh',
-  BREAD_MACHINE: 'bread-machine',
-  SOURDOUGH: 'sourdough'
+  'active-dry': 'Active Dry Yeast',
+  'instant': 'Instant Yeast',
+  'fresh': 'Fresh Yeast',
+  'bread-machine': 'Bread Machine Yeast',
+  'sourdough': 'Sourdough Starter'
 } as const;
 
-export type YeastType = typeof yeastTypes[keyof typeof yeastTypes];
+export type YeastType = keyof typeof yeastTypes;
 
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
