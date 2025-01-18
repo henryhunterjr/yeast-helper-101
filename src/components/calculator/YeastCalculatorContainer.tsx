@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import CalculatorHeader from './CalculatorHeader';
@@ -11,7 +11,7 @@ import {
   calculateConversion, 
   getTemperatureAdjustment, 
   calculateHydrationAdjustment,
-  calculateFermentationTime
+  calculateFermentationTime 
 } from '../../utils/yeastCalculations';
 
 const YeastCalculatorContainer = () => {
@@ -25,24 +25,32 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
 
-  const calculationResult = useMemo(() => {
-    if (!amount || isNaN(parseFloat(amount))) return '0';
-    
+  const result = useMemo(() => {
+    if (!amount || isNaN(parseFloat(amount))) return '';
     try {
       return calculateConversion(amount, fromType, toType);
     } catch (error) {
       console.error('Calculation error:', error);
-      return '0';
+      return '';
     }
   }, [amount, fromType, toType]);
 
+  const temperatureAdjustment = useMemo(() => {
+    if (!temperature || isNaN(parseFloat(temperature))) return '';
+    try {
+      return getTemperatureAdjustment(parseFloat(temperature));
+    } catch (error) {
+      console.error('Temperature adjustment error:', error);
+      return '';
+    }
+  }, [temperature]);
+
   const hydrationAdjustment = useMemo(() => {
-    if (!calculationResult || isNaN(parseFloat(hydration))) return null;
-    
+    if (!result || isNaN(parseFloat(hydration))) return null;
     try {
       return calculateHydrationAdjustment(
         parseFloat(hydration),
-        parseFloat(calculationResult),
+        parseFloat(result),
         fromType,
         toType
       );
@@ -50,7 +58,7 @@ const YeastCalculatorContainer = () => {
       console.error('Hydration calculation error:', error);
       return null;
     }
-  }, [calculationResult, hydration, fromType, toType]);
+  }, [result, hydration, fromType, toType]);
 
   const fermentationTime = useMemo(() => {
     if (!temperature || isNaN(parseFloat(temperature))) return null;
@@ -65,39 +73,23 @@ const YeastCalculatorContainer = () => {
     }
   }, [temperature, hydration]);
 
-  const temperatureAdjustment = useMemo(() => {
-    if (!temperature || isNaN(parseFloat(temperature))) return '';
-    try {
-      return getTemperatureAdjustment(parseFloat(temperature));
-    } catch (error) {
-      console.error('Temperature adjustment calculation error:', error);
-      return '';
-    }
-  }, [temperature]);
-
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
     if (state?.prefill) {
-      try {
-        setAmount(state.prefill.amount);
-        setFromType(state.prefill.fromType);
-        setToType(state.prefill.toType);
-      } catch (error) {
-        toast({
-          title: "Error loading preferences",
-          description: "There was an error loading your preferences. Default values will be used.",
-          variant: "destructive",
-        });
-      }
+      setAmount(state.prefill.amount);
+      setFromType(state.prefill.fromType);
+      setToType(state.prefill.toType);
     }
-  }, [location.state, toast]);
+  }, [location.state]);
+
+  const showResults = Boolean(amount && parseFloat(amount) > 0 && result);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
       <div className="space-y-6">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-yeast-100">
           <CalculatorHeader />
-
+          
           <div className="p-4 sm:p-6 space-y-6">
             <YeastInputSection
               amount={amount}
@@ -114,14 +106,14 @@ const YeastCalculatorContainer = () => {
               showAdjustments={false}
             />
 
-            {amount && parseFloat(amount) > 0 && (
+            {showResults && (
               <ConversionResult
                 amount={amount}
                 fromType={fromType}
                 toType={toType}
                 temperature={temperature}
                 hydration={hydration}
-                result={calculationResult}
+                result={result}
                 temperatureAdjustment={temperatureAdjustment}
                 hydrationAdjustment={hydrationAdjustment}
                 fermentationTime={fermentationTime}

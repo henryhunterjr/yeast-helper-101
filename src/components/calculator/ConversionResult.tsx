@@ -91,7 +91,7 @@ const ConversionResult = ({
           <p className="text-xl font-mono break-words text-yeast-700">
             {amount}g {yeastTypes[fromType]} =
           </p>
-          <p className="text-3xl font-bold text-yeast-800 font-mono break-words animate-in fade-in-50 duration-300">
+          <p className="text-3xl font-bold text-yeast-800 font-mono break-words">
             {result}g {yeastTypes[toType]}
           </p>
         </div>
