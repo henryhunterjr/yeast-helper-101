@@ -58,7 +58,7 @@ const YeastInput = ({
     if (parsedValue < MIN_AMOUNT) {
       toast({
         title: "Amount Too Small",
-        description: `Minimum amount is ${MIN_AMOUNT}g`,
+        description: `Minimum amount is ${MIN_AMOUNT}${unit}`,
         variant: "destructive",
       });
       return;
@@ -67,7 +67,7 @@ const YeastInput = ({
     if (parsedValue > MAX_AMOUNT) {
       toast({
         title: "Amount Too Large",
-        description: `Maximum amount is ${MAX_AMOUNT}g`,
+        description: `Maximum amount is ${MAX_AMOUNT}${unit}`,
         variant: "destructive",
       });
       return;
@@ -76,11 +76,19 @@ const YeastInput = ({
     setAmount(parsedValue.toString());
   };
 
-  const displayValue = () => {
+  const getDisplayValue = () => {
     if (!amount) return '';
     const numAmount = parseFloat(amount);
     
-    return formatMeasurement(numAmount, unit, yeastType as any);
+    if (useTsp) {
+      return convertFromTeaspoons(numAmount, yeastType as any).toFixed(2);
+    }
+    
+    if (unit === 'oz') {
+      return convertGramsToOunces(numAmount).toFixed(3);
+    }
+    
+    return numAmount.toFixed(1);
   };
 
   const getUnitLabel = () => {
@@ -112,10 +120,10 @@ const YeastInput = ({
         <Input
           type="number"
           inputMode="decimal"
-          value={displayValue()}
+          value={getDisplayValue()}
           onChange={(e) => handleAmountChange(e.target.value)}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
-          placeholder={`Enter amount`}
+          placeholder={`Enter amount in ${getUnitLabel()}`}
           step={useTsp ? '0.25' : (unit === 'oz' ? '0.001' : '0.1')}
         />
       </div>
