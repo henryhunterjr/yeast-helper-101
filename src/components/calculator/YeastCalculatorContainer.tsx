@@ -12,15 +12,16 @@ import {
   calculateConversion, 
   getTemperatureAdjustment, 
   calculateHydrationAdjustment,
-  calculateFermentationTime 
+  calculateFermentationTime,
+  YeastType
 } from '../../utils/yeastCalculations';
 
 const YeastCalculatorContainer = () => {
   const location = useLocation();
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
-  const [fromType, setFromType] = useState('active-dry');
-  const [toType, setToType] = useState('instant');
+  const [fromType, setFromType] = useState<YeastType>('active-dry');
+  const [toType, setToType] = useState<YeastType>('instant');
   const [temperature, setTemperature] = useState('72');
   const [hydration, setHydration] = useState('100');
   const [isLoading, setIsLoading] = useState(false);
@@ -87,14 +88,15 @@ const YeastCalculatorContainer = () => {
     if (!temperature || isNaN(parseFloat(temperature))) return null;
     try {
       return calculateFermentationTime(
-        parseFloat(temperature),
-        parseFloat(hydration)
+        fromType,
+        parseFloat(hydration),
+        parseFloat(temperature)
       );
     } catch (error) {
       console.error('Fermentation time calculation error:', error);
       return null;
     }
-  }, [temperature, hydration]);
+  }, [temperature, hydration, fromType]);
 
   useEffect(() => {
     const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };

@@ -7,6 +7,11 @@ export const yeastTypes = {
   'sourdough': 'Sourdough Starter'
 } as const;
 
+interface ProofingTime {
+  minHours: number;
+  maxHours: number;
+}
+
 export const calculateWaterTemperature = (
   roomTemp: number,
   yeastType: YeastType
@@ -20,17 +25,11 @@ export const calculateWaterTemperature = (
   return Math.min(Math.max(waterTemp, 75), 80);
 };
 
-interface ProofingTime {
-  minHours: number;
-  maxHours: number;
-}
-
 export const calculateProofingTime = (
   yeastType: YeastType,
   hydrationPercentage: number,
   temperature: number = 72
 ): ProofingTime => {
-  // Base calculation for active dry yeast
   const baseTime = 2.5;
   const hydrationFactor = (100 - hydrationPercentage) / 50;
   const tempFactor = Math.max(0.5, (72 - temperature) / 20);
@@ -38,7 +37,6 @@ export const calculateProofingTime = (
   let minTime = (baseTime - hydrationFactor) * (1 + tempFactor);
   let maxTime = (baseTime + hydrationFactor) * (1 + tempFactor);
 
-  // Adjust times based on yeast type
   switch (yeastType) {
     case 'instant':
       minTime *= 0.75;
@@ -59,19 +57,6 @@ export const calculateProofingTime = (
     maxHours: Math.max(maxTime, 1)
   };
 };
-
-// Helper functions for specific yeast types
-export const calculateActiveProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('active-dry', hydrationPercentage);
-
-export const calculateInstantProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('instant', hydrationPercentage);
-
-export const calculateFreshProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('fresh', hydrationPercentage);
-
-export const calculateSourdoughProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('sourdough', hydrationPercentage);
 
 export const calculateConversion = (
   amount: string,
@@ -125,3 +110,19 @@ export const calculateHydrationAdjustment = (
     showAdjustments: true
   };
 };
+
+// Alias for calculateProofingTime to maintain compatibility
+export const calculateFermentationTime = calculateProofingTime;
+
+// Helper functions for specific yeast types
+export const calculateActiveProofingTime = (hydrationPercentage: number): ProofingTime => 
+  calculateProofingTime('active-dry', hydrationPercentage);
+
+export const calculateInstantProofingTime = (hydrationPercentage: number): ProofingTime => 
+  calculateProofingTime('instant', hydrationPercentage);
+
+export const calculateFreshProofingTime = (hydrationPercentage: number): ProofingTime => 
+  calculateProofingTime('fresh', hydrationPercentage);
+
+export const calculateSourdoughProofingTime = (hydrationPercentage: number): ProofingTime => 
+  calculateProofingTime('sourdough', hydrationPercentage);
