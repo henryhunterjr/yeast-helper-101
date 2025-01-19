@@ -1,3 +1,5 @@
+import { YeastType } from './yeastTypes';
+
 export const yeastTypes = {
   'active-dry': 'Active Dry Yeast',
   'instant': 'Instant Yeast',
@@ -51,13 +53,15 @@ export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
 
 // Teaspoon conversion factors specifically for sourdough
 export const tspSourdoughConversion = (fromType: YeastType, toType: YeastType, amount: number): number => {
+  // Converting from active dry or instant yeast TO sourdough (multiply by 3)
   if (toType === 'sourdough' && (fromType === 'active-dry' || fromType === 'instant')) {
-    // For sourdough conversions in teaspoons, multiply by 3
+    console.log('Converting to sourdough in tsp:', amount, '×', 3, '=', amount * 3);
     return amount * 3;
   }
   
+  // Converting FROM sourdough TO active dry or instant yeast (divide by 3)
   if (fromType === 'sourdough' && (toType === 'active-dry' || toType === 'instant')) {
-    // For converting from sourdough to yeast in teaspoons, divide by 3
+    console.log('Converting from sourdough in tsp:', amount, '÷', 3, '=', amount / 3);
     return amount / 3;
   }
   
@@ -65,7 +69,6 @@ export const tspSourdoughConversion = (fromType: YeastType, toType: YeastType, a
   return amount * conversionFactors[fromType][toType];
 };
 
-// Gram to teaspoon conversion factors for each yeast type
 export const gramToTspConversion: Record<YeastType, number | null> = {
   'active-dry': 3.1,
   'instant': 3.3,

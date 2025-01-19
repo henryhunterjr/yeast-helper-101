@@ -96,6 +96,7 @@ export const calculateConversion = (
   if (useTsp) {
     // Use special sourdough conversion for teaspoons
     result = tspSourdoughConversion(fromType, toType, numericAmount);
+    console.log('Using teaspoon conversion:', result);
   } else {
     // For small amounts between active dry and instant yeast
     const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
@@ -115,7 +116,7 @@ export const calculateConversion = (
     result = numericAmount * conversionFactors[fromType][toType];
   }
   
-  console.log('Conversion result:', result);
+  console.log('Final conversion result:', result);
   console.groupEnd();
   
   return {
