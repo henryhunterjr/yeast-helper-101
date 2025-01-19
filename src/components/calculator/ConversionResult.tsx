@@ -77,7 +77,14 @@ const ConversionResult = ({
         fermentationTime={fermentationTime}
       />
 
-      <ActionButtons onReset={onReset} />
+      <ActionButtons 
+        onReset={onReset}
+        fromType={fromType}
+        toType={toType}
+        amount={amount}
+        temperature={temperature}
+        result={result}
+      />
     </div>
   );
 };

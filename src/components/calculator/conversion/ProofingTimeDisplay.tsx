@@ -1,23 +1,27 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { Info } from 'lucide-react';
+import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getFermentationTimeRange } from '@/utils/yeastTypes';
 
 interface ProofingTimeDisplayProps {
+  fermentationTime: {
+    minHours: number;
+    maxHours: number;
+  } | null;
   temperature: string;
   hydration: string;
 }
 
-const ProofingTimeDisplay = ({ temperature, hydration }: ProofingTimeDisplayProps) => {
-  const temp = parseFloat(temperature);
-  const hyd = parseFloat(hydration);
-  
-  const { minHours, maxHours } = getFermentationTimeRange(temp, hyd);
+const ProofingTimeDisplay = ({ 
+  fermentationTime, 
+  temperature, 
+  hydration 
+}: ProofingTimeDisplayProps) => {
+  if (!fermentationTime) return null;
 
   return (
     <Card className="p-4 space-y-2">
@@ -29,19 +33,17 @@ const ProofingTimeDisplay = ({ temperature, hydration }: ProofingTimeDisplayProp
           </TooltipTrigger>
           <TooltipContent>
             <p className="max-w-xs">
-              Proofing time is adjusted based on room temperature and dough hydration.
-              Higher temperatures and hydration levels generally result in faster proofing.
+              Estimated fermentation time based on temperature and hydration levels.
             </p>
           </TooltipContent>
         </Tooltip>
       </div>
-      
       <div className="text-sm text-gray-700">
         <p className="font-semibold">
-          {minHours}-{maxHours} hours
+          {fermentationTime.minHours}-{fermentationTime.maxHours} hours
         </p>
         <p className="text-xs text-gray-500 mt-1">
-          Based on {hydration}% hydration at {temperature}°F
+          At {temperature}°F with {hydration}% hydration
         </p>
       </div>
     </Card>
