@@ -53,6 +53,7 @@ const NewCalculator = () => {
           setStarterPercentage={setStarterPercentage}
           saltPercentage={saltPercentage}
           setSaltPercentage={setSaltPercentage}
+          unit={unit}
         />
 
         <IngredientBreakdown
