@@ -61,7 +61,6 @@ const MainCalculator = () => {
                 onStarterChange={updateRecipeBasedOnStarter}
                 onHydrationTargetChange={updateRecipeBasedOnHydration}
                 onReset={handleReset}
-                validationErrors={validationErrors}
               />
             </section>
 
