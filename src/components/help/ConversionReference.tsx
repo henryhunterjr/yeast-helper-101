@@ -22,7 +22,7 @@ const ConversionReference = () => {
             </div>
 
             <div>
-              <h4 className="font-medium text-foreground">Large Quantity Conversions (>14g)</h4>
+              <h4 className="font-medium text-foreground">Large Quantity Conversions (&gt;14g)</h4>
               <p className="text-muted-foreground mb-2">For professional baking or larger batches:</p>
               <ul className="list-disc list-inside text-muted-foreground text-sm">
                 <li>Uses precise conversion ratios</li>
