@@ -4,20 +4,25 @@ import { conversionFactors } from './yeastTypes';
 export type { YeastType };
 
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  const targetTemp = {
+  // Set desired dough temperature based on yeast type
+  const desiredTemp = {
     'active-dry': 75,
-    'instant': 80,
+    'instant': 75,
     'fresh': 75,
     'sourdough': 78,
-    'bread-machine': 80
+    'bread-machine': 75
   }[yeastType];
 
-  const frictionFactor = 22;
-  const flourTemp = roomTemp;
+  // Calculate water temperature using the formula: (Tdesired × 3) - Troom
+  let waterTemp = (desiredTemp * 3) - roomTemp;
 
-  let waterTemp = (targetTemp * 3) - roomTemp - flourTemp - frictionFactor;
-  waterTemp = Math.min(Math.max(waterTemp, 60), 90);
-  
+  // Apply appropriate temperature caps based on yeast type
+  if (yeastType === 'sourdough') {
+    waterTemp = Math.min(Math.max(waterTemp, 78), 82);
+  } else {
+    waterTemp = Math.min(Math.max(waterTemp, 75), 80);
+  }
+
   return Math.round(waterTemp);
 };
 
@@ -26,25 +31,44 @@ export const calculateProofingTime = (
   hydration: number,
   temperature: number
 ): { minHours: number; maxHours: number } => {
-  const baseTimes = {
-    'active-dry': { minHours: 2, maxHours: 3 },
-    'instant': { minHours: 1.5, maxHours: 2.3 },
-    'fresh': { minHours: 2.2, maxHours: 3.3 },
-    'sourdough': { minHours: 4.8, maxHours: 7.2 },
-    'bread-machine': { minHours: 1.5, maxHours: 2.3 }
+  // Calculate base proofing time for active dry yeast
+  const baseTime = 2.5;
+  const hydrationAdjustment = (100 - hydration) / 50;
+  
+  // Calculate active dry yeast proofing time
+  const activeProofTime = baseTime + hydrationAdjustment;
+  
+  // Calculate proofing times based on yeast type
+  const getProofingTime = () => {
+    switch (yeastType) {
+      case 'active-dry':
+        return activeProofTime;
+      case 'instant':
+        return activeProofTime * 0.75;
+      case 'fresh':
+        return activeProofTime * 1.1;
+      case 'sourdough':
+        return (hydration / 100) * 6;
+      default:
+        return activeProofTime;
+    }
   };
 
-  const baseTime = baseTimes[yeastType];
+  const baseProofTime = getProofingTime();
   
+  // Temperature adjustment factor (every 6°F difference changes time by ~20%)
   const tempDiff = temperature - 72;
-  const tempFactor = Math.pow(0.5, tempDiff / 17);
+  const tempFactor = Math.pow(0.8, tempDiff / 6);
   
-  const hydrationDiff = hydration - 100;
-  const hydrationFactor = Math.pow(0.95, hydrationDiff / 10);
-
+  // Calculate min and max times with temperature adjustment
+  const adjustedTime = baseProofTime * tempFactor;
+  
+  // Round to 1 decimal place
+  const roundToDecimal = (num: number) => Math.round(num * 10) / 10;
+  
   return {
-    minHours: Math.max(baseTime.minHours * tempFactor * hydrationFactor, 0.5),
-    maxHours: Math.max(baseTime.maxHours * tempFactor * hydrationFactor, 1)
+    minHours: roundToDecimal(adjustedTime * 0.8),
+    maxHours: roundToDecimal(adjustedTime * 1.2)
   };
 };
 
