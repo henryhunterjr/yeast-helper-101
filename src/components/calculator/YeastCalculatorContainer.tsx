@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import { YeastType, UnitType } from '@/utils/yeastTypes';
-import { calculateProofingTime } from '@/utils/yeastCalculations';
+import { calculateProofingTime, calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from '@/utils/yeastCalculations';
 import CalculatorForm from './form/CalculatorForm';
 import ConversionResult from './ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
@@ -15,8 +14,6 @@ interface YeastCalculatorContainerProps {
 }
 
 const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) => {
-  const location = useLocation();
-  const { toast } = useToast();
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState<YeastType>('active-dry');
   const [toType, setToType] = useState<YeastType>('instant');
@@ -39,30 +36,6 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
     }
   }, [amount, fromType, toType, onConvert]);
 
-  const handleFromTypeChange = (value: YeastType) => {
-    if (value === toType) {
-      toast({
-        title: "Invalid Selection",
-        description: "From and To types cannot be the same",
-        variant: "destructive",
-      });
-      return;
-    }
-    setFromType(value);
-  };
-
-  const handleToTypeChange = (value: YeastType) => {
-    if (value === fromType) {
-      toast({
-        title: "Invalid Selection",
-        description: "From and To types cannot be the same",
-        variant: "destructive",
-      });
-      return;
-    }
-    setToType(value);
-  };
-
   const handleReset = () => {
     setAmount('');
     setFromType('active-dry');
@@ -73,7 +46,13 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
   };
 
   const fermentationTime = calculateProofingTime(fromType, parseFloat(hydration), parseFloat(temperature));
-  const showResults = Boolean(amount && parseFloat(amount) > 0);
+  const temperatureAdjustment = getTemperatureAdjustment(parseFloat(temperature));
+  const hydrationAdjustment = calculateHydrationAdjustment(
+    parseFloat(hydration),
+    parseFloat(amount),
+    fromType,
+    toType
+  );
 
   return (
     <CalculatorLayout>
@@ -86,8 +65,8 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
         setHydration={setHydration}
         fromType={fromType}
         toType={toType}
-        handleFromTypeChange={handleFromTypeChange}
-        handleToTypeChange={handleToTypeChange}
+        handleFromTypeChange={setFromType}
+        handleToTypeChange={setToType}
         isLoading={isLoading}
         unit={unit}
         setUnit={setUnit}
@@ -95,7 +74,7 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
         setUseTsp={setUseTsp}
       />
 
-      {showResults && (
+      {conversionResult && (
         <ConversionResult
           amount={amount}
           fromType={fromType}
@@ -103,8 +82,8 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
           temperature={temperature}
           hydration={hydration}
           result={conversionResult}
-          temperatureAdjustment=""
-          hydrationAdjustment={null}
+          temperatureAdjustment={temperatureAdjustment}
+          hydrationAdjustment={hydrationAdjustment}
           fermentationTime={fermentationTime}
           isLoading={isLoading}
           unit={unit}

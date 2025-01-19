@@ -1,12 +1,10 @@
 import React from 'react';
-import { Card } from "@/components/ui/card";
-import { calculateWaterTemperature } from '@/utils/yeastCalculations';
-import ActionButtons from './conversion-result/ActionButtons';
-import ResultDisplay from './conversion-result/ResultDisplay';
-import AdjustmentDetails from './conversion/AdjustmentDetails';
-import ProofingTimeDisplay from './conversion/ProofingTimeDisplay';
+import { YeastType, UnitType } from '@/utils/yeastTypes';
 import WaterTempDisplay from './conversion/WaterTempDisplay';
-import { UnitType, YeastType } from '@/utils/yeastTypes';
+import ProofingTimeDisplay from './conversion/ProofingTimeDisplay';
+import AdjustmentDetails from './conversion/AdjustmentDetails';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 interface ConversionResultProps {
   amount: string;
@@ -24,7 +22,7 @@ interface ConversionResultProps {
   isSimplified?: boolean;
 }
 
-const ConversionResult = ({
+const ConversionResult: React.FC<ConversionResultProps> = ({
   amount,
   fromType,
   toType,
@@ -34,36 +32,32 @@ const ConversionResult = ({
   temperatureAdjustment,
   hydrationAdjustment,
   fermentationTime,
-  isLoading,
   unit,
-  onReset,
   isSimplified = false,
-}: ConversionResultProps) => {
-  console.group('ConversionResult Render');
-  console.log('Props:', {
-    amount,
-    fromType,
-    toType,
-    temperature,
-    hydration,
-    result,
-    isSimplified
-  });
+}) => {
+  if (!amount || !result) return null;
 
-  const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
-  console.log('Calculated Water Temperature:', waterTemp);
-  console.groupEnd();
+  const waterTemp = parseFloat(temperature) + 20;
 
   return (
     <div className="space-y-6">
-      <ResultDisplay
-        amount={amount}
-        fromType={fromType}
-        toType={toType}
-        result={result}
-        unit={unit}
-        isSimplified={isSimplified}
-      />
+      <div className="space-y-2">
+        <p className="text-xl font-mono break-words">
+          {amount} {unit} {fromType} =
+        </p>
+        <p className="text-3xl font-bold font-mono break-words">
+          {result} {unit} {toType}
+        </p>
+      </div>
+
+      {isSimplified && (
+        <Alert>
+          <InfoCircledIcon className="h-4 w-4" />
+          <AlertDescription>
+            For small amounts (14g or less), active dry and instant yeast can be used interchangeably at a 1:1 ratio.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <WaterTempDisplay roomTemp={temperature} waterTemp={waterTemp} />
@@ -80,15 +74,6 @@ const ConversionResult = ({
         hydrationAdjustment={hydrationAdjustment}
         fermentationTime={fermentationTime}
         fromType={fromType}
-      />
-
-      <ActionButtons 
-        onReset={onReset}
-        fromType={fromType}
-        toType={toType}
-        amount={amount}
-        temperature={temperature}
-        result={result}
       />
     </div>
   );
