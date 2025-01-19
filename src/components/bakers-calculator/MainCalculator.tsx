@@ -11,6 +11,7 @@ const MainCalculator = () => {
   const {
     recipe,
     updateRecipeBasedOnFlour,
+    updateRecipeBasedOnIngredient,
     updateRecipeBasedOnStarter,
     updateRecipeBasedOnHydration,
     handleReset
@@ -33,7 +34,7 @@ const MainCalculator = () => {
           <IngredientInputs
             recipe={recipe}
             onFlourChange={updateRecipeBasedOnFlour}
-            onIngredientChange={() => {}}
+            onIngredientChange={updateRecipeBasedOnIngredient}
             onStarterChange={updateRecipeBasedOnStarter}
             onHydrationTargetChange={updateRecipeBasedOnHydration}
             onReset={handleReset}

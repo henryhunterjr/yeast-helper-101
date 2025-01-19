@@ -36,6 +36,16 @@ const IngredientInputs = ({
     }
   };
 
+  const handleStarterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    onStarterChange(value === '' ? null : Number(value), recipe.starter?.hydration || 100);
+  };
+
+  const handleStarterHydrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    onStarterChange(recipe.starter?.weight || 0, value);
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -99,7 +109,7 @@ const IngredientInputs = ({
                 id="starter-weight"
                 type="number"
                 value={recipe.starter?.weight || ''}
-                onChange={(e) => onStarterChange(Number(e.target.value), recipe.starter?.hydration || 100)}
+                onChange={handleStarterChange}
                 min="0"
                 step="1"
                 placeholder="Enter starter weight"
@@ -111,7 +121,7 @@ const IngredientInputs = ({
                 id="starter-hydration"
                 type="number"
                 value={recipe.starter?.hydration || 100}
-                onChange={(e) => onStarterChange(recipe.starter?.weight || 0, Number(e.target.value))}
+                onChange={handleStarterHydrationChange}
                 min="50"
                 max="200"
                 step="1"
