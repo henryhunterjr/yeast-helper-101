@@ -1,7 +1,6 @@
 import YeastCalculator from "../components/YeastCalculator";
 import NewCalculator from "../components/bakers-calculator/NewCalculator";
 import Footer from "../components/Footer";
-import TutorialButton from "../components/tutorial/TutorialButton";
 import TutorialOverlay from "../components/tutorial/TutorialOverlay";
 import { useEffect } from "react";
 import { useTutorial } from "../components/tutorial/useTutorial";
@@ -27,7 +26,6 @@ const Index = () => {
           <NewCalculator />
         </div>
       </div>
-      <TutorialButton />
       <TutorialOverlay />
       <Footer />
     </div>
