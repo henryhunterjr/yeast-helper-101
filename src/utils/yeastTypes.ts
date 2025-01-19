@@ -58,6 +58,15 @@ export const gramToTspConversion: Record<YeastType, number | null> = {
   'sourdough': null
 };
 
+// Add the missing tspToGramConversion export
+export const tspToGramConversion: Record<YeastType, number | null> = {
+  'active-dry': 3.1,
+  'instant': 3.3,
+  'fresh': 10,
+  'bread-machine': 3.3,
+  'sourdough': null
+};
+
 export const getWaterTemperature = (roomTemp: number): number => {
   const targetTemp = 76;
   return Math.round(2 * targetTemp - roomTemp);
