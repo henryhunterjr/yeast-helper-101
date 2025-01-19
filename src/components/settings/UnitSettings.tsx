@@ -14,7 +14,7 @@ const UnitSettings = ({ units, setUnits, tempScale, setTempScale }: UnitSettings
     <>
       <div className="space-y-3">
         <Label className="text-base">Units</Label>
-        <RadioGroup value={units} onValueChange={setUnits} className="flex gap-4">
+        <RadioGroup value={units} onValueChange={setUnits} className="flex flex-col gap-2">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="metric" id="metric" />
             <Label htmlFor="metric">Metric (g)</Label>
@@ -22,6 +22,10 @@ const UnitSettings = ({ units, setUnits, tempScale, setTempScale }: UnitSettings
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="imperial" id="imperial" />
             <Label htmlFor="imperial">Imperial (oz)</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="teaspoons" id="teaspoons" />
+            <Label htmlFor="teaspoons">Teaspoons (tsp)</Label>
           </div>
         </RadioGroup>
       </div>

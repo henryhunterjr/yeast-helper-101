@@ -51,6 +51,14 @@ const Settings = () => {
     }
   }, []);
 
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   return (
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -62,7 +70,6 @@ const Settings = () => {
         </DialogHeader>
         
         <div className="space-y-8">
-          <ThemeSettings isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
           <UnitSettings 
             units={units} 
             setUnits={setUnits}
