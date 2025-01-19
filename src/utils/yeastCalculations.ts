@@ -16,9 +16,14 @@ export const calculateWaterTemperature = (
   roomTemp: number,
   yeastType: YeastType
 ): number => {
-  const desiredTemp = yeastType === 'sourdough' ? 78 : 75;
-  const waterTemp = (desiredTemp * 3) - roomTemp;
+  // Target dough temperature is different for sourdough vs regular yeast
+  const targetTemp = yeastType === 'sourdough' ? 78 : 75;
   
+  // Formula: Water Temp = (3 × Target Temp) - Room Temp - Flour Temp
+  // Assuming flour temp is same as room temp for simplicity
+  const waterTemp = (3 * targetTemp) - (2 * roomTemp);
+  
+  // Apply safe temperature ranges
   if (yeastType === 'sourdough') {
     return Math.min(Math.max(waterTemp, 78), 82);
   }
@@ -30,31 +35,29 @@ export const calculateProofingTime = (
   hydrationPercentage: number,
   temperature: number = 72
 ): ProofingTime => {
-  const baseTime = 2.5;
-  const hydrationFactor = (100 - hydrationPercentage) / 50;
-  const tempFactor = Math.max(0.5, (72 - temperature) / 20);
+  // Base proofing times for each yeast type at 72°F and 65% hydration
+  const baseProofingTimes = {
+    'active-dry': { min: 2, max: 3 },
+    'instant': { min: 1.5, max: 2.3 },
+    'fresh': { min: 2.2, max: 3.3 },
+    'sourdough': { min: 4.8, max: 7.2 }
+  };
+
+  // Temperature adjustment factor
+  // Every 17°F difference changes time by approximately 50%
+  const tempDiff = temperature - 72;
+  const tempFactor = Math.pow(0.5, tempDiff / 17);
+
+  // Hydration adjustment factor
+  // Higher hydration speeds up fermentation
+  const hydrationDiff = hydrationPercentage - 65;
+  const hydrationFactor = Math.pow(0.95, hydrationDiff / 5);
+
+  const base = baseProofingTimes[yeastType];
   
-  let minTime = (baseTime - hydrationFactor) * (1 + tempFactor);
-  let maxTime = (baseTime + hydrationFactor) * (1 + tempFactor);
-
-  switch (yeastType) {
-    case 'instant':
-      minTime *= 0.75;
-      maxTime *= 0.75;
-      break;
-    case 'fresh':
-      minTime *= 1.1;
-      maxTime *= 1.1;
-      break;
-    case 'sourdough':
-      minTime = (hydrationPercentage / 100) * 4 * (1 + tempFactor);
-      maxTime = (hydrationPercentage / 100) * 6 * (1 + tempFactor);
-      break;
-  }
-
   return {
-    minHours: Math.max(minTime, 0.5),
-    maxHours: Math.max(maxTime, 1)
+    minHours: Math.max(base.min * tempFactor * hydrationFactor, 0.5),
+    maxHours: Math.max(base.max * tempFactor * hydrationFactor, 1)
   };
 };
 
@@ -84,9 +87,12 @@ export const calculateConversion = (
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
-  if (temperature < 65) return 'cold';
-  if (temperature > 85) return 'hot';
-  return 'optimal';
+  if (temperature < 65) {
+    return 'Increase proofing time by 50%';
+  } else if (temperature > 85) {
+    return 'Decrease proofing time by 50%';
+  }
+  return 'Temperature is in optimal range';
 };
 
 export const calculateHydrationAdjustment = (
@@ -113,16 +119,3 @@ export const calculateHydrationAdjustment = (
 
 // Alias for calculateProofingTime to maintain compatibility
 export const calculateFermentationTime = calculateProofingTime;
-
-// Helper functions for specific yeast types
-export const calculateActiveProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('active-dry', hydrationPercentage);
-
-export const calculateInstantProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('instant', hydrationPercentage);
-
-export const calculateFreshProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('fresh', hydrationPercentage);
-
-export const calculateSourdoughProofingTime = (hydrationPercentage: number): ProofingTime => 
-  calculateProofingTime('sourdough', hydrationPercentage);
