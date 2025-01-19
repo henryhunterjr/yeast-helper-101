@@ -2,10 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { 
   calculateWaterTemperature,
   calculateProofingTime,
-  calculateActiveProofingTime,
-  calculateInstantProofingTime,
-  calculateFreshProofingTime,
-  calculateSourdoughProofingTime
 } from '../../utils/yeastCalculations';
 
 describe('Yeast Calculations', () => {
@@ -35,29 +31,29 @@ describe('Yeast Calculations', () => {
 
   describe('calculateProofingTime', () => {
     it('should calculate correct proofing time range for active dry yeast', () => {
-      const result = calculateActiveProofingTime(100);
+      const result = calculateProofingTime('active-dry', 100, 72);
       expect(result.minHours).toBeCloseTo(2, 1);
       expect(result.maxHours).toBeCloseTo(3, 1);
 
-      const result75 = calculateActiveProofingTime(75);
+      const result75 = calculateProofingTime('active-dry', 75, 72);
       expect(result75.minHours).toBeCloseTo(2.2, 1);
       expect(result75.maxHours).toBeCloseTo(3.2, 1);
     });
 
     it('should calculate correct proofing time range for instant yeast', () => {
-      const result = calculateInstantProofingTime(100);
+      const result = calculateProofingTime('instant', 100, 72);
       expect(result.minHours).toBeCloseTo(1.5, 1);
       expect(result.maxHours).toBeCloseTo(2.3, 1);
     });
 
     it('should calculate correct proofing time range for fresh yeast', () => {
-      const result = calculateFreshProofingTime(100);
+      const result = calculateProofingTime('fresh', 100, 72);
       expect(result.minHours).toBeCloseTo(2.2, 1);
       expect(result.maxHours).toBeCloseTo(3.3, 1);
     });
 
     it('should calculate correct proofing time range for sourdough starter', () => {
-      const result = calculateSourdoughProofingTime(100);
+      const result = calculateProofingTime('sourdough', 100, 72);
       expect(result.minHours).toBeCloseTo(4.8, 1);
       expect(result.maxHours).toBeCloseTo(7.2, 1);
     });
