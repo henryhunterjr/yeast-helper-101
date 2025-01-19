@@ -64,6 +64,12 @@ export const calculateProofingTime = (
   };
 };
 
-// Export other existing functions
-export { calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from './calculations';
+// Re-export functions from calculations.ts
+export { 
+  calculateConversion,
+  getTemperatureAdjustment,
+  calculateHydrationAdjustment,
+  calculateFermentationTime
+} from './calculations';
+
 export { validateAmount, validateTemperature, validateHydration } from './validations';
