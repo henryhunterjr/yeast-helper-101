@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import UnitToggle from './UnitToggle';
 import IngredientInputs from './IngredientInputs';
 import CalculationResults from './CalculationResults';
+import StarterCalculations from './StarterCalculations';
 import ValidationSystem from './ValidationSystem';
 import { useRecipeCalculator } from '@/hooks/useRecipeCalculator';
 
@@ -40,6 +41,8 @@ const MainCalculator = () => {
             onReset={handleReset}
           />
 
+          <StarterCalculations recipe={recipe} />
+          
           <CalculationResults recipe={recipe} />
         </div>
       </Card>
