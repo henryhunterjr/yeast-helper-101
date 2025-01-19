@@ -1,7 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Recipe } from '@/types/recipe';
 import { v4 as uuidv4 } from 'uuid';
-import { recalculateRecipe } from '@/utils/bakersCalculatorHelpers';
+import { 
+  recalculateRecipe,
+  calculateRecipeFromStarter
+} from '@/utils/bakersCalculatorHelpers';
 
 const createInitialRecipe = (): Recipe => ({
   flour: 0,
@@ -39,10 +42,23 @@ export const useRecipeCalculator = () => {
   }, []);
 
   const updateRecipeBasedOnStarter = useCallback((weight: number | null, hydration: number) => {
+    if (!weight) {
+      setRecipe(prev => ({
+        ...prev,
+        starter: undefined
+      }));
+      return;
+    }
+
     setRecipe(prev => {
+      if (!prev.flour) {
+        // If no flour is set, calculate recipe based on starter
+        return calculateRecipeFromStarter(weight, hydration, prev.hydrationTarget || 75);
+      }
+      
       const updatedRecipe = {
         ...prev,
-        starter: weight ? { weight, hydration } : undefined,
+        starter: { weight, hydration }
       };
       return recalculateRecipe(updatedRecipe);
     });

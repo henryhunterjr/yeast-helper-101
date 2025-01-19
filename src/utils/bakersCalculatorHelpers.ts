@@ -27,12 +27,20 @@ export const calculateStarterContributions = (
   };
 };
 
-export const calculateWaterFromFlour = (flourWeight: number, hydration: number): number => {
+export const calculateWaterFromHydration = (flourWeight: number, hydration: number): number => {
   return (flourWeight * hydration) / 100;
 };
 
 export const calculateSaltFromFlour = (flourWeight: number, saltPercentage: number = 2): number => {
   return (flourWeight * saltPercentage) / 100;
+};
+
+export const calculateStarterFromFlour = (flourWeight: number, starterPercentage: number = 20): number => {
+  return (flourWeight * starterPercentage) / 100;
+};
+
+export const calculateFlourFromWaterAndHydration = (waterWeight: number, hydration: number): number => {
+  return (waterWeight * 100) / hydration;
 };
 
 export const validateIngredient = (
@@ -68,6 +76,7 @@ export const recalculateRecipe = (recipe: Recipe, updatedIngredientId?: string):
   const updatedRecipe = { ...recipe };
   const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
   const saltIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'salt');
+  
   const starterContributions = calculateStarterContributions(
     recipe.starter?.weight || 0,
     recipe.starter?.hydration || 100
@@ -85,7 +94,7 @@ export const recalculateRecipe = (recipe: Recipe, updatedIngredientId?: string):
   }
 
   if (waterIngredient && recipe.hydrationTarget && updatedIngredientId !== waterIngredient.id) {
-    const targetTotalWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget);
+    const targetTotalWater = calculateWaterFromHydration(totalFlour, recipe.hydrationTarget);
     waterIngredient.weight = Math.max(0, targetTotalWater - starterContributions.water);
     waterIngredient.percentage = calculateBakersPercentage(waterIngredient.weight, totalFlour);
   }
@@ -96,4 +105,36 @@ export const recalculateRecipe = (recipe: Recipe, updatedIngredientId?: string):
   }
 
   return updatedRecipe;
+};
+
+export const calculateRecipeFromStarter = (
+  starterWeight: number,
+  starterHydration: number,
+  targetHydration: number
+): Recipe => {
+  const { flour: flourFromStarter, water: waterFromStarter } = calculateStarterContributions(
+    starterWeight,
+    starterHydration
+  );
+
+  const totalFlour = flourFromStarter * 5; // Assuming starter is 20% of total flour
+  const targetWater = calculateWaterFromHydration(totalFlour, targetHydration);
+  const mainFlour = totalFlour - flourFromStarter;
+  const mainWater = targetWater - waterFromStarter;
+  const salt = calculateSaltFromFlour(totalFlour);
+
+  return {
+    flour: mainFlour,
+    unit: 'g',
+    hydrationTarget: targetHydration,
+    ingredients: [
+      { id: 'water', name: 'Water', weight: mainWater, percentage: (mainWater / totalFlour) * 100 },
+      { id: 'salt', name: 'Salt', weight: salt, percentage: (salt / totalFlour) * 100 }
+    ],
+    starter: {
+      weight: starterWeight,
+      hydration: starterHydration,
+      percentage: (starterWeight / totalFlour) * 100
+    }
+  };
 };
