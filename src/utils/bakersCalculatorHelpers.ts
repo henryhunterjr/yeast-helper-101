@@ -25,6 +25,8 @@ export const calculateStarterContributions = (
   starterWeight: number,
   starterHydration: number
 ): { flour: number; water: number } => {
+  if (!starterWeight) return { flour: 0, water: 0 };
+  
   const totalParts = 1 + starterHydration / 100;
   const flourPart = 1 / totalParts;
   
@@ -62,40 +64,47 @@ export const validateIngredient = (
 };
 
 export const getTotalWeight = (recipe: Recipe): number => {
-  return recipe.flour + recipe.ingredients.reduce((sum, ing) => sum + ing.weight, 0) + 
-    (recipe.starter?.weight || 0);
-};
-
-export const convertUnits = (value: number, from: 'g' | 'oz', to: 'g' | 'oz'): number => {
-  if (from === to) return value;
-  const factor = from === 'g' ? UNIT_CONVERSION.gToOz : UNIT_CONVERSION.ozToG;
-  return Number((value * factor).toFixed(2));
+  const starterWeight = recipe.starter?.weight || 0;
+  return recipe.flour + recipe.ingredients.reduce((sum, ing) => sum + ing.weight, 0) + starterWeight;
 };
 
 export const recalculateRecipe = (recipe: Recipe, changedIngredientId?: string): Recipe => {
   const updatedRecipe = { ...recipe };
   const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
   const saltIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'salt');
+  const starterContributions = calculateStarterContributions(
+    recipe.starter?.weight || 0,
+    recipe.starter?.hydration || 100
+  );
 
-  // If water weight changed, recalculate flour based on hydration
-  if (changedIngredientId === waterIngredient?.id && waterIngredient.weight) {
-    updatedRecipe.flour = calculateFlourFromWater(waterIngredient.weight, recipe.hydrationTarget || 75);
+  // Adjust flour and water based on starter contributions
+  const totalFlour = updatedRecipe.flour + starterContributions.flour;
+  const totalWater = (waterIngredient?.weight || 0) + starterContributions.water;
+
+  // Calculate target water based on hydration
+  const targetWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget || 75);
+
+  // Update water ingredient
+  if (waterIngredient) {
+    waterIngredient.weight = Math.max(0, targetWater - starterContributions.water);
+    waterIngredient.percentage = calculateBakersPercentage(waterIngredient.weight, totalFlour);
   }
-  // If flour changed or was calculated, update other ingredients
-  else if (updatedRecipe.flour) {
-    if (waterIngredient) {
-      waterIngredient.weight = calculateWaterFromFlour(updatedRecipe.flour, recipe.hydrationTarget || 75);
-    }
-    if (saltIngredient) {
-      saltIngredient.weight = calculateSaltFromFlour(updatedRecipe.flour);
-    }
+
+  // Update salt based on total flour
+  if (saltIngredient) {
+    saltIngredient.weight = calculateSaltFromFlour(totalFlour);
+    saltIngredient.percentage = calculateBakersPercentage(saltIngredient.weight, totalFlour);
   }
 
   // Update all ingredient percentages
   updatedRecipe.ingredients = updatedRecipe.ingredients.map(ing => ({
     ...ing,
-    percentage: calculateBakersPercentage(ing.weight, updatedRecipe.flour)
+    percentage: calculateBakersPercentage(ing.weight, totalFlour)
   }));
+
+  if (recipe.starter) {
+    recipe.starter.percentage = calculateBakersPercentage(recipe.starter.weight, totalFlour);
+  }
 
   return updatedRecipe;
 };
