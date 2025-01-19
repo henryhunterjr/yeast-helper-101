@@ -4,9 +4,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useNewBakersCalculator } from '@/hooks/useNewBakersCalculator';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useToast } from "@/hooks/use-toast";
 import CoreInputs from './CoreInputs';
 import IngredientBreakdown from './IngredientBreakdown';
 import TotalRecipe from './TotalRecipe';
+import ValidationWarnings from './ValidationWarnings';
 
 const NewCalculator = () => {
   const {
@@ -19,19 +21,36 @@ const NewCalculator = () => {
     saltPercentage,
     setSaltPercentage,
     calculations,
-    validationError
+    validationError,
+    validationWarnings
   } = useNewBakersCalculator();
 
   const [unit, setUnit] = React.useState<'g' | 'oz'>('g');
+  const { toast } = useToast();
+
+  const handleUnitChange = (value: 'g' | 'oz') => {
+    if (value) {
+      setUnit(value);
+      toast({
+        title: "Unit Changed",
+        description: `Measurements updated to ${value === 'g' ? 'grams' : 'ounces'}`,
+      });
+    }
+  };
 
   return (
     <Card className="p-6 max-w-2xl mx-auto">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Baker's Percentage Calculator</h2>
-          <ToggleGroup type="single" value={unit} onValueChange={(value: 'g' | 'oz') => setUnit(value)}>
-            <ToggleGroupItem value="g">Grams</ToggleGroupItem>
-            <ToggleGroupItem value="oz">Ounces</ToggleGroupItem>
+          <ToggleGroup 
+            type="single" 
+            value={unit} 
+            onValueChange={handleUnitChange}
+            className="border rounded-lg"
+          >
+            <ToggleGroupItem value="g" className="px-3 py-2">Grams</ToggleGroupItem>
+            <ToggleGroupItem value="oz" className="px-3 py-2">Ounces</ToggleGroupItem>
           </ToggleGroup>
         </div>
 
@@ -43,6 +62,8 @@ const NewCalculator = () => {
             </AlertDescription>
           </Alert>
         )}
+
+        <ValidationWarnings warnings={validationWarnings} />
 
         <CoreInputs
           flour={flour}
