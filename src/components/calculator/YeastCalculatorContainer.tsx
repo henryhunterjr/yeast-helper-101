@@ -8,13 +8,12 @@ import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import FavoritesList from '../favorites/FavoritesList';
 import DarkModeToggle from '../MeasurementToggle';
-import { UnitType } from '@/utils/yeastTypes';
+import { UnitType, YeastType } from '@/utils/yeastTypes';
 import { 
   calculateConversion, 
   getTemperatureAdjustment, 
   calculateHydrationAdjustment,
   calculateFermentationTime,
-  YeastType
 } from '../../utils/yeastCalculations';
 
 const YeastCalculatorContainer = () => {
@@ -29,8 +28,33 @@ const YeastCalculatorContainer = () => {
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
-  
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleFromTypeChange = (value: YeastType) => {
+    if (value === toType) {
+      // Prevent selecting the same type for both inputs
+      toast({
+        title: "Invalid Selection",
+        description: "From and To types cannot be the same",
+        variant: "destructive",
+      });
+      return;
+    }
+    setFromType(value as YeastType);
+  };
+
+  const handleToTypeChange = (value: YeastType) => {
+    if (value === fromType) {
+      // Prevent selecting the same type for both inputs
+      toast({
+        title: "Invalid Selection",
+        description: "From and To types cannot be the same",
+        variant: "destructive",
+      });
+      return;
+    }
+    setToType(value as YeastType);
+  };
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
