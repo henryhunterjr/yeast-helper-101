@@ -1,11 +1,7 @@
 import { useState, useCallback } from 'react';
-import { Recipe, Ingredient } from '@/types/recipe';
+import { Recipe } from '@/types/recipe';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  calculateWaterFromFlour,
-  calculateSaltFromFlour,
-  recalculateRecipe
-} from '@/utils/bakersCalculatorHelpers';
+import { recalculateRecipe } from '@/utils/bakersCalculatorHelpers';
 
 const createInitialRecipe = (): Recipe => ({
   flour: 0,

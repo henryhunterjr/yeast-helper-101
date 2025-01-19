@@ -73,28 +73,23 @@ export const recalculateRecipe = (recipe: Recipe, updatedIngredientId?: string):
     recipe.starter?.hydration || 100
   );
 
-  // Calculate total flour including starter contribution
   const totalFlour = updatedRecipe.flour + starterContributions.flour;
 
-  // Update all ingredient percentages based on total flour
   updatedRecipe.ingredients = updatedRecipe.ingredients.map(ing => ({
     ...ing,
     percentage: calculateBakersPercentage(ing.weight, totalFlour)
   }));
 
-  // Update starter percentage if it exists
   if (recipe.starter) {
     recipe.starter.percentage = calculateBakersPercentage(recipe.starter.weight, totalFlour);
   }
 
-  // Calculate target water based on hydration
   if (waterIngredient && recipe.hydrationTarget && updatedIngredientId !== waterIngredient.id) {
     const targetTotalWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget);
     waterIngredient.weight = Math.max(0, targetTotalWater - starterContributions.water);
     waterIngredient.percentage = calculateBakersPercentage(waterIngredient.weight, totalFlour);
   }
 
-  // Update salt based on total flour
   if (saltIngredient && updatedIngredientId !== saltIngredient.id) {
     saltIngredient.weight = calculateSaltFromFlour(totalFlour);
     saltIngredient.percentage = calculateBakersPercentage(saltIngredient.weight, totalFlour);
