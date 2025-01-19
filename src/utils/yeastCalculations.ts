@@ -16,11 +16,8 @@ export const calculateWaterTemperature = (
   roomTemp: number,
   yeastType: YeastType
 ): number => {
-  // Set desired dough temperature based on yeast type
   const desiredTemp = yeastType === 'sourdough' ? 78 : 75;
-  
-  // Calculate water temperature using the formula: (Tdesired × 3) - Troom
-  let waterTemp = (desiredTemp * 3) - roomTemp;
+  const waterTemp = (desiredTemp * 3) - roomTemp;
   
   // Apply caps based on yeast type
   if (yeastType === 'sourdough') {
@@ -44,9 +41,6 @@ export const calculateProofingTime = (
   hydrationPercentage: number,
   temperature: number = 72
 ): ProofingTime => {
-  // Get base proofing time for active dry yeast
-  const activeTime = calculateActiveProofingTime(hydrationPercentage);
-  
   // Temperature adjustment factor (every 17°F difference changes time by ~50%)
   const tempDiff = temperature - 72;
   const tempFactor = Math.pow(0.5, tempDiff / 17);
@@ -56,22 +50,24 @@ export const calculateProofingTime = (
   
   switch (yeastType) {
     case 'instant':
+      const activeTime = calculateActiveProofingTime(hydrationPercentage);
       minHours = activeTime.minHours * 0.75;
       maxHours = activeTime.maxHours * 0.75;
       break;
     case 'fresh':
-      minHours = activeTime.minHours * 1.1;
-      maxHours = activeTime.maxHours * 1.1;
+      const freshTime = calculateActiveProofingTime(hydrationPercentage);
+      minHours = freshTime.minHours * 1.1;
+      maxHours = freshTime.maxHours * 1.1;
       break;
     case 'sourdough':
-      // For sourdough, use the formula: (hydration/100) × 6
       const baseTime = (hydrationPercentage / 100) * 6;
       minHours = baseTime * 0.8;
       maxHours = baseTime * 1.2;
       break;
     default: // active-dry
-      minHours = activeTime.minHours;
-      maxHours = activeTime.maxHours;
+      const defaultTime = calculateActiveProofingTime(hydrationPercentage);
+      minHours = defaultTime.minHours;
+      maxHours = defaultTime.maxHours;
   }
   
   // Apply temperature factor and round to 1 decimal
@@ -81,5 +77,80 @@ export const calculateProofingTime = (
   };
 };
 
-// Alias for calculateProofingTime to maintain compatibility
+// Alias for backward compatibility
 export const calculateFermentationTime = calculateProofingTime;
+
+export const getTemperatureAdjustment = (temperature: number): string => {
+  if (temperature < 68) return "Increase proofing time by 15-20%";
+  if (temperature > 76) return "Decrease proofing time by 15-20%";
+  return "Temperature is in optimal range";
+};
+
+export const calculateHydrationAdjustment = (
+  hydrationPercentage: number,
+  amount: number,
+  fromType: YeastType,
+  toType: YeastType
+): { flour: number; water: number } | null => {
+  if (toType !== 'sourdough') return null;
+  
+  const flourNeeded = amount * (100 / hydrationPercentage);
+  const waterNeeded = amount - flourNeeded;
+  
+  return {
+    flour: Math.round(flourNeeded * 10) / 10,
+    water: Math.round(waterNeeded * 10) / 10
+  };
+};
+
+export const calculateConversion = (
+  amount: string | number,
+  fromType: YeastType,
+  toType: YeastType,
+  useTsp: boolean = false
+): string => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  
+  if (isNaN(numAmount) || numAmount <= 0) {
+    throw new Error("Invalid amount");
+  }
+
+  const conversionRates: Record<YeastType, Record<YeastType, number>> = {
+    'active-dry': {
+      'instant': 0.75,
+      'fresh': 3,
+      'sourdough': 20
+    },
+    'instant': {
+      'active-dry': 1.33,
+      'fresh': 4,
+      'sourdough': 26.67
+    },
+    'fresh': {
+      'active-dry': 0.33,
+      'instant': 0.25,
+      'sourdough': 6.67
+    },
+    'sourdough': {
+      'active-dry': 0.05,
+      'instant': 0.0375,
+      'fresh': 0.15
+    }
+  };
+
+  if (fromType === toType) return numAmount.toString();
+  
+  const rate = conversionRates[fromType][toType];
+  if (!rate) throw new Error("Invalid conversion");
+  
+  const result = numAmount * rate;
+  const rounded = Math.round(result * 100) / 100;
+  
+  if (useTsp) {
+    // Convert to teaspoons (approximate conversion)
+    const tsp = rounded * 3;
+    return `${Math.round(tsp * 10) / 10}`;
+  }
+  
+  return rounded.toString();
+};
