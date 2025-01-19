@@ -99,6 +99,20 @@ export const calculateConversion = (
     amountInGrams = numericAmount * 3; // 1 tsp = 3g for active dry/instant yeast
   }
 
+  // Check if we should use simplified 1:1 conversion for active dry and instant yeast
+  const isSimplifiedConversion = 
+    amountInGrams <= 14 && 
+    ((fromType === 'active-dry' && toType === 'instant') || 
+     (fromType === 'instant' && toType === 'active-dry'));
+
+  if (isSimplifiedConversion) {
+    console.log('Using simplified 1:1 conversion for small amount');
+    return {
+      result: amount,
+      isSimplified: true
+    };
+  }
+
   // Special handling for sourdough conversion
   if (toType === 'sourdough' && (fromType === 'active-dry' || fromType === 'instant')) {
     // Base conversion: 1g yeast = 5g starter
