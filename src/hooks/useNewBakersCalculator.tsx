@@ -10,13 +10,48 @@ interface Calculations {
   totalWeight: number;
 }
 
+interface ValidationErrors {
+  flour?: string;
+  hydration?: string;
+  starter?: string;
+  salt?: string;
+}
+
 export const useNewBakersCalculator = () => {
-  const [flour, setFlour] = useState<number>(500);
+  const [flour, setFlour] = useState<number | null>(500);
   const [hydration, setHydration] = useState<number>(75);
   const [starterPercentage, setStarterPercentage] = useState<number>(20);
   const [saltPercentage, setSaltPercentage] = useState<number>(2);
   const [starterHydration] = useState<number>(100);
   const { toast } = useToast();
+
+  const validationErrors = useMemo<ValidationErrors>(() => {
+    const errors: ValidationErrors = {};
+    
+    if (!flour || flour <= 0) {
+      errors.flour = "Flour weight must be greater than 0";
+    }
+    
+    if (hydration < 50) {
+      errors.hydration = "Hydration must be at least 50%";
+    } else if (hydration > 100) {
+      errors.hydration = "Hydration cannot exceed 100%";
+    }
+    
+    if (starterPercentage < 0) {
+      errors.starter = "Starter percentage cannot be negative";
+    } else if (starterPercentage > 100) {
+      errors.starter = "Starter percentage cannot exceed 100%";
+    }
+    
+    if (saltPercentage < 0) {
+      errors.salt = "Salt percentage cannot be negative";
+    } else if (saltPercentage > 5) {
+      errors.salt = "Salt percentage cannot exceed 5%";
+    }
+    
+    return errors;
+  }, [flour, hydration, starterPercentage, saltPercentage]);
 
   const validationWarnings = useMemo(() => {
     const warnings: string[] = [];
@@ -35,15 +70,11 @@ export const useNewBakersCalculator = () => {
   }, [hydration, starterPercentage, saltPercentage]);
 
   const validationError = useMemo(() => {
-    if (flour <= 0) return "Flour weight must be greater than 0";
-    if (hydration < 50) return "Hydration must be at least 50%";
-    if (hydration > 120) return "Hydration cannot exceed 120%";
-    if (starterPercentage < 0) return "Starter percentage cannot be negative";
-    if (starterPercentage > 100) return "Starter percentage cannot exceed 100%";
-    if (saltPercentage < 0) return "Salt percentage cannot be negative";
-    if (saltPercentage > 5) return "Salt percentage cannot exceed 5%";
+    if (Object.keys(validationErrors).length > 0) {
+      return "Please correct the input errors before proceeding.";
+    }
     return null;
-  }, [flour, hydration, starterPercentage, saltPercentage]);
+  }, [validationErrors]);
 
   const calculations = useMemo<Calculations>(() => {
     if (!flour || flour <= 0) {
@@ -102,6 +133,7 @@ export const useNewBakersCalculator = () => {
     setSaltPercentage,
     calculations,
     validationError,
-    validationWarnings
+    validationWarnings,
+    validationErrors
   };
 };

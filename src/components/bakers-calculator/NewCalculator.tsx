@@ -1,10 +1,8 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { useNewBakersCalculator } from '@/hooks/useNewBakersCalculator';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useToast } from "@/hooks/use-toast";
+import { useNewBakersCalculator } from '@/hooks/useNewBakersCalculator';
 import CoreInputs from './CoreInputs';
 import IngredientBreakdown from './IngredientBreakdown';
 import TotalRecipe from './TotalRecipe';
@@ -22,14 +20,15 @@ const NewCalculator = () => {
     setSaltPercentage,
     calculations,
     validationError,
-    validationWarnings
+    validationWarnings,
+    validationErrors
   } = useNewBakersCalculator();
 
   const [unit, setUnit] = React.useState<'g' | 'oz'>('g');
   const { toast } = useToast();
 
-  const handleUnitChange = (value: 'g' | 'oz') => {
-    if (value) {
+  const handleUnitChange = (value: string) => {
+    if (value === 'g' || value === 'oz') {
       setUnit(value);
       toast({
         title: "Unit Changed",
@@ -54,15 +53,6 @@ const NewCalculator = () => {
           </ToggleGroup>
         </div>
 
-        {validationError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {validationError}
-            </AlertDescription>
-          </Alert>
-        )}
-
         <ValidationWarnings warnings={validationWarnings} />
 
         <div className="grid gap-6">
@@ -76,6 +66,7 @@ const NewCalculator = () => {
             saltPercentage={saltPercentage}
             setSaltPercentage={setSaltPercentage}
             unit={unit}
+            validationErrors={validationErrors}
           />
 
           <IngredientBreakdown
