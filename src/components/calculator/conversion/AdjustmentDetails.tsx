@@ -15,7 +15,10 @@ interface AdjustmentDetailsProps {
     waterAdjustment: number;
     showAdjustments: boolean;
   };
-  fermentationTime: string;
+  fermentationTime: {
+    minHours: number;
+    maxHours: number;
+  } | null;
 }
 
 const AdjustmentDetails = ({
@@ -65,7 +68,9 @@ const AdjustmentDetails = ({
       <Card className="p-4">
         <h4 className="font-medium mb-2">Fermentation Time</h4>
         <div className="flex items-center gap-2">
-          <p className="text-sm text-gray-600">{fermentationTime}</p>
+          <p className="text-sm text-gray-600">
+            {fermentationTime ? `${fermentationTime.minHours.toFixed(1)}-${fermentationTime.maxHours.toFixed(1)} hours` : 'Not available'}
+          </p>
           <Tooltip>
             <TooltipTrigger>
               <Info className="h-4 w-4 text-gray-400" />
