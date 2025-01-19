@@ -9,25 +9,13 @@ export const calculateHydration = (waterWeight: number, flourWeight: number): nu
   return calculateBakersPercentage(waterWeight, flourWeight);
 };
 
-export const calculateFlourFromWater = (waterWeight: number, hydration: number): number => {
-  return (waterWeight * 100) / hydration;
-};
-
-export const calculateWaterFromFlour = (flourWeight: number, hydration: number): number => {
-  return (flourWeight * hydration) / 100;
-};
-
-export const calculateSaltFromFlour = (flourWeight: number, saltPercentage: number = 2): number => {
-  return (flourWeight * saltPercentage) / 100;
-};
-
 export const calculateStarterContributions = (
   starterWeight: number,
   starterHydration: number
 ): { flour: number; water: number } => {
   if (!starterWeight) return { flour: 0, water: 0 };
   
-  const totalParts = 1 + starterHydration / 100;
+  const totalParts = 1 + (starterHydration / 100);
   const flourPart = 1 / totalParts;
   
   const flourContribution = starterWeight * flourPart;
@@ -37,6 +25,14 @@ export const calculateStarterContributions = (
     flour: flourContribution,
     water: waterContribution,
   };
+};
+
+export const calculateWaterFromFlour = (flourWeight: number, hydration: number): number => {
+  return (flourWeight * hydration) / 100;
+};
+
+export const calculateSaltFromFlour = (flourWeight: number, saltPercentage: number = 2): number => {
+  return (flourWeight * saltPercentage) / 100;
 };
 
 export const validateIngredient = (
@@ -68,7 +64,7 @@ export const getTotalWeight = (recipe: Recipe): number => {
   return recipe.flour + recipe.ingredients.reduce((sum, ing) => sum + ing.weight, 0) + starterWeight;
 };
 
-export const recalculateRecipe = (recipe: Recipe, changedIngredientId?: string): Recipe => {
+export const recalculateRecipe = (recipe: Recipe): Recipe => {
   const updatedRecipe = { ...recipe };
   const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
   const saltIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'salt');
