@@ -5,6 +5,7 @@ interface CalculatorInputs {
   saltPercentage: number;
   starterWeight: number;
   starterHydration: number;
+  unit?: 'g' | 'oz';
 }
 
 interface CalculatorResults {
@@ -16,9 +17,18 @@ interface CalculatorResults {
   error?: string;
 }
 
+const CONVERSION = {
+  gToOz: 0.03527396,
+  ozToG: 28.3495,
+};
+
+function convertToOunces(grams: number): number {
+  return grams * CONVERSION.gToOz;
+}
+
 export function calculateWater(flour: number, hydration: number): number {
-  if (flour < 0 || hydration < 50 || hydration > 120) {
-    throw new Error("Invalid input: Flour must be non-negative and hydration must be between 50% and 120%.");
+  if (flour < 0 || hydration < 0 || hydration > 100) {
+    throw new Error("Invalid input: Flour must be non-negative and hydration must be between 0% and 100%.");
   }
   return (flour * hydration) / 100;
 }
@@ -46,22 +56,23 @@ export function recalculateIngredients(inputs: CalculatorInputs): CalculatorResu
       saltPercentage,
       starterWeight,
       starterHydration,
+      unit = 'g',
     } = inputs;
 
     if (!flour && !starterWeight) {
       throw new Error("Either flour weight or starter weight must be provided.");
     }
 
-    if (hydration < 50 || hydration > 120) {
-      throw new Error("Hydration must be between 50% and 120%.");
+    if (hydration < 0 || hydration > 100) {
+      throw new Error("Hydration must be between 0% and 100%.");
     }
 
-    if (starterPercentage < 0 || starterPercentage > 50) {
-      throw new Error("Starter percentage must be between 0% and 50%.");
+    if (starterPercentage < 0 || starterPercentage > 100) {
+      throw new Error("Starter percentage must be between 0% and 100%.");
     }
 
-    if (saltPercentage < 0 || saltPercentage > 5) {
-      throw new Error("Salt percentage must be between 0% and 5%.");
+    if (saltPercentage < 0 || saltPercentage > 100) {
+      throw new Error("Salt percentage must be between 0% and 100%.");
     }
 
     let calculatedFlour = flour || 0;
@@ -77,13 +88,25 @@ export function recalculateIngredients(inputs: CalculatorInputs): CalculatorResu
       calculatedWater -= contributions.waterFromStarter;
     }
 
-    return {
+    let results = {
       flour: calculatedFlour,
       water: calculatedWater,
       starter: calculatedStarter,
       salt: calculatedSalt,
       totalWeight: calculatedFlour + calculatedWater + calculatedStarter + calculatedSalt,
     };
+
+    if (unit === 'oz') {
+      results = {
+        flour: convertToOunces(results.flour),
+        water: convertToOunces(results.water),
+        starter: convertToOunces(results.starter),
+        salt: convertToOunces(results.salt),
+        totalWeight: convertToOunces(results.totalWeight),
+      };
+    }
+
+    return results;
   } catch (error) {
     console.error("Error in recalculateIngredients:", error instanceof Error ? error.message : String(error));
     return {
