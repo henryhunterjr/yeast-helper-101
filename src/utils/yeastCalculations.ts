@@ -29,10 +29,11 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
     console.log('Applied regular yeast capping (75-80°F)');
   }
 
-  console.log('Final Water Temperature (after capping):', waterTemp);
+  const finalTemp = Math.round(waterTemp);
+  console.log('Final Water Temperature (rounded):', finalTemp);
   console.groupEnd();
 
-  return Math.round(waterTemp);
+  return finalTemp;
 };
 
 export const calculateProofingTime = (
@@ -131,3 +132,4 @@ export const calculateHydrationAdjustment = (
 
 // Export calculateProofingTime as calculateFermentationTime for backward compatibility
 export const calculateFermentationTime = calculateProofingTime;
+

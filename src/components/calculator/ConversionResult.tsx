@@ -1,29 +1,23 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { UnitType, YeastType } from '@/utils/yeastTypes';
-import HydrationAdjustments from './adjustments/HydrationAdjustments';
-import TemperatureAdjustments from './adjustments/TemperatureAdjustments';
-import ResultDisplay from './conversion-result/ResultDisplay';
+import { calculateWaterTemperature } from '@/utils/yeastCalculations';
 import ActionButtons from './conversion-result/ActionButtons';
-import ProofingTimeDisplay from './conversion-result/ProofingTimeDisplay';
+import ResultDisplay from './conversion-result/ResultDisplay';
+import AdjustmentDetails from './conversion/AdjustmentDetails';
+import ProofingTimeDisplay from './conversion/ProofingTimeDisplay';
+import WaterTempDisplay from './conversion/WaterTempDisplay';
+import { UnitType, YeastType } from '@/utils/yeastTypes';
 
 interface ConversionResultProps {
   amount: string;
-  fromType: string;
-  toType: string;
+  fromType: YeastType;
+  toType: YeastType;
   temperature: string;
   hydration: string;
   result: string;
   temperatureAdjustment: string;
-  hydrationAdjustment?: {
-    flourAdjustment: number;
-    waterAdjustment: number;
-    showAdjustments: boolean;
-  };
-  fermentationTime?: {
-    minHours: number;
-    maxHours: number;
-  } | null;
+  hydrationAdjustment: any;
+  fermentationTime: any;
   isLoading: boolean;
   unit: UnitType;
   onReset: () => void;
@@ -41,58 +35,49 @@ const ConversionResult = ({
   fermentationTime,
   isLoading,
   unit,
-  onReset
+  onReset,
 }: ConversionResultProps) => {
-  const waterTemp = Math.round(105 - parseFloat(temperature));
+  console.group('ConversionResult Render');
+  console.log('Props:', {
+    amount,
+    fromType,
+    toType,
+    temperature,
+    hydration,
+    result
+  });
 
-  if (isLoading) {
-    return <div className="animate-pulse">Loading...</div>;
-  }
+  const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
+  console.log('Calculated Water Temperature:', waterTemp);
+  console.groupEnd();
 
   return (
     <div className="space-y-6">
-      <Card className="p-6 bg-gradient-to-r from-yeast-50 to-yeast-100 border-2 border-yeast-200 shadow-lg transition-all hover:shadow-xl">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-lg font-medium text-yeast-800">Conversion Result</h3>
-          <ActionButtons
-            onReset={onReset}
-            fromType={fromType}
-            toType={toType}
-            amount={amount}
-            temperature={temperature}
-            result={result}
-          />
-        </div>
-        <ResultDisplay
-          amount={amount}
-          result={result}
-          fromType={fromType}
-          toType={toType}
-          unit={unit}
-        />
-      </Card>
-
-      {hydrationAdjustment?.showAdjustments && (
-        <HydrationAdjustments 
-          hydrationAdjustment={hydrationAdjustment}
-          hydration={hydration}
-        />
-      )}
+      <ResultDisplay
+        amount={amount}
+        fromType={fromType}
+        toType={toType}
+        result={result}
+        unit={unit}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <TemperatureAdjustments
-          temperatureAdjustment={temperatureAdjustment}
-          waterTemp={waterTemp}
+        <WaterTempDisplay roomTemp={temperature} waterTemp={waterTemp} />
+        <ProofingTimeDisplay
+          fermentationTime={fermentationTime}
+          temperature={temperature}
+          hydration={hydration}
         />
-
-        {fermentationTime && (
-          <ProofingTimeDisplay
-            fermentationTime={fermentationTime}
-            temperature={temperature}
-            hydration={hydration}
-          />
-        )}
       </div>
+
+      <AdjustmentDetails
+        temperature={temperature}
+        temperatureAdjustment={temperatureAdjustment}
+        hydrationAdjustment={hydrationAdjustment}
+        fermentationTime={fermentationTime}
+      />
+
+      <ActionButtons onReset={onReset} />
     </div>
   );
 };

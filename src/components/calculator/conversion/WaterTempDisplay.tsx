@@ -6,15 +6,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getWaterTemperature } from '@/utils/yeastTypes';
 
 interface WaterTempDisplayProps {
   roomTemp: string;
+  waterTemp: number;
 }
 
-const WaterTempDisplay = ({ roomTemp }: WaterTempDisplayProps) => {
-  const temp = parseFloat(roomTemp);
-  const waterTemp = getWaterTemperature(temp);
+const WaterTempDisplay = ({ roomTemp, waterTemp }: WaterTempDisplayProps) => {
+  console.group('WaterTempDisplay Render');
+  console.log('Props:', { roomTemp, waterTemp });
+  console.groupEnd();
 
   return (
     <Card className="p-4 space-y-2">
@@ -36,7 +37,7 @@ const WaterTempDisplay = ({ roomTemp }: WaterTempDisplayProps) => {
       <div className="text-sm text-gray-700">
         <p className="font-semibold">{waterTemp}°F</p>
         <p className="text-xs text-gray-500 mt-1">
-          For optimal dough temperature
+          For optimal dough temperature at {roomTemp}°F room temperature
         </p>
       </div>
     </Card>
