@@ -50,7 +50,7 @@ const AdjustmentDetails = ({
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="p-4 border border-border">
+        <Card className="p-4 bg-card border border-border">
           <h4 className="font-medium mb-2 text-foreground">Temperature Adjustments</h4>
           <p className="text-sm text-foreground break-words">
             {temperature}°F: {temperatureAdjustment}
@@ -61,7 +61,7 @@ const AdjustmentDetails = ({
         </Card>
         
         {hydrationAdjustment?.showAdjustments && (
-          <Card className="p-4 border border-border">
+          <Card className="p-4 bg-card border border-border">
             <h4 className="font-medium mb-2 text-foreground">Hydration Adjustments</h4>
             <ul className="text-sm text-foreground space-y-1">
               <li>Flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
@@ -71,7 +71,7 @@ const AdjustmentDetails = ({
         )}
       </div>
       
-      <Card className="p-4 border border-border">
+      <Card className="p-4 bg-card border border-border">
         <h4 className="font-medium mb-2 text-foreground">Fermentation Time</h4>
         <div className="flex items-center gap-2">
           <p className="text-sm text-foreground">
