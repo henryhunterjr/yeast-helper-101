@@ -16,7 +16,7 @@ const Index = () => {
   }, [hasSeenTutorial, startTutorial]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-yeast-50 to-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="flex-grow py-4 sm:py-12 px-4 sm:px-6">
         <div 
           className="space-y-8"
