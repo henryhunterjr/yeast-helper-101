@@ -18,12 +18,12 @@ const WaterTempDisplay = ({ roomTemp, waterTemp }: WaterTempDisplayProps) => {
   console.groupEnd();
 
   return (
-    <Card className="p-4 space-y-2">
+    <Card className="p-4 space-y-2 bg-background">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-sm">Recommended Water Temperature</h3>
+        <h3 className="font-medium text-sm text-foreground">Recommended Water Temperature</h3>
         <Tooltip>
           <TooltipTrigger>
-            <Info className="h-4 w-4 text-gray-400" />
+            <Info className="h-4 w-4 text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent>
             <p className="max-w-xs">
@@ -34,9 +34,9 @@ const WaterTempDisplay = ({ roomTemp, waterTemp }: WaterTempDisplayProps) => {
         </Tooltip>
       </div>
       
-      <div className="text-sm text-gray-700">
-        <p className="font-semibold">{waterTemp}°F</p>
-        <p className="text-xs text-gray-500 mt-1">
+      <div className="text-sm">
+        <p className="font-semibold text-foreground">{waterTemp}°F</p>
+        <p className="mt-1 text-xs text-muted-foreground">
           For optimal dough temperature at {roomTemp}°F room temperature
         </p>
       </div>

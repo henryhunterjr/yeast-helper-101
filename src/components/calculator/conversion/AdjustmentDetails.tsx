@@ -31,16 +31,15 @@ const AdjustmentDetails = ({
   fermentationTime,
   fromType,
 }: AdjustmentDetailsProps) => {
-  // Calculate the water temperature using the same function as in WaterTempDisplay
   const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
 
   return (
     <div className="space-y-4">
       <div className="font-medium flex items-center gap-2">
-        <h3 className="text-lg">Recipe Adjustments</h3>
+        <h3 className="text-lg text-foreground">Recipe Adjustments</h3>
         <Tooltip>
           <TooltipTrigger>
-            <Info className="h-4 w-4 text-gray-400" />
+            <Info className="h-4 w-4 text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent>
             <p className="max-w-xs">
@@ -51,20 +50,20 @@ const AdjustmentDetails = ({
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card className="p-4">
-          <h4 className="font-medium mb-2">Temperature Adjustments</h4>
-          <p className="text-sm text-gray-600 break-words">
+        <Card className="p-4 bg-background">
+          <h4 className="font-medium mb-2 text-foreground">Temperature Adjustments</h4>
+          <p className="text-sm text-muted-foreground break-words">
             {temperature}°F: {temperatureAdjustment}
           </p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Recommended water temperature: {waterTemp}°F
           </p>
         </Card>
         
         {hydrationAdjustment?.showAdjustments && (
-          <Card className="p-4">
-            <h4 className="font-medium mb-2">Hydration Adjustments</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
+          <Card className="p-4 bg-background">
+            <h4 className="font-medium mb-2 text-foreground">Hydration Adjustments</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
               <li>Flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
               <li>Water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
             </ul>
@@ -72,15 +71,15 @@ const AdjustmentDetails = ({
         )}
       </div>
       
-      <Card className="p-4">
-        <h4 className="font-medium mb-2">Fermentation Time</h4>
+      <Card className="p-4 bg-background">
+        <h4 className="font-medium mb-2 text-foreground">Fermentation Time</h4>
         <div className="flex items-center gap-2">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {fermentationTime ? `${fermentationTime.minHours.toFixed(1)}-${fermentationTime.maxHours.toFixed(1)} hours` : 'Not available'}
           </p>
           <Tooltip>
             <TooltipTrigger>
-              <Info className="h-4 w-4 text-gray-400" />
+              <Info className="h-4 w-4 text-muted-foreground" />
             </TooltipTrigger>
             <TooltipContent>
               <p className="max-w-xs">
