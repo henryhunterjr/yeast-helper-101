@@ -30,12 +30,14 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
+  const [useTsp, setUseTsp] = useState(false);
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       setUnit(settings.units === 'teaspoons' ? 'tsp' : settings.units === 'imperial' ? 'oz' : 'g');
+      setUseTsp(settings.units === 'teaspoons');
     }
   }, []);
 
@@ -45,6 +47,30 @@ const YeastCalculatorContainer = () => {
     setToType('instant');
     setTemperature('72');
     setHydration('100');
+  };
+
+  const handleFromTypeChange = (value: YeastType) => {
+    if (value === toType) {
+      toast({
+        title: "Invalid Selection",
+        description: "From and To types cannot be the same",
+        variant: "destructive",
+      });
+      return;
+    }
+    setFromType(value);
+  };
+
+  const handleToTypeChange = (value: YeastType) => {
+    if (value === fromType) {
+      toast({
+        title: "Invalid Selection",
+        description: "From and To types cannot be the same",
+        variant: "destructive",
+      });
+      return;
+    }
+    setToType(value);
   };
 
   const conversionResult = useMemo(() => {
@@ -124,8 +150,8 @@ const YeastCalculatorContainer = () => {
             <YeastTypeSelector
               fromType={fromType}
               toType={toType}
-              onFromTypeChange={setFromType}
-              onToTypeChange={setToType}
+              onFromTypeChange={handleFromTypeChange}
+              onToTypeChange={handleToTypeChange}
             />
 
             <YeastInputSection
@@ -136,15 +162,15 @@ const YeastCalculatorContainer = () => {
               hydration={hydration}
               setHydration={setHydration}
               fromType={fromType}
-              setFromType={setFromType}
+              setFromType={handleFromTypeChange}
               toType={toType}
-              setToType={setToType}
+              setToType={handleToTypeChange}
               isLoading={isLoading}
               showAdjustments={false}
               unit={unit}
               setUnit={setUnit}
-              useTsp={unit === 'tsp'}
-              setUseTsp={() => {}}
+              useTsp={useTsp}
+              setUseTsp={setUseTsp}
             />
 
             {showResults && (
@@ -190,16 +216,16 @@ const YeastCalculatorContainer = () => {
                   hydration={hydration}
                   setHydration={setHydration}
                   fromType={fromType}
-                  setFromType={setFromType}
+                  setFromType={handleFromTypeChange}
                   toType={toType}
-                  setToType={setToType}
+                  setToType={handleToTypeChange}
                   isLoading={isLoading}
                   showAdjustments={true}
                   hideMainInputs={true}
                   unit={unit}
                   setUnit={setUnit}
-                  useTsp={unit === 'tsp'}
-                  setUseTsp={() => {}}
+                  useTsp={useTsp}
+                  setUseTsp={setUseTsp}
                 />
               </CollapsibleContent>
             </Collapsible>
