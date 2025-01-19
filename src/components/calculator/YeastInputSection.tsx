@@ -9,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface YeastInputSectionProps {
   amount: string;
@@ -65,33 +66,41 @@ const YeastInputSection = ({
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">From</label>
-              <select
+              <label className="block text-sm font-medium text-foreground mb-2">From</label>
+              <Select
                 value={fromType}
-                onChange={(e) => setFromType(e.target.value)}
-                className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
+                onValueChange={setFromType}
                 disabled={isLoading}
               >
-                <option value="active-dry">Active Dry Yeast</option>
-                <option value="instant">Instant Yeast</option>
-                <option value="fresh">Fresh Yeast</option>
-                <option value="sourdough">Sourdough Starter</option>
-              </select>
+                <SelectTrigger className="w-full bg-background text-foreground">
+                  <SelectValue placeholder="Select yeast type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active-dry">Active Dry Yeast</SelectItem>
+                  <SelectItem value="instant">Instant Yeast</SelectItem>
+                  <SelectItem value="fresh">Fresh Yeast</SelectItem>
+                  <SelectItem value="sourdough">Sourdough Starter</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">To</label>
-              <select
+              <label className="block text-sm font-medium text-foreground mb-2">To</label>
+              <Select
                 value={toType}
-                onChange={(e) => setToType(e.target.value)}
-                className="w-full p-3 sm:p-2 text-lg sm:text-base border rounded focus:ring-2 focus:ring-yeast-500 outline-none"
+                onValueChange={setToType}
                 disabled={isLoading}
               >
-                <option value="active-dry">Active Dry Yeast</option>
-                <option value="instant">Instant Yeast</option>
-                <option value="fresh">Fresh Yeast</option>
-                <option value="sourdough">Sourdough Starter</option>
-              </select>
+                <SelectTrigger className="w-full bg-background text-foreground">
+                  <SelectValue placeholder="Select yeast type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active-dry">Active Dry Yeast</SelectItem>
+                  <SelectItem value="instant">Instant Yeast</SelectItem>
+                  <SelectItem value="fresh">Fresh Yeast</SelectItem>
+                  <SelectItem value="sourdough">Sourdough Starter</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -102,11 +111,11 @@ const YeastInputSection = ({
           <TemperatureInput temperature={temperature} setTemperature={setTemperature} />
 
           <div className="w-full">
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Starter Hydration (%)
               <Tooltip>
                 <TooltipTrigger className="ml-1 inline-flex">
-                  <Droplets className="h-4 w-4 text-gray-400" />
+                  <Droplets className="h-4 w-4 text-muted-foreground" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
@@ -116,13 +125,13 @@ const YeastInputSection = ({
               </Tooltip>
             </label>
             <div className="relative">
-              <Droplets className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+              <Droplets className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground pointer-events-none" />
               <Input
                 type="number"
                 inputMode="decimal"
                 value={hydration}
                 onChange={(e) => setHydration(e.target.value)}
-                className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
+                className="pl-10 w-full"
                 placeholder="Enter hydration %"
                 min="50"
                 max="200"
