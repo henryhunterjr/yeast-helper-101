@@ -10,15 +10,6 @@ export type YeastType = keyof typeof yeastTypes;
 
 export type UnitType = 'g' | 'tsp' | 'oz';
 
-// Teaspoon conversion factors (relative to grams)
-export const tspToGramConversion: Record<YeastType, number> = {
-  'active-dry': 3.1,
-  'instant': 3.3,
-  'fresh': 10,
-  'bread-machine': 3.3,
-  'sourdough': null
-} as const;
-
 // Direct conversion factors between yeast types (for both grams and teaspoons)
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
@@ -58,8 +49,16 @@ export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   }
 };
 
+// Gram to teaspoon conversion factors for each yeast type
+export const gramToTspConversion: Record<YeastType, number | null> = {
+  'active-dry': 3.1,
+  'instant': 3.3,
+  'fresh': 10,
+  'bread-machine': 3.3,
+  'sourdough': null
+};
+
 export const getWaterTemperature = (roomTemp: number): number => {
-  // Target dough temperature is typically around 75-78°F (24-26°C)
   const targetTemp = 76;
   return Math.round(2 * targetTemp - roomTemp);
 };
@@ -91,14 +90,14 @@ export const getFermentationTimeRange = (
 };
 
 export const convertToTeaspoons = (grams: number, yeastType: YeastType): number | null => {
-  const conversionFactor = tspToGramConversion[yeastType];
-  if (conversionFactor === null) return null; // For sourdough or unsupported types
+  const conversionFactor = gramToTspConversion[yeastType];
+  if (conversionFactor === null) return null;
   return grams / conversionFactor;
 };
 
 export const convertFromTeaspoons = (teaspoons: number, yeastType: YeastType): number | null => {
-  const conversionFactor = tspToGramConversion[yeastType];
-  if (conversionFactor === null) return null; // For sourdough or unsupported types
+  const conversionFactor = gramToTspConversion[yeastType];
+  if (conversionFactor === null) return null;
   return teaspoons * conversionFactor;
 };
 
@@ -115,8 +114,7 @@ export const formatMeasurement = (value: number, unit: UnitType, yeastType: Yeas
     case 'g':
       return `${value.toFixed(2)}g`;
     case 'tsp':
-      const tspValue = convertToTeaspoons(value, yeastType);
-      return tspValue ? `${tspValue.toFixed(2)} tsp` : `${value.toFixed(2)}g`;
+      return `${value.toFixed(2)} tsp`;
     case 'oz':
       return `${convertGramsToOunces(value).toFixed(2)} oz`;
     default:
@@ -130,8 +128,7 @@ export const parseInputValue = (value: string, unit: UnitType, yeastType: YeastT
 
   switch (unit) {
     case 'tsp':
-      const gramsValue = convertFromTeaspoons(numValue, yeastType);
-      return gramsValue ?? numValue;
+      return numValue;
     case 'oz':
       return convertOuncesToGrams(numValue);
     default:

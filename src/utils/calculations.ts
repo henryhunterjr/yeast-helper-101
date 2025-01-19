@@ -1,5 +1,5 @@
 import { validateAmount, validateTemperature, validateHydration, BASE_TEMPERATURE, BASE_HYDRATION } from './validations';
-import { conversionFactors, getWaterTemperature, getFermentationTimeRange, convertFromTeaspoons, convertToTeaspoons } from './yeastTypes';
+import { conversionFactors, getWaterTemperature, getFermentationTimeRange } from './yeastTypes';
 
 export const calculateConversion = (
   amount: string,
@@ -14,38 +14,31 @@ export const calculateConversion = (
   
   if (fromType === toType) return amount;
 
-  // When using teaspoons, we'll work with the teaspoon values directly
+  // Get the conversion factor
+  const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
+  if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
+  
+  // Calculate the result using the conversion factor
+  const result = numAmount * factor;
+
+  // Apply validation based on the unit being used
   if (useTsp) {
-    const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
-    if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
-    
-    // Convert directly using the conversion factor
-    const result = numAmount * factor;
-    
-    // Validate result bounds
     if (result < 0.1) {
       throw new Error(`Resulting amount (${result.toFixed(3)} tsp) is too small. Minimum is 0.1 tsp`);
     }
     if (result > 1000) {
       throw new Error(`Resulting amount (${result.toFixed(2)} tsp) is too large. Maximum is 1000 tsp`);
     }
-    
-    return result.toFixed(2);
   } else {
-    // For gram calculations, use the original logic
-    const factor = conversionFactors[fromType as keyof typeof conversionFactors]?.[toType as keyof typeof conversionFactors[keyof typeof conversionFactors]];
-    if (!factor) throw new Error(`Cannot convert from ${fromType} to ${toType}`);
-
-    const result = numAmount * factor;
     if (result < 0.1) {
       throw new Error(`Resulting amount (${result.toFixed(3)}g) is too small. Minimum is 0.1g`);
     }
     if (result > 1000) {
       throw new Error(`Resulting amount (${result.toFixed(2)}g) is too large. Maximum is 1000g`);
     }
-
-    return result.toFixed(2);
   }
+
+  return result.toFixed(2);
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
