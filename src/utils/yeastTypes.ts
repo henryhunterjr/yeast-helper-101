@@ -1,5 +1,3 @@
-import { YeastType } from './yeastTypes';
-
 export const yeastTypes = {
   'active-dry': 'Active Dry Yeast',
   'instant': 'Instant Yeast',
