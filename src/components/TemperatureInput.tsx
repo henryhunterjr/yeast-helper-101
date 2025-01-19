@@ -13,14 +13,18 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
   const { toast } = useToast();
   
   const handleTemperatureChange = (value: string) => {
+    console.log('Temperature Input - handleTemperatureChange called with:', value);
+    
     const numValue = parseFloat(value);
     
     if (value === '') {
-      setTemperature('72'); // Reset to default
+      console.log('Temperature Input - Empty value, resetting to default (72)');
+      setTemperature('72');
       return;
     }
 
     if (isNaN(numValue)) {
+      console.log('Temperature Input - Invalid number entered');
       toast({
         title: "Invalid Temperature",
         description: "Please enter a valid number",
@@ -30,6 +34,7 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
     }
 
     if (numValue < 32 || numValue > 120) {
+      console.log('Temperature Input - Temperature out of range:', numValue);
       toast({
         title: "Invalid Temperature Range",
         description: "Temperature must be between 32°F and 120°F",
@@ -38,10 +43,12 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
       return;
     }
 
+    console.log('Temperature Input - Setting new temperature:', value);
     setTemperature(value);
   };
 
   const handleSliderChange = (value: number[]) => {
+    console.log('Temperature Input - Slider changed to:', value[0]);
     setTemperature(value[0].toString());
   };
 

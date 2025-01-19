@@ -4,8 +4,8 @@ import { conversionFactors } from './yeastTypes';
 export type { YeastType };
 
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  console.log('Input - Room Temperature:', roomTemp);
-  console.log('Input - Yeast Type:', yeastType);
+  console.group('Water Temperature Calculation');
+  console.log('Function called with:', { roomTemp, yeastType });
 
   const desiredTemp = {
     'active-dry': 75,
@@ -23,11 +23,14 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
   // Capping logic
   if (yeastType === 'sourdough') {
     waterTemp = Math.min(Math.max(waterTemp, 78), 82);
+    console.log('Applied sourdough capping (78-82°F)');
   } else {
     waterTemp = Math.min(Math.max(waterTemp, 75), 80);
+    console.log('Applied regular yeast capping (75-80°F)');
   }
 
   console.log('Final Water Temperature (after capping):', waterTemp);
+  console.groupEnd();
 
   return Math.round(waterTemp);
 };
