@@ -99,7 +99,7 @@ const YeastCalculatorContainer = () => {
   }, [temperature, hydration, fromType]);
 
   useEffect(() => {
-    const state = location.state as { prefill?: { amount: string; fromType: string; toType: string } };
+    const state = location.state as { prefill?: { amount: string; fromType: YeastType; toType: YeastType } };
     if (state?.prefill) {
       setAmount(state.prefill.amount);
       setFromType(state.prefill.fromType);
@@ -108,6 +108,14 @@ const YeastCalculatorContainer = () => {
   }, [location.state]);
 
   const showResults = Boolean(amount && parseFloat(amount) > 0 && result);
+
+  const handleFromTypeChange = (value: string) => {
+    setFromType(value as YeastType);
+  };
+
+  const handleToTypeChange = (value: string) => {
+    setToType(value as YeastType);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
@@ -124,9 +132,9 @@ const YeastCalculatorContainer = () => {
               hydration={hydration}
               setHydration={setHydration}
               fromType={fromType}
-              setFromType={setFromType}
+              setFromType={handleFromTypeChange}
               toType={toType}
-              setToType={setToType}
+              setToType={handleToTypeChange}
               isLoading={isLoading}
               showAdjustments={false}
               unit={unit}
@@ -177,9 +185,9 @@ const YeastCalculatorContainer = () => {
                   hydration={hydration}
                   setHydration={setHydration}
                   fromType={fromType}
-                  setFromType={setFromType}
+                  setFromType={handleFromTypeChange}
                   toType={toType}
-                  setToType={setToType}
+                  setToType={handleToTypeChange}
                   isLoading={isLoading}
                   showAdjustments={true}
                   hideMainInputs={true}
