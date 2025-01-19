@@ -7,6 +7,7 @@ import {
 import { Info } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { calculateWaterTemperature } from '@/utils/yeastCalculations';
+import { YeastType } from '@/utils/yeastTypes';
 
 interface AdjustmentDetailsProps {
   temperature: string;
@@ -20,6 +21,7 @@ interface AdjustmentDetailsProps {
     minHours: number;
     maxHours: number;
   } | null;
+  fromType: YeastType;
 }
 
 const AdjustmentDetails = ({
@@ -27,9 +29,10 @@ const AdjustmentDetails = ({
   temperatureAdjustment,
   hydrationAdjustment,
   fermentationTime,
+  fromType,
 }: AdjustmentDetailsProps) => {
   // Calculate the water temperature using the same function as in WaterTempDisplay
-  const waterTemp = calculateWaterTemperature(parseFloat(temperature), 'active-dry');
+  const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
 
   return (
     <div className="space-y-4">

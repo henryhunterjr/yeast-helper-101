@@ -75,6 +75,7 @@ const ConversionResult = ({
         temperatureAdjustment={temperatureAdjustment}
         hydrationAdjustment={hydrationAdjustment}
         fermentationTime={fermentationTime}
+        fromType={fromType}
       />
 
       <ActionButtons 
