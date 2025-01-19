@@ -14,7 +14,6 @@ import { getFavorites, deleteFavorite, updateFavoriteNotes, StoredFavorite } fro
 import { yeastTypes } from '@/utils/yeastTypes';
 import { useNavigate } from 'react-router-dom';
 
-// Create a custom event for favorite updates
 export const FAVORITES_UPDATED_EVENT = 'favoritesUpdated';
 
 const FavoritesList = () => {
@@ -29,7 +28,6 @@ const FavoritesList = () => {
   useEffect(() => {
     refreshFavorites();
 
-    // Listen for favorites updates
     const handleFavoritesUpdate = () => {
       refreshFavorites();
     };
@@ -64,28 +62,28 @@ const FavoritesList = () => {
 
   if (favorites.length === 0) {
     return (
-      <div className="text-center p-8 text-gray-500">
+      <div className="text-center p-8 text-muted-foreground">
         No saved favorites yet. Save a conversion to see it here.
       </div>
     );
   }
 
   return (
-    <ScrollArea className="h-[400px] rounded-md border p-4">
+    <ScrollArea className="h-[400px] rounded-md border p-4 bg-background">
       <div className="space-y-4">
         {favorites.map((favorite) => (
-          <Card key={favorite.id}>
+          <Card key={favorite.id} className="bg-card">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-card-foreground">
                 {favorite.amount}g {yeastTypes[favorite.fromType]} to {yeastTypes[favorite.toType]}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-muted-foreground">
                 {new Date(favorite.timestamp).toLocaleDateString()}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex justify-between items-center">
-                <p className="text-2xl font-bold text-yeast-600">
+                <p className="text-2xl font-bold text-primary">
                   {favorite.result}g
                 </p>
                 <div className="space-x-2">
