@@ -1,13 +1,19 @@
 export { yeastTypes } from './yeastTypes';
 
-// Temperature adjustment calculation
-export const calculateWaterTemperature = (roomTemp: number): number => {
-  const desiredTemp = 75; // °F
+// Temperature adjustment calculation with type-specific desired temperatures
+export const calculateWaterTemperature = (roomTemp: number, yeastType: string = 'active-dry'): number => {
+  // Set desired temperature based on yeast type
+  const desiredTemp = yeastType === 'sourdough' ? 78 : 75;
   let waterTemp = (desiredTemp * 3) - roomTemp;
   
-  // Cap water temperature within practical range
-  if (waterTemp > 80) waterTemp = 80;
-  if (waterTemp < 75) waterTemp = 75;
+  // Cap water temperature within practical range based on yeast type
+  if (yeastType === 'sourdough') {
+    if (waterTemp > 82) waterTemp = 82;
+    if (waterTemp < 78) waterTemp = 78;
+  } else {
+    if (waterTemp > 80) waterTemp = 80;
+    if (waterTemp < 75) waterTemp = 75;
+  }
   
   return Math.round(waterTemp);
 };
@@ -17,9 +23,7 @@ export const calculateActiveProofingTime = (hydrationPercentage: number): {
   minHours: number;
   maxHours: number;
 } => {
-  // Base time is 2.5 hours
   const baseTime = 2.5;
-  // Calculate adjustment factor based on hydration
   const hydrationAdjustment = (100 - hydrationPercentage) / 50;
   
   return {
@@ -40,6 +44,30 @@ export const calculateInstantProofingTime = (hydrationPercentage: number): {
   };
 };
 
+// Proofing time calculation for fresh yeast
+export const calculateFreshProofingTime = (hydrationPercentage: number): {
+  minHours: number;
+  maxHours: number;
+} => {
+  const activeTime = calculateActiveProofingTime(hydrationPercentage);
+  return {
+    minHours: Math.round(activeTime.minHours * 1.1 * 10) / 10,
+    maxHours: Math.round(activeTime.maxHours * 1.1 * 10) / 10
+  };
+};
+
+// Proofing time calculation for sourdough starter
+export const calculateSourdoughProofingTime = (hydrationPercentage: number): {
+  minHours: number;
+  maxHours: number;
+} => {
+  const baseTime = 6 * (hydrationPercentage / 100);
+  return {
+    minHours: Math.max(4, Math.round(baseTime * 0.8 * 10) / 10),
+    maxHours: Math.max(6, Math.round(baseTime * 1.2 * 10) / 10)
+  };
+};
+
 // Main proofing time calculation function
 export const calculateProofingTime = (
   yeastType: string,
@@ -50,9 +78,20 @@ export const calculateProofingTime = (
   maxHours: number;
 } => {
   // Calculate base proofing time based on yeast type
-  const baseTime = yeastType === 'instant' 
-    ? calculateInstantProofingTime(hydrationPercentage)
-    : calculateActiveProofingTime(hydrationPercentage);
+  let baseTime;
+  switch (yeastType) {
+    case 'instant':
+      baseTime = calculateInstantProofingTime(hydrationPercentage);
+      break;
+    case 'fresh':
+      baseTime = calculateFreshProofingTime(hydrationPercentage);
+      break;
+    case 'sourdough':
+      baseTime = calculateSourdoughProofingTime(hydrationPercentage);
+      break;
+    default: // active-dry
+      baseTime = calculateActiveProofingTime(hydrationPercentage);
+  }
     
   // Temperature adjustment factor
   // For every 17°F increase in temperature, fermentation time approximately halves
