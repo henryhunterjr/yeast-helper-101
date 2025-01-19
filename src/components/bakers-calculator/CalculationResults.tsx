@@ -26,6 +26,9 @@ const CalculationResults = ({ recipe }: CalculationResultsProps) => {
     recipe.ingredients.forEach((ing) => {
       percentages[ing.name] = ing.percentage || 0;
     });
+    if (recipe.starter) {
+      percentages['Sourdough Starter'] = recipe.starter.percentage || 0;
+    }
     return percentages;
   };
 
@@ -55,22 +58,6 @@ const CalculationResults = ({ recipe }: CalculationResultsProps) => {
           </div>
         ))}
       </div>
-
-      {recipe.starter && (
-        <div className="space-y-2 pt-2 border-t">
-          <Label>Starter Breakdown</Label>
-          <div className="text-sm space-y-1">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Flour from starter</span>
-              <span className="font-mono">{(recipe.starter.weight / 2).toFixed(1)} {recipe.unit}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Water from starter</span>
-              <span className="font-mono">{starterWaterContribution.toFixed(1)} {recipe.unit}</span>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="flex items-center justify-between pt-2 border-t">
         <Label>Total Weight</Label>

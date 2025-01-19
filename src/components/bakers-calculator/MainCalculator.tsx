@@ -41,7 +41,9 @@ const MainCalculator = () => {
             onReset={handleReset}
           />
 
-          <StarterCalculations recipe={recipe} />
+          {recipe.starter && recipe.starter.weight > 0 && (
+            <StarterCalculations recipe={recipe} />
+          )}
           
           <CalculationResults recipe={recipe} />
         </div>

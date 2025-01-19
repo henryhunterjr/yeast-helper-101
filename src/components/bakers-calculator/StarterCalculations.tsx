@@ -17,17 +17,17 @@ const StarterCalculations = ({ recipe }: StarterCalculationsProps) => {
   );
 
   return (
-    <Card className="p-4 space-y-4">
+    <Card className="p-4 space-y-4 bg-muted/50">
       <div className="space-y-2">
-        <Label className="text-lg font-semibold">Starter Breakdown</Label>
+        <Label className="text-lg font-semibold">Sourdough Starter</Label>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <Label>Total Starter Weight</Label>
-            <p className="font-mono">{recipe.starter.weight.toFixed(1)} {recipe.unit}</p>
+            <Label>Required Starter Amount</Label>
+            <p className="font-mono text-lg">{recipe.starter.weight.toFixed(1)} {recipe.unit}</p>
           </div>
           <div>
             <Label>Starter Hydration</Label>
-            <p className="font-mono">{recipe.starter.hydration}%</p>
+            <p className="font-mono text-lg">{recipe.starter.hydration}%</p>
           </div>
           <div>
             <Label>Flour from Starter</Label>
