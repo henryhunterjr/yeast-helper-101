@@ -4,7 +4,6 @@ import { conversionFactors } from './yeastTypes';
 export type { YeastType };
 
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  // Target dough temperature is typically 75-78°F for most yeast types
   const targetTemp = {
     'active-dry': 75,
     'instant': 80,
@@ -13,15 +12,10 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
     'bread-machine': 80
   }[yeastType];
 
-  // Formula: Water Temp = (Target Temp × 3) - Room Temp - Flour Temp - Friction Factor
-  // Assuming flour temperature is roughly equal to room temperature
-  // Friction factor is typically 20-25°F for hand kneading, using 22°F as average
   const frictionFactor = 22;
-  const flourTemp = roomTemp; // Flour is usually at room temperature
+  const flourTemp = roomTemp;
 
   let waterTemp = (targetTemp * 3) - roomTemp - flourTemp - frictionFactor;
-
-  // Cap water temperature within safe ranges
   waterTemp = Math.min(Math.max(waterTemp, 60), 90);
   
   return Math.round(waterTemp);
@@ -32,7 +26,6 @@ export const calculateProofingTime = (
   hydration: number,
   temperature: number
 ): { minHours: number; maxHours: number } => {
-  // Base proofing times at 72°F (room temperature)
   const baseTimes = {
     'active-dry': { minHours: 2, maxHours: 3 },
     'instant': { minHours: 1.5, maxHours: 2.3 },
@@ -43,13 +36,9 @@ export const calculateProofingTime = (
 
   const baseTime = baseTimes[yeastType];
   
-  // Temperature adjustment factor
-  // For every 17°F increase in temperature, fermentation time approximately halves
   const tempDiff = temperature - 72;
   const tempFactor = Math.pow(0.5, tempDiff / 17);
   
-  // Hydration adjustment factor
-  // Higher hydration speeds up fermentation slightly
   const hydrationDiff = hydration - 100;
   const hydrationFactor = Math.pow(0.95, hydrationDiff / 10);
 
@@ -106,3 +95,6 @@ export const calculateHydrationAdjustment = (
     showAdjustments: true
   };
 };
+
+// Export calculateProofingTime as calculateFermentationTime for backward compatibility
+export const calculateFermentationTime = calculateProofingTime;
