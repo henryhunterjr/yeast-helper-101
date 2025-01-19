@@ -3,6 +3,8 @@ import { conversionFactors } from './yeastTypes';
 
 export type { YeastType };
 
+const SIMPLIFIED_THRESHOLD = 14; // grams
+
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
   console.group('Water Temperature Calculation');
   console.log('Function called with:', { roomTemp, yeastType });
@@ -20,7 +22,6 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
   let waterTemp = (desiredTemp * 3) - roomTemp;
   console.log('Initial Water Temperature Calculation:', waterTemp);
 
-  // Capping logic
   if (yeastType === 'sourdough') {
     waterTemp = Math.min(Math.max(waterTemp, 78), 82);
     console.log('Applied sourdough capping (78-82°F)');
@@ -41,14 +42,11 @@ export const calculateProofingTime = (
   hydration: number,
   temperature: number
 ): { minHours: number; maxHours: number } => {
-  // Calculate base proofing time for active dry yeast
   const baseTime = 2.5;
   const hydrationAdjustment = (100 - hydration) / 50;
   
-  // Calculate active dry yeast proofing time
   const activeProofTime = baseTime + hydrationAdjustment;
   
-  // Calculate proofing times based on yeast type
   const getProofingTime = () => {
     switch (yeastType) {
       case 'active-dry':
@@ -65,15 +63,10 @@ export const calculateProofingTime = (
   };
 
   const baseProofTime = getProofingTime();
-  
-  // Temperature adjustment factor (every 6°F difference changes time by ~20%)
   const tempDiff = temperature - 72;
   const tempFactor = Math.pow(0.8, tempDiff / 6);
-  
-  // Calculate min and max times with temperature adjustment
   const adjustedTime = baseProofTime * tempFactor;
   
-  // Round to 1 decimal place
   const roundToDecimal = (num: number) => Math.round(num * 10) / 10;
   
   return {
@@ -87,14 +80,30 @@ export const calculateConversion = (
   fromType: YeastType,
   toType: YeastType,
   useTsp: boolean
-): string => {
+): { result: string; isSimplified: boolean } => {
   const numericAmount = parseFloat(amount);
-  if (isNaN(numericAmount) || numericAmount <= 0) return '';
+  if (isNaN(numericAmount) || numericAmount <= 0) return { result: '', isSimplified: false };
+  
+  // For small amounts between active dry and instant yeast
+  const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
+  const isActiveInstantConversion = 
+    (fromType === 'active-dry' && toType === 'instant') ||
+    (fromType === 'instant' && toType === 'active-dry');
+
+  if (isSmallAmount && isActiveInstantConversion) {
+    return { 
+      result: numericAmount.toFixed(2),
+      isSimplified: true
+    };
+  }
   
   const conversionRate = conversionFactors[fromType][toType];
   const result = numericAmount * conversionRate;
   
-  return result.toFixed(2);
+  return {
+    result: result.toFixed(2),
+    isSimplified: false
+  };
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
@@ -130,6 +139,4 @@ export const calculateHydrationAdjustment = (
   };
 };
 
-// Export calculateProofingTime as calculateFermentationTime for backward compatibility
 export const calculateFermentationTime = calculateProofingTime;
-
