@@ -1,5 +1,12 @@
 export type YeastType = 'active-dry' | 'instant' | 'fresh' | 'sourdough';
 
+export const yeastTypes = {
+  'active-dry': 'Active Dry Yeast',
+  'instant': 'Instant Yeast',
+  'fresh': 'Fresh Yeast',
+  'sourdough': 'Sourdough Starter'
+} as const;
+
 interface ProofingTime {
   minHours: number;
   maxHours: number;
