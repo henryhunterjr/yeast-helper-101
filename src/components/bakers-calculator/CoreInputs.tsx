@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { useToast } from "@/hooks/use-toast";
 
 interface CoreInputsProps {
   flour: number | null;
@@ -12,6 +13,7 @@ interface CoreInputsProps {
   setStarterPercentage: (value: number) => void;
   saltPercentage: number;
   setSaltPercentage: (value: number) => void;
+  unit: 'g' | 'oz';
 }
 
 const CoreInputs = ({
@@ -23,19 +25,35 @@ const CoreInputs = ({
   setStarterPercentage,
   saltPercentage,
   setSaltPercentage,
+  unit,
 }: CoreInputsProps) => {
+  const { toast } = useToast();
+
+  const handleFlourChange = (value: string) => {
+    const numValue = value === '' ? null : Number(value);
+    if (numValue !== null && numValue < 0) {
+      toast({
+        title: "Invalid Input",
+        description: "Flour weight cannot be negative",
+        variant: "destructive",
+      });
+      return;
+    }
+    setFlour(numValue);
+  };
+
   return (
     <section className="space-y-4">
       <h3 className="text-lg font-semibold">Core Inputs</h3>
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="flour">Flour Weight (g)</Label>
+          <Label htmlFor="flour">Flour Weight ({unit})</Label>
           <Input
             id="flour"
             type="number"
             value={flour || ''}
-            onChange={(e) => setFlour(e.target.value === '' ? null : Number(e.target.value))}
+            onChange={(e) => handleFlourChange(e.target.value)}
             min="0"
             step="1"
             className="w-full"
@@ -48,7 +66,7 @@ const CoreInputs = ({
             id="hydration"
             value={[hydration]}
             onValueChange={(value) => setHydration(value[0])}
-            min={0}
+            min={50}
             max={100}
             step={1}
             className="w-full"
@@ -62,7 +80,7 @@ const CoreInputs = ({
             value={[starterPercentage]}
             onValueChange={(value) => setStarterPercentage(value[0])}
             min={0}
-            max={100}
+            max={50}
             step={1}
             className="w-full"
           />
@@ -75,7 +93,7 @@ const CoreInputs = ({
             value={[saltPercentage]}
             onValueChange={(value) => setSaltPercentage(value[0])}
             min={0}
-            max={100}
+            max={5}
             step={0.1}
             className="w-full"
           />
