@@ -1,12 +1,10 @@
 import type { YeastType } from './yeastTypes';
-import { conversionFactors, tspSourdoughConversion } from './yeastTypes';
+import { conversionFactors } from './yeastTypes';
 
-export type { YeastType };
-
-const SIMPLIFIED_THRESHOLD = 14; // grams
+export const SIMPLIFIED_THRESHOLD = 14; // grams
 
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  console.group('Water Temperature Calculation');
+  console.log('Water Temperature Calculation');
   console.log('Function called with:', { roomTemp, yeastType });
 
   const desiredTemp = {
@@ -32,7 +30,6 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
 
   const finalTemp = Math.round(waterTemp);
   console.log('Final Water Temperature (rounded):', finalTemp);
-  console.groupEnd();
 
   return finalTemp;
 };
@@ -79,45 +76,69 @@ export const calculateConversion = (
   amount: string,
   fromType: YeastType,
   toType: YeastType,
-  useTsp: boolean
-): { result: string; isSimplified: boolean } => {
-  console.group('Conversion Calculation');
-  console.log('Inputs:', { amount, fromType, toType, useTsp });
+  useTsp: boolean,
+  temperature: number = 72
+): { 
+  result: string; 
+  isSimplified: boolean;
+  flourAdjustment?: number;
+  waterAdjustment?: number;
+} => {
+  console.log('Conversion Calculation');
+  console.log('Inputs:', { amount, fromType, toType, useTsp, temperature });
 
   const numericAmount = parseFloat(amount);
   if (isNaN(numericAmount) || numericAmount <= 0) {
     console.log('Invalid amount, returning empty result');
-    console.groupEnd();
     return { result: '', isSimplified: false };
   }
-  
-  let result: number;
-  
-  if (useTsp) {
-    // Use special sourdough conversion for teaspoons
-    result = tspSourdoughConversion(fromType, toType, numericAmount);
-    console.log('Using teaspoon conversion:', result);
-  } else {
-    // For small amounts between active dry and instant yeast
-    const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
-    const isActiveInstantConversion = 
-      (fromType === 'active-dry' && toType === 'instant') ||
-      (fromType === 'instant' && toType === 'active-dry');
 
-    if (isSmallAmount && isActiveInstantConversion) {
-      console.log('Using simplified 1:1 conversion');
-      console.groupEnd();
-      return { 
-        result: numericAmount.toString(),
-        isSimplified: true
-      };
-    }
-    
-    result = numericAmount * conversionFactors[fromType][toType];
+  // Convert to grams if using teaspoons for active dry or instant yeast
+  let amountInGrams = numericAmount;
+  if (useTsp && (fromType === 'active-dry' || fromType === 'instant')) {
+    amountInGrams = numericAmount * 3; // 1 tsp = 3g for active dry/instant yeast
   }
+
+  // Special handling for sourdough conversion
+  if (toType === 'sourdough' && (fromType === 'active-dry' || fromType === 'instant')) {
+    // Base conversion: 1g yeast = 5g starter
+    let starterAmount = amountInGrams * 5;
+
+    // Temperature adjustment
+    if (temperature < 70) {
+      starterAmount *= 1.1; // Increase by 10% for lower temperatures
+    } else if (temperature > 80) {
+      starterAmount *= 0.9; // Decrease by 10% for higher temperatures
+    }
+
+    // Calculate flour and water adjustments (assuming 100% hydration)
+    const flourAdjustment = starterAmount / 2;
+    const waterAdjustment = starterAmount / 2;
+
+    // Convert back to teaspoons if needed
+    if (useTsp) {
+      starterAmount = starterAmount / 5; // Approximate conversion: 5g starter = 1 tsp
+    }
+
+    return {
+      result: starterAmount.toFixed(2),
+      isSimplified: false,
+      flourAdjustment,
+      waterAdjustment
+    };
+  }
+
+  // For other conversions, use standard conversion factors
+  let result = amountInGrams * conversionFactors[fromType][toType];
   
+  // Convert back to teaspoons if needed
+  if (useTsp) {
+    if (toType === 'active-dry' || toType === 'instant') {
+      result = result / 3; // Convert grams back to teaspoons
+    }
+  }
+
   console.log('Final conversion result:', result);
-  console.groupEnd();
   
   return {
     result: result.toFixed(2),
@@ -126,12 +147,12 @@ export const calculateConversion = (
 };
 
 export const getTemperatureAdjustment = (temperature: number): string => {
-  if (temperature < 65) {
-    return "Increase proofing time by 15-30%";
+  if (temperature < 70) {
+    return "Increase starter amount by 10% for slower fermentation";
   } else if (temperature > 80) {
-    return "Decrease proofing time by 15-30%";
+    return "Decrease starter amount by 10% for faster fermentation";
   }
-  return "Optimal proofing temperature";
+  return "Optimal temperature range for fermentation";
 };
 
 export const calculateHydrationAdjustment = (
@@ -148,8 +169,10 @@ export const calculateHydrationAdjustment = (
     };
   }
 
-  const flourAmount = amount / 2;
-  const waterAmount = (flourAmount * hydration) / 100;
+  // Calculate flour and water content in starter (assuming 100% hydration)
+  const starterAmount = amount * 5; // New conversion ratio
+  const flourAmount = starterAmount / 2;
+  const waterAmount = flourAmount;
 
   return {
     flourAdjustment: flourAmount,

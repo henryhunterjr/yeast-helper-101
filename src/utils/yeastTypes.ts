@@ -7,83 +7,64 @@ export const yeastTypes = {
 } as const;
 
 export type YeastType = keyof typeof yeastTypes;
-
 export type UnitType = 'g' | 'tsp' | 'oz';
 
-// Direct conversion factors between yeast types (for grams)
+// Updated conversion factors based on weight (grams)
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
     'instant': 0.75,
     'fresh': 2.5,
     'bread-machine': 0.75,
-    'sourdough': 20,
+    'sourdough': 5, // New ratio: 1g yeast = 5g starter
     'active-dry': 1
   },
   'instant': {
     'active-dry': 1.33,
     'fresh': 3.33,
     'bread-machine': 1,
-    'sourdough': 26.67,
+    'sourdough': 5, // Same ratio for instant yeast
     'instant': 1
   },
   'fresh': {
     'active-dry': 0.4,
     'instant': 0.3,
     'bread-machine': 0.3,
-    'sourdough': 8,
+    'sourdough': 2,
     'fresh': 1
   },
   'bread-machine': {
     'active-dry': 1.33,
     'instant': 1,
     'fresh': 3.33,
-    'sourdough': 16,
+    'sourdough': 5,
     'bread-machine': 1
   },
   'sourdough': {
-    'active-dry': 0.05,
-    'instant': 0.0375,
-    'fresh': 0.125,
-    'bread-machine': 0.0625,
+    'active-dry': 0.2,
+    'instant': 0.2,
+    'fresh': 0.5,
+    'bread-machine': 0.2,
     'sourdough': 1
   }
 };
 
-// Teaspoon conversion factors specifically for sourdough
-export const tspSourdoughConversion = (fromType: YeastType, toType: YeastType, amount: number): number => {
-  // Converting from active dry or instant yeast TO sourdough (multiply by 3)
-  if (toType === 'sourdough' && (fromType === 'active-dry' || fromType === 'instant')) {
-    console.log('Converting to sourdough in tsp:', amount, '×', 3, '=', amount * 3);
-    return amount * 3;
-  }
-  
-  // Converting FROM sourdough TO active dry or instant yeast (divide by 3)
-  if (fromType === 'sourdough' && (toType === 'active-dry' || toType === 'instant')) {
-    console.log('Converting from sourdough in tsp:', amount, '÷', 3, '=', amount / 3);
-    return amount / 3;
-  }
-  
-  // For other conversions, use the standard conversion factors
-  return amount * conversionFactors[fromType][toType];
-};
-
 export const gramToTspConversion: Record<YeastType, number | null> = {
-  'active-dry': 3.1,
-  'instant': 3.3,
+  'active-dry': 3,
+  'instant': 3,
   'fresh': 10,
-  'bread-machine': 3.3,
-  'sourdough': null
+  'bread-machine': 3,
+  'sourdough': 5 // 5g starter ≈ 1 tsp
 };
 
-// Add the missing tspToGramConversion export
 export const tspToGramConversion: Record<YeastType, number | null> = {
-  'active-dry': 3.1,
-  'instant': 3.3,
+  'active-dry': 3,
+  'instant': 3,
   'fresh': 10,
-  'bread-machine': 3.3,
-  'sourdough': null
+  'bread-machine': 3,
+  'sourdough': 5
 };
 
+// Helper functions remain unchanged
 export const getWaterTemperature = (roomTemp: number): number => {
   const targetTemp = 76;
   return Math.round(2 * targetTemp - roomTemp);
@@ -161,3 +142,4 @@ export const parseInputValue = (value: string, unit: UnitType, yeastType: YeastT
       return numValue;
   }
 };
+
