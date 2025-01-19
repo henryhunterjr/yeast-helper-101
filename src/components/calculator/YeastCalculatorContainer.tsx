@@ -6,7 +6,14 @@ import CalculatorForm from './form/CalculatorForm';
 import CalculationResults from './results/CalculationResults';
 import CalculatorLayout from './layout/CalculatorLayout';
 
-const YeastCalculatorContainer = () => {
+interface YeastCalculatorContainerProps {
+  onConvert: (amount: string, fromType: YeastType, toType: YeastType) => {
+    result: string;
+    isSimplified: boolean;
+  };
+}
+
+const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) => {
   const location = useLocation();
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
@@ -17,15 +24,16 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
+  const [conversionResult, setConversionResult] = useState<string>('');
+  const [isSimplified, setIsSimplified] = useState(false);
 
   useEffect(() => {
-    const savedSettings = localStorage.getItem('yeastwise-settings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      setUnit(settings.units === 'teaspoons' ? 'tsp' : settings.units === 'imperial' ? 'oz' : 'g');
-      setUseTsp(settings.units === 'teaspoons');
+    if (amount && fromType && toType) {
+      const { result, isSimplified } = onConvert(amount, fromType, toType);
+      setConversionResult(result);
+      setIsSimplified(isSimplified);
     }
-  }, []);
+  }, [amount, fromType, toType, onConvert]);
 
   const handleFromTypeChange = (value: YeastType) => {
     if (value === toType) {
@@ -57,6 +65,7 @@ const YeastCalculatorContainer = () => {
     setToType('instant');
     setTemperature('72');
     setHydration('100');
+    setConversionResult('');
   };
 
   const showResults = Boolean(amount && parseFloat(amount) > 0);
@@ -88,7 +97,7 @@ const YeastCalculatorContainer = () => {
           toType={toType}
           temperature={temperature}
           hydration={hydration}
-          result={amount}
+          result={conversionResult}
           temperatureAdjustment=""
           hydrationAdjustment={null}
           fermentationTime={{ minHours: 2, maxHours: 4 }}
