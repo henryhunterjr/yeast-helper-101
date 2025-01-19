@@ -11,7 +11,7 @@ import {
 import { Pencil, Trash2, ArrowRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getFavorites, deleteFavorite, updateFavoriteNotes, StoredFavorite } from '@/utils/favoritesStorage';
-import { yeastTypes } from '@/utils/yeastCalculations';
+import { yeastTypes } from '@/utils/yeastTypes';
 import { useNavigate } from 'react-router-dom';
 
 // Create a custom event for favorite updates
