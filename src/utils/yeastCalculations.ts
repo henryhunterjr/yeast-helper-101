@@ -1,16 +1,19 @@
 export type YeastType = 'active-dry' | 'instant' | 'fresh' | 'sourdough';
 
-export const yeastTypes = {
-  'active-dry': 'Active Dry Yeast',
-  'instant': 'Instant Yeast',
-  'fresh': 'Fresh Yeast',
-  'sourdough': 'Sourdough Starter'
-} as const;
-
 interface ProofingTime {
   minHours: number;
   maxHours: number;
 }
+
+const calculateActiveProofingTime = (hydrationPercentage: number): ProofingTime => {
+  const baseTime = 2.5;
+  const variation = (100 - hydrationPercentage) / 50;
+  
+  return {
+    minHours: Math.round((baseTime - variation) * 10) / 10,
+    maxHours: Math.round((baseTime + variation) * 10) / 10
+  };
+};
 
 export const calculateWaterTemperature = (
   roomTemp: number,
@@ -24,16 +27,6 @@ export const calculateWaterTemperature = (
     return Math.min(Math.max(waterTemp, 78), 82);
   }
   return Math.min(Math.max(waterTemp, 75), 80);
-};
-
-const calculateActiveProofingTime = (hydrationPercentage: number): ProofingTime => {
-  const baseTime = 2.5;
-  const variation = (100 - hydrationPercentage) / 50;
-  
-  return {
-    minHours: Math.round((baseTime - variation) * 10) / 10,
-    maxHours: Math.round((baseTime + variation) * 10) / 10
-  };
 };
 
 export const calculateProofingTime = (
@@ -91,15 +84,20 @@ export const calculateHydrationAdjustment = (
   amount: number,
   fromType: YeastType,
   toType: YeastType
-): { flour: number; water: number } | null => {
-  if (toType !== 'sourdough') return null;
+): { flourAdjustment: number; waterAdjustment: number; showAdjustments: boolean; } => {
+  if (toType !== 'sourdough') return {
+    flourAdjustment: 0,
+    waterAdjustment: 0,
+    showAdjustments: false
+  };
   
   const flourNeeded = amount * (100 / hydrationPercentage);
   const waterNeeded = amount - flourNeeded;
   
   return {
-    flour: Math.round(flourNeeded * 10) / 10,
-    water: Math.round(waterNeeded * 10) / 10
+    flourAdjustment: Math.round(flourNeeded * 10) / 10,
+    waterAdjustment: Math.round(waterNeeded * 10) / 10,
+    showAdjustments: true
   };
 };
 
@@ -117,24 +115,28 @@ export const calculateConversion = (
 
   const conversionRates: Record<YeastType, Record<YeastType, number>> = {
     'active-dry': {
+      'active-dry': 1,
       'instant': 0.75,
       'fresh': 3,
       'sourdough': 20
     },
     'instant': {
       'active-dry': 1.33,
+      'instant': 1,
       'fresh': 4,
       'sourdough': 26.67
     },
     'fresh': {
       'active-dry': 0.33,
       'instant': 0.25,
+      'fresh': 1,
       'sourdough': 6.67
     },
     'sourdough': {
       'active-dry': 0.05,
       'instant': 0.0375,
-      'fresh': 0.15
+      'fresh': 0.15,
+      'sourdough': 1
     }
   };
 
