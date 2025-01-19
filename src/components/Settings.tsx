@@ -13,6 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UnitType } from '@/utils/yeastTypes';
+
+// Create a custom event for unit changes
+const unitChangeEvent = new Event('unitChange');
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -23,12 +27,26 @@ const Settings = () => {
   const [defaultYeast, setDefaultYeast] = React.useState('active-dry');
 
   const handleSave = () => {
-    localStorage.setItem('yeastwise-settings', JSON.stringify({
+    // Convert units selection to UnitType
+    let unitType: UnitType = 'g';
+    if (units === 'imperial') {
+      unitType = 'oz';
+    } else if (units === 'teaspoons') {
+      unitType = 'tsp';
+    }
+
+    const settings = {
       darkMode: isDarkMode,
-      units,
+      units: unitType,
       tempScale,
       defaultYeast
-    }));
+    };
+
+    localStorage.setItem('yeastwise-settings', JSON.stringify(settings));
+    
+    // Dispatch the unit change event
+    window.dispatchEvent(unitChangeEvent);
+    
     toast({
       title: "Settings saved",
       description: "Your preferences have been updated",
@@ -45,7 +63,16 @@ const Settings = () => {
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       setIsDarkMode(settings.darkMode);
-      setUnits(settings.units);
+      
+      // Convert UnitType back to radio selection
+      if (settings.units === 'oz') {
+        setUnits('imperial');
+      } else if (settings.units === 'tsp') {
+        setUnits('teaspoons');
+      } else {
+        setUnits('metric');
+      }
+      
       setTempScale(settings.tempScale);
       setDefaultYeast(settings.defaultYeast);
     }
