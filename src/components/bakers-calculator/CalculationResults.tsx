@@ -1,67 +1,43 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from 'lucide-react';
 import { Recipe } from '@/types/recipe';
-import { calculateHydration, getTotalWeight } from '@/utils/bakersCalculatorHelpers';
+import { getTotalWeight } from '@/utils/recipeCalculations';
 
 interface CalculationResultsProps {
   recipe: Recipe;
 }
 
 const CalculationResults = ({ recipe }: CalculationResultsProps) => {
-  const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
-  const starterWaterContribution = recipe.starter ? 
-    (recipe.starter.weight * (recipe.starter.hydration / 100)) / 2 : 0;
-  
-  const totalWater = (waterIngredient?.weight || 0) + starterWaterContribution;
-  const totalFlour = recipe.flour + (recipe.starter ? recipe.starter.weight / 2 : 0);
-  
-  const hydration = calculateHydration(totalWater, totalFlour);
   const totalWeight = getTotalWeight(recipe);
-
-  const getIngredientPercentages = () => {
-    const percentages: { [key: string]: number } = {};
-    recipe.ingredients.forEach((ing) => {
-      percentages[ing.name] = ing.percentage || 0;
-    });
-    if (recipe.starter) {
-      percentages['Sourdough Starter'] = recipe.starter.percentage || 0;
-    }
-    return percentages;
-  };
+  const totalHydration = recipe.hydrationTarget || 0;
 
   return (
     <Card className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Label>Total Hydration</Label>
-          <Tooltip>
-            <TooltipTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Includes water from starter and main dough</p>
-            </TooltipContent>
-          </Tooltip>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Total Recipe Weight</Label>
+          <p className="font-mono text-lg">{totalWeight.toFixed(1)} {recipe.unit}</p>
         </div>
-        <span className="font-mono">{hydration.toFixed(1)}%</span>
+        <div>
+          <Label>Total Hydration</Label>
+          <p className="font-mono text-lg">{totalHydration.toFixed(1)}%</p>
+        </div>
       </div>
-
+      
       <div className="space-y-2">
-        <Label>Ingredient Percentages</Label>
-        {Object.entries(getIngredientPercentages()).map(([ingredient, percentage]) => (
-          <div key={ingredient} className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">{ingredient}</span>
-            <span className="font-mono">{percentage.toFixed(1)}%</span>
+        <Label>Ingredient Breakdown</Label>
+        {recipe.ingredients.map((ingredient) => (
+          <div key={ingredient.id} className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">{ingredient.name}</span>
+            <div className="flex items-center gap-4">
+              <span className="font-mono">{ingredient.weight.toFixed(1)} {recipe.unit}</span>
+              <span className="font-mono text-muted-foreground w-16 text-right">
+                {ingredient.percentage?.toFixed(1)}%
+              </span>
+            </div>
           </div>
         ))}
-      </div>
-
-      <div className="flex items-center justify-between pt-2 border-t">
-        <Label>Total Weight</Label>
-        <span className="font-mono">{totalWeight.toFixed(1)} {recipe.unit}</span>
       </div>
     </Card>
   );

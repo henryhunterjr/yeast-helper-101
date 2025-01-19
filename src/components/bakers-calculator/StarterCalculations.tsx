@@ -18,25 +18,22 @@ const StarterCalculations = ({ recipe }: StarterCalculationsProps) => {
 
   return (
     <Card className="p-4 space-y-4 bg-muted/50">
-      <div className="space-y-2">
-        <Label className="text-lg font-semibold">Sourdough Starter</Label>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <Label>Required Starter Amount</Label>
-            <p className="font-mono text-lg">{recipe.starter.weight.toFixed(1)} {recipe.unit}</p>
-          </div>
-          <div>
-            <Label>Starter Hydration</Label>
-            <p className="font-mono text-lg">{recipe.starter.hydration}%</p>
-          </div>
-          <div>
-            <Label>Flour from Starter</Label>
-            <p className="font-mono">{flourFromStarter.toFixed(1)} {recipe.unit}</p>
-          </div>
-          <div>
-            <Label>Water from Starter</Label>
-            <p className="font-mono">{waterFromStarter.toFixed(1)} {recipe.unit}</p>
-          </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Flour from Starter</Label>
+          <p className="font-mono text-lg">{flourFromStarter.toFixed(1)} {recipe.unit}</p>
+        </div>
+        <div>
+          <Label>Water from Starter</Label>
+          <p className="font-mono text-lg">{waterFromStarter.toFixed(1)} {recipe.unit}</p>
+        </div>
+        <div>
+          <Label>Starter Weight</Label>
+          <p className="font-mono text-lg">{recipe.starter.weight.toFixed(1)} {recipe.unit}</p>
+        </div>
+        <div>
+          <Label>Starter Hydration</Label>
+          <p className="font-mono text-lg">{recipe.starter.hydration}%</p>
         </div>
       </div>
     </Card>

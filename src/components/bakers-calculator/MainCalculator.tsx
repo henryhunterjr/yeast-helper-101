@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import UnitToggle from './UnitToggle';
 import IngredientInputs from './IngredientInputs';
 import CalculationResults from './CalculationResults';
@@ -18,6 +20,8 @@ const MainCalculator = () => {
     handleReset
   } = useRecipeCalculator();
 
+  const hasValidationErrors = recipe.hydrationTarget && recipe.hydrationTarget > 120;
+
   return (
     <TooltipProvider>
       <Card className="p-6 max-w-2xl mx-auto">
@@ -30,22 +34,54 @@ const MainCalculator = () => {
             />
           </div>
 
+          {hasValidationErrors && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Warning: Hydration level is very high (>120%). This may result in an extremely wet dough.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <ValidationSystem warnings={[]} />
 
-          <IngredientInputs
-            recipe={recipe}
-            onFlourChange={updateRecipeBasedOnFlour}
-            onIngredientChange={updateRecipeBasedOnIngredient}
-            onStarterChange={updateRecipeBasedOnStarter}
-            onHydrationTargetChange={updateRecipeBasedOnHydration}
-            onReset={handleReset}
-          />
+          <div className="grid gap-8">
+            {/* Core Inputs Section */}
+            <section className="space-y-4">
+              <h3 className="text-lg font-semibold">Core Inputs</h3>
+              <IngredientInputs
+                recipe={recipe}
+                onFlourChange={updateRecipeBasedOnFlour}
+                onIngredientChange={updateRecipeBasedOnIngredient}
+                onStarterChange={updateRecipeBasedOnStarter}
+                onHydrationTargetChange={updateRecipeBasedOnHydration}
+                onReset={handleReset}
+              />
+            </section>
 
-          {recipe.starter && recipe.starter.weight > 0 && (
-            <StarterCalculations recipe={recipe} />
-          )}
-          
-          <CalculationResults recipe={recipe} />
+            {/* Starter Calculations Section */}
+            {recipe.starter && recipe.starter.weight > 0 && (
+              <section className="space-y-4">
+                <h3 className="text-lg font-semibold">Starter Contribution</h3>
+                <StarterCalculations recipe={recipe} />
+              </section>
+            )}
+            
+            {/* Results Section */}
+            <section className="space-y-4">
+              <h3 className="text-lg font-semibold">Recipe Results</h3>
+              <CalculationResults recipe={recipe} />
+            </section>
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+            >
+              Reset Calculator
+            </button>
+          </div>
         </div>
       </Card>
     </TooltipProvider>
