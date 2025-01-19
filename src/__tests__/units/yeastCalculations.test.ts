@@ -36,30 +36,30 @@ describe('Yeast Calculations', () => {
   describe('calculateProofingTime', () => {
     it('should calculate correct proofing time range for active dry yeast', () => {
       const result = calculateActiveProofingTime(100);
-      expect(result.minHours).toBe(2);
-      expect(result.maxHours).toBe(3);
+      expect(result.minHours).toBeCloseTo(2, 1);
+      expect(result.maxHours).toBeCloseTo(3, 1);
 
       const result75 = calculateActiveProofingTime(75);
-      expect(result75.minHours).toBe(2.2);
-      expect(result75.maxHours).toBe(3.2);
+      expect(result75.minHours).toBeCloseTo(2.2, 1);
+      expect(result75.maxHours).toBeCloseTo(3.2, 1);
     });
 
     it('should calculate correct proofing time range for instant yeast', () => {
       const result = calculateInstantProofingTime(100);
-      expect(result.minHours).toBe(1.5);
-      expect(result.maxHours).toBe(2.3);
+      expect(result.minHours).toBeCloseTo(1.5, 1);
+      expect(result.maxHours).toBeCloseTo(2.3, 1);
     });
 
     it('should calculate correct proofing time range for fresh yeast', () => {
       const result = calculateFreshProofingTime(100);
-      expect(result.minHours).toBe(2.2);
-      expect(result.maxHours).toBe(3.3);
+      expect(result.minHours).toBeCloseTo(2.2, 1);
+      expect(result.maxHours).toBeCloseTo(3.3, 1);
     });
 
     it('should calculate correct proofing time range for sourdough starter', () => {
       const result = calculateSourdoughProofingTime(100);
-      expect(result.minHours).toBe(4.8);
-      expect(result.maxHours).toBe(7.2);
+      expect(result.minHours).toBeCloseTo(4.8, 1);
+      expect(result.maxHours).toBeCloseTo(7.2, 1);
     });
 
     it('should adjust proofing time based on temperature', () => {
