@@ -49,13 +49,13 @@ const YeastCalculatorContainer = () => {
     setHydration('100');
   };
 
-  const result = useMemo(() => {
-    if (!amount || isNaN(parseFloat(amount))) return '';
+  const conversionResult = useMemo(() => {
+    if (!amount || isNaN(parseFloat(amount))) return { result: '', isSimplified: false };
     try {
       return calculateConversion(amount, fromType, toType, useTsp);
     } catch (error) {
       console.error('Calculation error:', error);
-      return '';
+      return { result: '', isSimplified: false };
     }
   }, [amount, fromType, toType, useTsp]);
 
@@ -70,11 +70,11 @@ const YeastCalculatorContainer = () => {
   }, [temperature]);
 
   const hydrationAdjustment = useMemo(() => {
-    if (!result || isNaN(parseFloat(hydration))) return null;
+    if (!conversionResult.result || isNaN(parseFloat(hydration))) return null;
     try {
       return calculateHydrationAdjustment(
         parseFloat(hydration),
-        parseFloat(result),
+        parseFloat(conversionResult.result),
         fromType,
         toType
       );
@@ -82,7 +82,7 @@ const YeastCalculatorContainer = () => {
       console.error('Hydration calculation error:', error);
       return null;
     }
-  }, [result, hydration, fromType, toType]);
+  }, [conversionResult.result, hydration, fromType, toType]);
 
   const fermentationTime = useMemo(() => {
     if (!temperature || isNaN(parseFloat(temperature))) return null;
@@ -107,7 +107,7 @@ const YeastCalculatorContainer = () => {
     }
   }, [location.state]);
 
-  const showResults = Boolean(amount && parseFloat(amount) > 0 && result);
+  const showResults = Boolean(amount && parseFloat(amount) > 0 && conversionResult.result);
 
   const handleFromTypeChange = (value: string) => {
     setFromType(value as YeastType);
@@ -150,13 +150,14 @@ const YeastCalculatorContainer = () => {
                 toType={toType}
                 temperature={temperature}
                 hydration={hydration}
-                result={result}
+                result={conversionResult.result}
                 temperatureAdjustment={temperatureAdjustment}
                 hydrationAdjustment={hydrationAdjustment}
                 fermentationTime={fermentationTime}
                 isLoading={isLoading}
                 unit={unit}
                 onReset={handleReset}
+                isSimplified={conversionResult.isSimplified}
               />
             )}
 

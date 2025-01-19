@@ -21,6 +21,7 @@ interface ConversionResultProps {
   isLoading: boolean;
   unit: UnitType;
   onReset: () => void;
+  isSimplified?: boolean;
 }
 
 const ConversionResult = ({
@@ -36,6 +37,7 @@ const ConversionResult = ({
   isLoading,
   unit,
   onReset,
+  isSimplified = false,
 }: ConversionResultProps) => {
   console.group('ConversionResult Render');
   console.log('Props:', {
@@ -44,7 +46,8 @@ const ConversionResult = ({
     toType,
     temperature,
     hydration,
-    result
+    result,
+    isSimplified
   });
 
   const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
@@ -59,6 +62,7 @@ const ConversionResult = ({
         toType={toType}
         result={result}
         unit={unit}
+        isSimplified={isSimplified}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
