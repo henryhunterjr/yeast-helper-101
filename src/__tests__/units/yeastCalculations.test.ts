@@ -1,103 +1,75 @@
 import { describe, it, expect } from 'vitest';
 import { 
-  calculateConversion, 
-  getTemperatureAdjustment, 
-  calculateHydrationAdjustment,
-  calculateFermentationTime
+  calculateWaterTemperature,
+  calculateProofingTime,
+  calculateActiveProofingTime,
+  calculateInstantProofingTime
 } from '../../utils/yeastCalculations';
 
 describe('Yeast Calculations', () => {
-  describe('calculateConversion', () => {
-    it('should correctly convert active dry to instant yeast', () => {
-      const result = calculateConversion('10', 'active-dry', 'instant');
-      expect(result).toBe('7.50');
+  describe('calculateWaterTemperature', () => {
+    it('should calculate correct water temperature', () => {
+      expect(calculateWaterTemperature(72)).toBe(75);
+      expect(calculateWaterTemperature(65)).toBe(80);
+      expect(calculateWaterTemperature(85)).toBe(75);
     });
 
-    it('should correctly convert instant to fresh yeast', () => {
-      const result = calculateConversion('10', 'instant', 'fresh');
-      expect(result).toBe('40.00');
-    });
-
-    it('should correctly convert fresh to sourdough starter', () => {
-      const result = calculateConversion('10', 'fresh', 'sourdough');
-      expect(result).toBe('46.70');
-    });
-
-    it('should throw error for invalid amounts', () => {
-      expect(() => calculateConversion('-1', 'active-dry', 'instant')).toThrow();
-      expect(() => calculateConversion('1001', 'active-dry', 'instant')).toThrow();
-      expect(() => calculateConversion('abc', 'active-dry', 'instant')).toThrow();
-    });
-
-    it('should handle same type conversion', () => {
-      const result = calculateConversion('10', 'instant', 'instant');
-      expect(result).toBe('10');
+    it('should cap water temperature within practical range', () => {
+      expect(calculateWaterTemperature(60)).toBe(80); // Would be too hot, capped at 80
+      expect(calculateWaterTemperature(90)).toBe(75); // Would be too cold, capped at 75
     });
   });
 
-  describe('getTemperatureAdjustment', () => {
-    it('should return standard proofing time for optimal temperature', () => {
-      expect(getTemperatureAdjustment(72)).toBe('Standard proofing time');
-    });
+  describe('calculateActiveProofingTime', () => {
+    it('should calculate correct proofing time range for active dry yeast', () => {
+      const result100 = calculateActiveProofingTime(100);
+      expect(result100.minHours).toBe(2);
+      expect(result100.maxHours).toBe(3);
 
-    it('should suggest increased proofing time for cold temperatures', () => {
-      const result = getTemperatureAdjustment(62);
-      expect(result).toContain('Increase proofing time');
-    });
+      const result75 = calculateActiveProofingTime(75);
+      expect(result75.minHours).toBe(2.2);
+      expect(result75.maxHours).toBe(3.2);
 
-    it('should suggest decreased proofing time for warm temperatures', () => {
-      const result = getTemperatureAdjustment(82);
-      expect(result).toContain('Decrease proofing time');
-    });
-
-    it('should throw error for invalid temperatures', () => {
-      expect(() => getTemperatureAdjustment(31)).toThrow();
-      expect(() => getTemperatureAdjustment(121)).toThrow();
+      const result50 = calculateActiveProofingTime(50);
+      expect(result50.minHours).toBe(2.5);
+      expect(result50.maxHours).toBe(3.5);
     });
   });
 
-  describe('calculateHydrationAdjustment', () => {
-    it('should calculate correct hydration adjustments for sourdough conversion', () => {
-      const result = calculateHydrationAdjustment(100, 10, 'active-dry', 'sourdough');
-      expect(result.showAdjustments).toBe(true);
-      expect(result.flourAdjustment).toBeDefined();
-      expect(result.waterAdjustment).toBeDefined();
-    });
+  describe('calculateInstantProofingTime', () => {
+    it('should calculate correct proofing time range for instant yeast', () => {
+      const result100 = calculateInstantProofingTime(100);
+      expect(result100.minHours).toBe(1.5);
+      expect(result100.maxHours).toBe(2.3);
 
-    it('should not show adjustments for non-sourdough conversions', () => {
-      const result = calculateHydrationAdjustment(100, 10, 'active-dry', 'instant');
-      expect(result.showAdjustments).toBe(false);
-    });
-
-    it('should handle different hydration levels', () => {
-      const result = calculateHydrationAdjustment(80, 10, 'active-dry', 'sourdough');
-      expect(result.flourAdjustment).toBeDefined();
-      expect(result.waterAdjustment).toBeDefined();
-    });
-
-    it('should throw error for invalid hydration values', () => {
-      expect(() => calculateHydrationAdjustment(49, 10, 'active-dry', 'sourdough')).toThrow();
-      expect(() => calculateHydrationAdjustment(201, 10, 'active-dry', 'sourdough')).toThrow();
+      const result75 = calculateInstantProofingTime(75);
+      expect(result75.minHours).toBe(1.7);
+      expect(result75.maxHours).toBe(2.4);
     });
   });
 
-  describe('calculateFermentationTime', () => {
-    it('should calculate correct fermentation time range for standard conditions', () => {
-      const result = calculateFermentationTime(72, 100);
-      expect(result.minHours).toBeLessThan(result.maxHours);
-      expect(result.minHours).toBeGreaterThan(0);
+  describe('calculateProofingTime', () => {
+    it('should adjust proofing time based on temperature', () => {
+      const baseResult = calculateProofingTime('active-dry', 100, 72);
+      const warmerResult = calculateProofingTime('active-dry', 100, 89);
+      const coolerResult = calculateProofingTime('active-dry', 100, 55);
+
+      expect(warmerResult.minHours).toBeLessThan(baseResult.minHours);
+      expect(coolerResult.minHours).toBeGreaterThan(baseResult.minHours);
     });
 
-    it('should adjust fermentation time for temperature variations', () => {
-      const coldResult = calculateFermentationTime(62, 100);
-      const warmResult = calculateFermentationTime(82, 100);
-      expect(coldResult.minHours).toBeGreaterThan(warmResult.minHours);
+    it('should handle different yeast types', () => {
+      const activeResult = calculateProofingTime('active-dry', 100, 72);
+      const instantResult = calculateProofingTime('instant', 100, 72);
+
+      expect(instantResult.minHours).toBeLessThan(activeResult.minHours);
+      expect(instantResult.maxHours).toBeLessThan(activeResult.maxHours);
     });
 
-    it('should adjust fermentation time for hydration variations', () => {
-      const dryResult = calculateFermentationTime(72, 65);
-      const wetResult = calculateFermentationTime(72, 100);
-      expect(dryResult.minHours).toBeGreaterThan(wetResult.minHours);
+    it('should never return times below minimum thresholds', () => {
+      const result = calculateProofingTime('instant', 100, 95); // Very warm temperature
+      expect(result.minHours).toBeGreaterThanOrEqual(0.5);
+      expect(result.maxHours).toBeGreaterThanOrEqual(1);
     });
   });
 });
