@@ -1,5 +1,5 @@
 import type { YeastType } from './yeastTypes';
-import { conversionFactors } from './yeastTypes';
+import { conversionFactors, tspSourdoughConversion } from './yeastTypes';
 
 export type { YeastType };
 
@@ -91,29 +91,35 @@ export const calculateConversion = (
     return { result: '', isSimplified: false };
   }
   
-  // For small amounts between active dry and instant yeast
-  const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
-  const isActiveInstantConversion = 
-    (fromType === 'active-dry' && toType === 'instant') ||
-    (fromType === 'instant' && toType === 'active-dry');
-
-  if (isSmallAmount && isActiveInstantConversion) {
-    console.log('Using simplified 1:1 conversion');
-    console.groupEnd();
-    return { 
-      result: numericAmount.toString(),
-      isSimplified: true
-    };
-  }
+  let result: number;
   
-  const conversionRate = conversionFactors[fromType][toType];
-  const result = numericAmount * conversionRate;
+  if (useTsp) {
+    // Use special sourdough conversion for teaspoons
+    result = tspSourdoughConversion(fromType, toType, numericAmount);
+  } else {
+    // For small amounts between active dry and instant yeast
+    const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
+    const isActiveInstantConversion = 
+      (fromType === 'active-dry' && toType === 'instant') ||
+      (fromType === 'instant' && toType === 'active-dry');
+
+    if (isSmallAmount && isActiveInstantConversion) {
+      console.log('Using simplified 1:1 conversion');
+      console.groupEnd();
+      return { 
+        result: numericAmount.toString(),
+        isSimplified: true
+      };
+    }
+    
+    result = numericAmount * conversionFactors[fromType][toType];
+  }
   
   console.log('Conversion result:', result);
   console.groupEnd();
   
   return {
-    result: result.toString(),
+    result: result.toFixed(2),
     isSimplified: false
   };
 };

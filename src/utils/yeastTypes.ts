@@ -10,7 +10,7 @@ export type YeastType = keyof typeof yeastTypes;
 
 export type UnitType = 'g' | 'tsp' | 'oz';
 
-// Direct conversion factors between yeast types (for both grams and teaspoons)
+// Direct conversion factors between yeast types (for grams)
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
     'instant': 0.75,
@@ -47,6 +47,22 @@ export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
     'bread-machine': 0.0625,
     'sourdough': 1
   }
+};
+
+// Teaspoon conversion factors specifically for sourdough
+export const tspSourdoughConversion = (fromType: YeastType, toType: YeastType, amount: number): number => {
+  if (toType === 'sourdough' && (fromType === 'active-dry' || fromType === 'instant')) {
+    // For sourdough conversions in teaspoons, multiply by 3
+    return amount * 3;
+  }
+  
+  if (fromType === 'sourdough' && (toType === 'active-dry' || toType === 'instant')) {
+    // For converting from sourdough to yeast in teaspoons, divide by 3
+    return amount / 3;
+  }
+  
+  // For other conversions, use the standard conversion factors
+  return amount * conversionFactors[fromType][toType];
 };
 
 // Gram to teaspoon conversion factors for each yeast type
