@@ -1,8 +1,7 @@
 import React from 'react';
-import { UnitType } from '../utils/yeastTypes';
-import { tspToGramConversion } from '../utils/yeastTypes';
-import UnitToggle from './calculator/yeast-input/UnitToggle';
-import AmountInput from './calculator/yeast-input/AmountInput';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { UnitType } from '@/utils/yeastTypes';
 
 interface YeastInputProps {
   amount: string;
@@ -18,42 +17,22 @@ const YeastInput = ({
   amount, 
   setAmount, 
   yeastType,
-  unit,
-  setUnit,
-  useTsp,
-  setUseTsp 
+  unit
 }: YeastInputProps) => {
-  const getUnitLabel = () => {
-    if (useTsp) return 'tsp';
-    return unit === 'oz' ? 'ounces' : 'grams';
-  };
-
-  const canUseTsp = tspToGramConversion[yeastType as any] !== null;
-
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium">
-          Amount ({getUnitLabel()})
-        </label>
-        <UnitToggle
-          useTsp={useTsp}
-          setUseTsp={setUseTsp}
-          canUseTsp={canUseTsp}
-        />
-      </div>
-      <AmountInput
-        amount={amount}
-        setAmount={setAmount}
-        useTsp={useTsp}
-        unit={unit}
-        getUnitLabel={getUnitLabel}
+    <div className="space-y-2">
+      <Label htmlFor="yeast-amount">Amount ({unit})</Label>
+      <Input
+        id="yeast-amount"
+        type="number"
+        inputMode="decimal"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        className="w-full"
+        placeholder={`Enter amount in ${unit}`}
+        min="0"
+        step="0.1"
       />
-      {amount && (
-        <p className="text-sm text-gray-500">
-          {amount} {getUnitLabel()}
-        </p>
-      )}
     </div>
   );
 };

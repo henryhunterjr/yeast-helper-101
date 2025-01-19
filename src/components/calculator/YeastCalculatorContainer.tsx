@@ -7,6 +7,7 @@ import CalculatorHeader from './CalculatorHeader';
 import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import FavoritesList from '../favorites/FavoritesList';
+import DarkModeToggle from '../MeasurementToggle';
 import { UnitType } from '@/utils/yeastTypes';
 import { 
   calculateConversion, 
@@ -28,18 +29,25 @@ const YeastCalculatorContainer = () => {
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
+  
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    if (useTsp) {
-      setUnit('tsp');
-    } else {
-      const savedSettings = localStorage.getItem('yeastwise-settings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        setUnit(settings.units === 'imperial' ? 'oz' : 'g');
-      }
+    const savedSettings = localStorage.getItem('yeastwise-settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setIsDarkMode(settings.darkMode || false);
+      setUnit(settings.units === 'teaspoons' ? 'tsp' : settings.units === 'imperial' ? 'oz' : 'g');
     }
-  }, [useTsp]);
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const handleReset = () => {
     setAmount('');
@@ -109,21 +117,28 @@ const YeastCalculatorContainer = () => {
 
   const showResults = Boolean(amount && parseFloat(amount) > 0 && conversionResult.result);
 
-  const handleFromTypeChange = (value: string) => {
-    setFromType(value as YeastType);
-  };
-
-  const handleToTypeChange = (value: string) => {
-    setToType(value as YeastType);
-  };
-
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-yeast-100">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-yeast-100 dark:border-gray-700">
           <CalculatorHeader />
           
           <div className="p-4 sm:p-6 space-y-6">
+            <div className="flex justify-end">
+              <DarkModeToggle 
+                isDarkMode={isDarkMode} 
+                onToggle={(value) => {
+                  setIsDarkMode(value);
+                  const savedSettings = localStorage.getItem('yeastwise-settings');
+                  const settings = savedSettings ? JSON.parse(savedSettings) : {};
+                  localStorage.setItem('yeastwise-settings', JSON.stringify({
+                    ...settings,
+                    darkMode: value
+                  }));
+                }}
+              />
+            </div>
+            
             <YeastInputSection
               amount={amount}
               setAmount={setAmount}
@@ -139,8 +154,8 @@ const YeastCalculatorContainer = () => {
               showAdjustments={false}
               unit={unit}
               setUnit={setUnit}
-              useTsp={useTsp}
-              setUseTsp={setUseTsp}
+              useTsp={unit === 'tsp'}
+              setUseTsp={() => {}} // This is now handled through settings
             />
 
             {showResults && (
