@@ -39,9 +39,9 @@ const NewCalculator = () => {
   };
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto">
+    <Card className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-2xl font-bold">Baker's Percentage Calculator</h2>
           <ToggleGroup 
             type="single" 
@@ -65,27 +65,29 @@ const NewCalculator = () => {
 
         <ValidationWarnings warnings={validationWarnings} />
 
-        <CoreInputs
-          flour={flour}
-          setFlour={setFlour}
-          hydration={hydration}
-          setHydration={setHydration}
-          starterPercentage={starterPercentage}
-          setStarterPercentage={setStarterPercentage}
-          saltPercentage={saltPercentage}
-          setSaltPercentage={setSaltPercentage}
-          unit={unit}
-        />
+        <div className="grid gap-6">
+          <CoreInputs
+            flour={flour}
+            setFlour={setFlour}
+            hydration={hydration}
+            setHydration={setHydration}
+            starterPercentage={starterPercentage}
+            setStarterPercentage={setStarterPercentage}
+            saltPercentage={saltPercentage}
+            setSaltPercentage={setSaltPercentage}
+            unit={unit}
+          />
 
-        <IngredientBreakdown
-          calculations={calculations}
-          unit={unit}
-        />
+          <IngredientBreakdown
+            calculations={calculations}
+            unit={unit}
+          />
 
-        <TotalRecipe
-          totalWeight={calculations.totalWeight}
-          unit={unit}
-        />
+          <TotalRecipe
+            totalWeight={calculations.totalWeight}
+            unit={unit}
+          />
+        </div>
       </div>
     </Card>
   );

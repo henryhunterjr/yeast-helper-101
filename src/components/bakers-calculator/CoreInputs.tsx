@@ -3,6 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+interface ValidationError {
+  message: string;
+  type: 'error' | 'warning';
+}
 
 interface CoreInputsProps {
   flour: number | null;
@@ -29,18 +36,62 @@ const CoreInputs = ({
 }: CoreInputsProps) => {
   const { toast } = useToast();
 
+  const validateFlour = (value: number | null): ValidationError | null => {
+    if (value === null || value <= 0) {
+      return { message: "Flour weight must be greater than 0", type: 'error' };
+    }
+    return null;
+  };
+
+  const validateHydration = (value: number): ValidationError | null => {
+    if (value < 50) {
+      return { message: "Hydration should be at least 50%", type: 'error' };
+    }
+    if (value > 100) {
+      return { message: "Very high hydration may result in extremely wet dough", type: 'warning' };
+    }
+    return null;
+  };
+
+  const validateStarter = (value: number): ValidationError | null => {
+    if (value < 0) {
+      return { message: "Starter percentage cannot be negative", type: 'error' };
+    }
+    if (value > 50) {
+      return { message: "High starter percentage may lead to faster fermentation", type: 'warning' };
+    }
+    return null;
+  };
+
+  const validateSalt = (value: number): ValidationError | null => {
+    if (value < 0) {
+      return { message: "Salt percentage cannot be negative", type: 'error' };
+    }
+    if (value > 2.5) {
+      return { message: "Salt percentage is higher than typical (2%)", type: 'warning' };
+    }
+    return null;
+  };
+
   const handleFlourChange = (value: string) => {
     const numValue = value === '' ? null : Number(value);
-    if (numValue !== null && numValue < 0) {
+    const error = validateFlour(numValue);
+    
+    if (error?.type === 'error') {
       toast({
         title: "Invalid Input",
-        description: "Flour weight cannot be negative",
+        description: error.message,
         variant: "destructive",
       });
-      return;
     }
+    
     setFlour(numValue);
   };
+
+  const flourError = validateFlour(flour);
+  const hydrationError = validateHydration(hydration);
+  const starterError = validateStarter(starterPercentage);
+  const saltError = validateSalt(saltPercentage);
 
   return (
     <section className="space-y-4">
@@ -56,8 +107,14 @@ const CoreInputs = ({
             onChange={(e) => handleFlourChange(e.target.value)}
             min="0"
             step="1"
-            className="w-full"
+            className={`w-full ${flourError?.type === 'error' ? 'border-red-500' : ''}`}
           />
+          {flourError && (
+            <Alert variant={flourError.type === 'error' ? 'destructive' : 'default'} className="mt-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{flourError.message}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -71,6 +128,12 @@ const CoreInputs = ({
             step={1}
             className="w-full"
           />
+          {hydrationError && (
+            <Alert variant={hydrationError.type === 'error' ? 'destructive' : 'default'} className="mt-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{hydrationError.message}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -84,6 +147,12 @@ const CoreInputs = ({
             step={1}
             className="w-full"
           />
+          {starterError && (
+            <Alert variant={starterError.type === 'error' ? 'destructive' : 'default'} className="mt-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{starterError.message}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -97,6 +166,12 @@ const CoreInputs = ({
             step={0.1}
             className="w-full"
           />
+          {saltError && (
+            <Alert variant={saltError.type === 'error' ? 'destructive' : 'default'} className="mt-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{saltError.message}</AlertDescription>
+            </Alert>
+          )}
         </div>
       </div>
     </section>
