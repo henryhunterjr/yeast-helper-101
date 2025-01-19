@@ -64,7 +64,7 @@ export const getTotalWeight = (recipe: Recipe): number => {
   return recipe.flour + recipe.ingredients.reduce((sum, ing) => sum + ing.weight, 0) + starterWeight;
 };
 
-export const recalculateRecipe = (recipe: Recipe): Recipe => {
+export const recalculateRecipe = (recipe: Recipe, updatedIngredientId?: string): Recipe => {
   const updatedRecipe = { ...recipe };
   const waterIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'water');
   const saltIngredient = recipe.ingredients.find(ing => ing.name.toLowerCase() === 'salt');
@@ -88,14 +88,14 @@ export const recalculateRecipe = (recipe: Recipe): Recipe => {
   }
 
   // Calculate target water based on hydration
-  if (waterIngredient && recipe.hydrationTarget) {
+  if (waterIngredient && recipe.hydrationTarget && updatedIngredientId !== waterIngredient.id) {
     const targetTotalWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget);
     waterIngredient.weight = Math.max(0, targetTotalWater - starterContributions.water);
     waterIngredient.percentage = calculateBakersPercentage(waterIngredient.weight, totalFlour);
   }
 
   // Update salt based on total flour
-  if (saltIngredient) {
+  if (saltIngredient && updatedIngredientId !== saltIngredient.id) {
     saltIngredient.weight = calculateSaltFromFlour(totalFlour);
     saltIngredient.percentage = calculateBakersPercentage(saltIngredient.weight, totalFlour);
   }
