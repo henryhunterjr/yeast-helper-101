@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { YeastType, UnitType } from '@/utils/yeastTypes';
 import { calculateProofingTime } from '@/utils/yeastCalculations';
 import CalculatorForm from './form/CalculatorForm';
-import ConversionResult from './conversion-result/ConversionResult';
+import ConversionResult from './ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
 
 interface YeastCalculatorContainerProps {
