@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import { YeastType, UnitType } from '@/utils/yeastTypes';
+import { calculateProofingTime } from '@/utils/yeastCalculations';
 import CalculatorForm from './form/CalculatorForm';
-import CalculationResults from './results/CalculationResults';
+import ConversionResult from './conversion-result/ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
 
 interface YeastCalculatorContainerProps {
@@ -32,6 +33,9 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
       const { result, isSimplified } = onConvert(amount, fromType, toType);
       setConversionResult(result);
       setIsSimplified(isSimplified);
+    } else {
+      setConversionResult('');
+      setIsSimplified(false);
     }
   }, [amount, fromType, toType, onConvert]);
 
@@ -68,6 +72,7 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
     setConversionResult('');
   };
 
+  const fermentationTime = calculateProofingTime(fromType, parseFloat(hydration), parseFloat(temperature));
   const showResults = Boolean(amount && parseFloat(amount) > 0);
 
   return (
@@ -91,7 +96,7 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
       />
 
       {showResults && (
-        <CalculationResults
+        <ConversionResult
           amount={amount}
           fromType={fromType}
           toType={toType}
@@ -100,9 +105,11 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
           result={conversionResult}
           temperatureAdjustment=""
           hydrationAdjustment={null}
-          fermentationTime={{ minHours: 2, maxHours: 4 }}
+          fermentationTime={fermentationTime}
+          isLoading={isLoading}
           unit={unit}
           onReset={handleReset}
+          isSimplified={isSimplified}
         />
       )}
     </CalculatorLayout>

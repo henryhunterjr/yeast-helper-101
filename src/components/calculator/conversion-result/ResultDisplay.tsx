@@ -25,16 +25,21 @@ const ResultDisplay = ({
   unit,
   isSimplified 
 }: ResultDisplayProps) => {
-  if (!result) return null;
+  if (!result || !amount) return null;
+
+  const numericAmount = parseFloat(amount);
+  const numericResult = parseFloat(result);
+
+  if (isNaN(numericAmount) || isNaN(numericResult)) return null;
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         <p className="text-xl font-mono break-words text-foreground">
-          {formatMeasurement(parseFloat(amount), unit, fromType as YeastType)} {yeastTypes[fromType as YeastType]} =
+          {formatMeasurement(numericAmount, unit, fromType as YeastType)} {yeastTypes[fromType as YeastType]} =
         </p>
         <p className="text-3xl font-bold text-foreground font-mono break-words">
-          {formatMeasurement(parseFloat(result), unit, toType as YeastType)} {yeastTypes[toType as YeastType]}
+          {formatMeasurement(numericResult, unit, toType as YeastType)} {yeastTypes[toType as YeastType]}
         </p>
       </div>
 
