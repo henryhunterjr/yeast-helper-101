@@ -138,3 +138,45 @@ export const calculateRecipeFromStarter = (
     }
   };
 };
+
+export const validateRecipe = (recipe: Recipe): string[] => {
+  const warnings: string[] = [];
+
+  // Validate flour weight
+  if (!recipe.flour || recipe.flour <= 0) {
+    warnings.push("Flour weight must be greater than 0");
+  }
+
+  // Validate hydration target
+  if (recipe.hydrationTarget) {
+    if (recipe.hydrationTarget < TYPICAL_RANGES.hydration.min) {
+      warnings.push(`Hydration is too low (minimum ${TYPICAL_RANGES.hydration.min}%)`);
+    }
+    if (recipe.hydrationTarget > TYPICAL_RANGES.hydration.max) {
+      warnings.push(`Hydration is very high (maximum recommended ${TYPICAL_RANGES.hydration.max}%)`);
+    }
+  }
+
+  // Validate starter
+  if (recipe.starter) {
+    if (recipe.starter.weight < 0) {
+      warnings.push("Starter weight cannot be negative");
+    }
+    if (recipe.starter.hydration < 50) {
+      warnings.push("Starter hydration should be at least 50%");
+    }
+    if (recipe.starter.hydration > 200) {
+      warnings.push("Starter hydration should not exceed 200%");
+    }
+  }
+
+  // Validate ingredients
+  recipe.ingredients.forEach(ingredient => {
+    const validation = validateIngredient(ingredient, recipe.flour);
+    if (validation.message) {
+      warnings.push(validation.message);
+    }
+  });
+
+  return warnings;
+};

@@ -9,6 +9,7 @@ import CalculationResults from './CalculationResults';
 import StarterCalculations from './StarterCalculations';
 import ValidationSystem from './ValidationSystem';
 import { useRecipeCalculator } from '@/hooks/useRecipeCalculator';
+import { validateRecipe } from '@/utils/bakersCalculatorHelpers';
 
 const MainCalculator = () => {
   const {
@@ -17,10 +18,12 @@ const MainCalculator = () => {
     updateRecipeBasedOnIngredient,
     updateRecipeBasedOnStarter,
     updateRecipeBasedOnHydration,
-    handleReset
+    handleReset,
+    validationErrors
   } = useRecipeCalculator();
 
-  const hasValidationErrors = recipe.hydrationTarget && recipe.hydrationTarget > 120;
+  const hasValidationErrors = validationErrors.length > 0;
+  const hasHighHydration = recipe.hydrationTarget && recipe.hydrationTarget > 120;
 
   return (
     <TooltipProvider>
@@ -34,7 +37,7 @@ const MainCalculator = () => {
             />
           </div>
 
-          {hasValidationErrors && (
+          {hasHighHydration && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
@@ -43,7 +46,9 @@ const MainCalculator = () => {
             </Alert>
           )}
 
-          <ValidationSystem warnings={[]} />
+          {hasValidationErrors && (
+            <ValidationSystem warnings={validationErrors} />
+          )}
 
           <div className="grid gap-8">
             {/* Core Inputs Section */}
@@ -56,6 +61,7 @@ const MainCalculator = () => {
                 onStarterChange={updateRecipeBasedOnStarter}
                 onHydrationTargetChange={updateRecipeBasedOnHydration}
                 onReset={handleReset}
+                validationErrors={validationErrors}
               />
             </section>
 

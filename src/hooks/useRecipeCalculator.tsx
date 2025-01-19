@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Recipe } from '@/types/recipe';
 import { v4 as uuidv4 } from 'uuid';
 import { 
   recalculateRecipe,
-  calculateRecipeFromStarter
+  calculateRecipeFromStarter,
+  validateRecipe
 } from '@/utils/bakersCalculatorHelpers';
 
 const createInitialRecipe = (): Recipe => ({
@@ -18,6 +19,10 @@ const createInitialRecipe = (): Recipe => ({
 
 export const useRecipeCalculator = () => {
   const [recipe, setRecipe] = useState<Recipe>(createInitialRecipe());
+
+  const validationErrors = useMemo(() => {
+    return validateRecipe(recipe);
+  }, [recipe]);
 
   const updateRecipeBasedOnFlour = useCallback((flourWeight: number | null) => {
     setRecipe(prev => {
@@ -52,7 +57,6 @@ export const useRecipeCalculator = () => {
 
     setRecipe(prev => {
       if (!prev.flour) {
-        // If no flour is set, calculate recipe based on starter
         return calculateRecipeFromStarter(weight, hydration, prev.hydrationTarget || 75);
       }
       
@@ -80,6 +84,7 @@ export const useRecipeCalculator = () => {
 
   return {
     recipe,
+    validationErrors,
     updateRecipeBasedOnFlour,
     updateRecipeBasedOnIngredient,
     updateRecipeBasedOnStarter,
