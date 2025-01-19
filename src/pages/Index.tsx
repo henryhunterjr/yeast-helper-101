@@ -16,9 +16,13 @@ const Index = () => {
   }, [hasSeenTutorial, startTutorial]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-yeast-50 to-white flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-yeast-50 to-white">
       <div className="flex-grow py-4 sm:py-12 px-4 sm:px-6">
-        <div className="space-y-8">
+        <div 
+          className="space-y-8"
+          style={{ minHeight: "calc(100vh - 1px)" }}
+          inert={hasSeenTutorial ? undefined : ""}
+        >
           <YeastCalculator />
           <NewCalculator />
         </div>

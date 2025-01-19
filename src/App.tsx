@@ -14,7 +14,18 @@ import React from 'react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
+      retry: (failureCount, error: any) => {
+        // Don't retry on 429 errors (rate limiting)
+        if (error?.response?.status === 429) {
+          toast({
+            title: "Rate limit reached",
+            description: "Please wait a moment before trying again",
+            variant: "destructive",
+          });
+          return false;
+        }
+        return failureCount < 3;
+      },
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
       meta: {
