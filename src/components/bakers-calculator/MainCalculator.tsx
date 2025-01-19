@@ -38,7 +38,7 @@ const MainCalculator = () => {
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Warning: Hydration level is very high (>120%). This may result in an extremely wet dough.
+                Warning: Hydration level is very high (&gt;120%). This may result in an extremely wet dough.
               </AlertDescription>
             </Alert>
           )}
