@@ -4,7 +4,9 @@ import { conversionFactors } from './yeastTypes';
 export type { YeastType };
 
 export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  // Set desired dough temperature based on yeast type
+  console.log('Input - Room Temperature:', roomTemp);
+  console.log('Input - Yeast Type:', yeastType);
+
   const desiredTemp = {
     'active-dry': 75,
     'instant': 75,
@@ -13,23 +15,20 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
     'bread-machine': 75
   }[yeastType];
 
-  // Calculate water temperature using the formula: (Tdesired × 3) - Troom
-  // We multiply desired temp by 3 first, then subtract room temp
+  console.log('Desired Temperature:', desiredTemp);
+
   let waterTemp = (desiredTemp * 3) - roomTemp;
+  console.log('Initial Water Temperature Calculation:', waterTemp);
 
-  // Example: If room temp is 72°F and desired is 75°F:
-  // waterTemp = (75 × 3) - 72
-  // waterTemp = 225 - 72
-  // waterTemp = 153°F (before capping)
-
-  // Apply appropriate temperature caps based on yeast type
+  // Capping logic
   if (yeastType === 'sourdough') {
     waterTemp = Math.min(Math.max(waterTemp, 78), 82);
   } else {
     waterTemp = Math.min(Math.max(waterTemp, 75), 80);
   }
 
-  // Round to nearest whole number
+  console.log('Final Water Temperature (after capping):', waterTemp);
+
   return Math.round(waterTemp);
 };
 
