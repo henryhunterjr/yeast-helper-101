@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useNewBakersCalculator } from '@/hooks/useNewBakersCalculator';
+import { recalculateIngredients } from '@/utils/bakersCalculatorUtils';
+import { toast } from '@/components/ui/use-toast';
 
 const NewCalculator = () => {
   const {
@@ -20,6 +22,25 @@ const NewCalculator = () => {
     calculations,
     validationError
   } = useNewBakersCalculator();
+
+  useEffect(() => {
+    const results = recalculateIngredients({
+      flour,
+      hydration,
+      starterPercentage,
+      saltPercentage,
+      starterWeight: calculations.starter,
+      starterHydration: 100, // Fixed at 100% for simplicity
+    });
+
+    if (results.error) {
+      toast({
+        title: "Calculation Error",
+        description: results.error,
+        variant: "destructive",
+      });
+    }
+  }, [flour, hydration, starterPercentage, saltPercentage, calculations.starter]);
 
   return (
     <Card className="p-6 max-w-2xl mx-auto">
@@ -45,7 +66,7 @@ const NewCalculator = () => {
               <Input
                 id="flour"
                 type="number"
-                value={flour}
+                value={flour || ''}
                 onChange={(e) => setFlour(Number(e.target.value))}
                 min="0"
                 step="1"
