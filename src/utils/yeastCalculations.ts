@@ -14,7 +14,13 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
   }[yeastType];
 
   // Calculate water temperature using the formula: (Tdesired × 3) - Troom
+  // We multiply desired temp by 3 first, then subtract room temp
   let waterTemp = (desiredTemp * 3) - roomTemp;
+
+  // Example: If room temp is 72°F and desired is 75°F:
+  // waterTemp = (75 × 3) - 72
+  // waterTemp = 225 - 72
+  // waterTemp = 153°F (before capping)
 
   // Apply appropriate temperature caps based on yeast type
   if (yeastType === 'sourdough') {
@@ -23,6 +29,7 @@ export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType
     waterTemp = Math.min(Math.max(waterTemp, 75), 80);
   }
 
+  // Round to nearest whole number
   return Math.round(waterTemp);
 };
 
