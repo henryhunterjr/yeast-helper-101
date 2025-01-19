@@ -25,6 +25,8 @@ const ResultDisplay = ({
   unit,
   isSimplified 
 }: ResultDisplayProps) => {
+  if (!result) return null;
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">

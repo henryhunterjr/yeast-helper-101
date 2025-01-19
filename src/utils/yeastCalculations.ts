@@ -81,8 +81,15 @@ export const calculateConversion = (
   toType: YeastType,
   useTsp: boolean
 ): { result: string; isSimplified: boolean } => {
+  console.group('Conversion Calculation');
+  console.log('Inputs:', { amount, fromType, toType, useTsp });
+
   const numericAmount = parseFloat(amount);
-  if (isNaN(numericAmount) || numericAmount <= 0) return { result: '', isSimplified: false };
+  if (isNaN(numericAmount) || numericAmount <= 0) {
+    console.log('Invalid amount, returning empty result');
+    console.groupEnd();
+    return { result: '', isSimplified: false };
+  }
   
   // For small amounts between active dry and instant yeast
   const isSmallAmount = numericAmount <= SIMPLIFIED_THRESHOLD;
@@ -91,8 +98,10 @@ export const calculateConversion = (
     (fromType === 'instant' && toType === 'active-dry');
 
   if (isSmallAmount && isActiveInstantConversion) {
+    console.log('Using simplified 1:1 conversion');
+    console.groupEnd();
     return { 
-      result: numericAmount.toFixed(2),
+      result: numericAmount.toString(),
       isSimplified: true
     };
   }
@@ -100,8 +109,11 @@ export const calculateConversion = (
   const conversionRate = conversionFactors[fromType][toType];
   const result = numericAmount * conversionRate;
   
+  console.log('Conversion result:', result);
+  console.groupEnd();
+  
   return {
-    result: result.toFixed(2),
+    result: result.toString(),
     isSimplified: false
   };
 };
