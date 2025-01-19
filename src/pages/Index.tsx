@@ -1,5 +1,5 @@
 import YeastCalculator from "../components/YeastCalculator";
-import BakersCalculator from "../components/bakers-calculator/BakersCalculator";
+import NewCalculator from "../components/bakers-calculator/NewCalculator";
 import Footer from "../components/Footer";
 import TutorialButton from "../components/tutorial/TutorialButton";
 import TutorialOverlay from "../components/tutorial/TutorialOverlay";
@@ -20,7 +20,7 @@ const Index = () => {
       <div className="flex-grow py-4 sm:py-12 px-4 sm:px-6">
         <div className="space-y-8">
           <YeastCalculator />
-          <BakersCalculator />
+          <NewCalculator />
         </div>
       </div>
       <TutorialButton />
