@@ -14,7 +14,7 @@ interface WaterTempDisplayProps {
 
 const WaterTempDisplay = ({ roomTemp, waterTemp }: WaterTempDisplayProps) => {
   return (
-    <Card className="p-4 space-y-2 bg-background">
+    <Card className="p-4 space-y-2 border border-border">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-sm text-foreground">Recommended Water Temperature</h3>
         <Tooltip>

@@ -24,7 +24,7 @@ const ProofingTimeDisplay = ({
   if (!fermentationTime) return null;
 
   return (
-    <Card className="p-4 space-y-2 bg-background">
+    <Card className="p-4 space-y-2 border border-border">
       <div className="flex items-center justify-between">
         <h3 className="font-medium text-sm text-foreground">Proofing Time Range</h3>
         <Tooltip>
