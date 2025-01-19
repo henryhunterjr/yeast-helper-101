@@ -91,6 +91,7 @@ const FavoritesList = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleUse(favorite)}
+                    className="text-foreground"
                   >
                     Use <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -98,6 +99,7 @@ const FavoritesList = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => handleDelete(favorite.id)}
+                    className="text-foreground"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

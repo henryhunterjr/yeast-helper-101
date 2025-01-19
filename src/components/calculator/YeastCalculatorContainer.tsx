@@ -8,6 +8,8 @@ import YeastInputSection from './YeastInputSection';
 import ConversionResult from './ConversionResult';
 import FavoritesList from '../favorites/FavoritesList';
 import DarkModeToggle from '../MeasurementToggle';
+import YeastTypeSelector from './YeastTypeSelector';
+import { useDarkMode } from '@/hooks/useDarkMode';
 import { UnitType, YeastType } from '@/utils/yeastTypes';
 import { 
   calculateConversion, 
@@ -19,6 +21,7 @@ import {
 const YeastCalculatorContainer = () => {
   const location = useLocation();
   const { toast } = useToast();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState<YeastType>('active-dry');
   const [toType, setToType] = useState<YeastType>('instant');
@@ -27,51 +30,14 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAdjustmentsOpen, setIsAdjustmentsOpen] = useState(true);
   const [unit, setUnit] = useState<UnitType>('g');
-  const [useTsp, setUseTsp] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const handleFromTypeChange = (value: YeastType) => {
-    if (value === toType) {
-      // Prevent selecting the same type for both inputs
-      toast({
-        title: "Invalid Selection",
-        description: "From and To types cannot be the same",
-        variant: "destructive",
-      });
-      return;
-    }
-    setFromType(value as YeastType);
-  };
-
-  const handleToTypeChange = (value: YeastType) => {
-    if (value === fromType) {
-      // Prevent selecting the same type for both inputs
-      toast({
-        title: "Invalid Selection",
-        description: "From and To types cannot be the same",
-        variant: "destructive",
-      });
-      return;
-    }
-    setToType(value as YeastType);
-  };
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setIsDarkMode(settings.darkMode || false);
       setUnit(settings.units === 'teaspoons' ? 'tsp' : settings.units === 'imperial' ? 'oz' : 'g');
     }
   }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
 
   const handleReset = () => {
     setAmount('');
@@ -144,25 +110,24 @@ const YeastCalculatorContainer = () => {
   return (
     <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
       <div className="space-y-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-yeast-100 dark:border-gray-700">
+        <div className="bg-background dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-border">
           <CalculatorHeader />
           
           <div className="p-4 sm:p-6 space-y-6">
             <div className="flex justify-end">
               <DarkModeToggle 
                 isDarkMode={isDarkMode} 
-                onToggle={(value) => {
-                  setIsDarkMode(value);
-                  const savedSettings = localStorage.getItem('yeastwise-settings');
-                  const settings = savedSettings ? JSON.parse(savedSettings) : {};
-                  localStorage.setItem('yeastwise-settings', JSON.stringify({
-                    ...settings,
-                    darkMode: value
-                  }));
-                }}
+                onToggle={toggleDarkMode}
               />
             </div>
             
+            <YeastTypeSelector
+              fromType={fromType}
+              toType={toType}
+              onFromTypeChange={setFromType}
+              onToTypeChange={setToType}
+            />
+
             <YeastInputSection
               amount={amount}
               setAmount={setAmount}
@@ -171,15 +136,15 @@ const YeastCalculatorContainer = () => {
               hydration={hydration}
               setHydration={setHydration}
               fromType={fromType}
-              setFromType={handleFromTypeChange}
+              setFromType={setFromType}
               toType={toType}
-              setToType={handleToTypeChange}
+              setToType={setToType}
               isLoading={isLoading}
               showAdjustments={false}
               unit={unit}
               setUnit={setUnit}
               useTsp={unit === 'tsp'}
-              setUseTsp={() => {}} // This is now handled through settings
+              setUseTsp={() => {}}
             />
 
             {showResults && (
@@ -206,12 +171,12 @@ const YeastCalculatorContainer = () => {
               className="w-full space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Additional Adjustments</h3>
-                <CollapsibleTrigger className="hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <h3 className="text-lg font-semibold text-foreground">Additional Adjustments</h3>
+                <CollapsibleTrigger className="hover:bg-muted p-2 rounded-full transition-colors">
                   {isAdjustmentsOpen ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-4 w-4 text-foreground" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 text-foreground" />
                   )}
                 </CollapsibleTrigger>
               </div>
@@ -225,25 +190,25 @@ const YeastCalculatorContainer = () => {
                   hydration={hydration}
                   setHydration={setHydration}
                   fromType={fromType}
-                  setFromType={handleFromTypeChange}
+                  setFromType={setFromType}
                   toType={toType}
-                  setToType={handleToTypeChange}
+                  setToType={setToType}
                   isLoading={isLoading}
                   showAdjustments={true}
                   hideMainInputs={true}
                   unit={unit}
                   setUnit={setUnit}
-                  useTsp={useTsp}
-                  setUseTsp={setUseTsp}
+                  useTsp={unit === 'tsp'}
+                  setUseTsp={() => {}}
                 />
               </CollapsibleContent>
             </Collapsible>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-yeast-100">
+        <div className="bg-background dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-border">
           <div className="p-4 sm:p-6">
-            <h2 className="text-lg font-semibold mb-4 text-yeast-800">Saved Favorites</h2>
+            <h2 className="text-lg font-semibold mb-4 text-foreground">Saved Favorites</h2>
             <FavoritesList />
           </div>
         </div>
