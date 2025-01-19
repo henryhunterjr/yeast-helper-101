@@ -1,4 +1,4 @@
-import { Recipe, Ingredient, TYPICAL_RANGES, UNIT_CONVERSION } from '@/types/recipe';
+import { Recipe, Ingredient, TYPICAL_RANGES } from '@/types/recipe';
 
 export const calculateBakersPercentage = (ingredientWeight: number, flourWeight: number): number => {
   if (!flourWeight) return 0;
@@ -77,16 +77,24 @@ export const recalculateRecipe = (recipe: Recipe, changedIngredientId?: string):
     recipe.starter?.hydration || 100
   );
 
-  // Adjust flour and water based on starter contributions
+  // Calculate total flour including starter contribution
   const totalFlour = updatedRecipe.flour + starterContributions.flour;
-  const totalWater = (waterIngredient?.weight || 0) + starterContributions.water;
+
+  // Update all ingredient percentages based on total flour
+  updatedRecipe.ingredients = updatedRecipe.ingredients.map(ing => ({
+    ...ing,
+    percentage: calculateBakersPercentage(ing.weight, totalFlour)
+  }));
+
+  // Update starter percentage if it exists
+  if (recipe.starter) {
+    recipe.starter.percentage = calculateBakersPercentage(recipe.starter.weight, totalFlour);
+  }
 
   // Calculate target water based on hydration
-  const targetWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget || 75);
-
-  // Update water ingredient
-  if (waterIngredient) {
-    waterIngredient.weight = Math.max(0, targetWater - starterContributions.water);
+  if (waterIngredient && recipe.hydrationTarget) {
+    const targetTotalWater = calculateWaterFromFlour(totalFlour, recipe.hydrationTarget);
+    waterIngredient.weight = Math.max(0, targetTotalWater - starterContributions.water);
     waterIngredient.percentage = calculateBakersPercentage(waterIngredient.weight, totalFlour);
   }
 
@@ -94,16 +102,6 @@ export const recalculateRecipe = (recipe: Recipe, changedIngredientId?: string):
   if (saltIngredient) {
     saltIngredient.weight = calculateSaltFromFlour(totalFlour);
     saltIngredient.percentage = calculateBakersPercentage(saltIngredient.weight, totalFlour);
-  }
-
-  // Update all ingredient percentages
-  updatedRecipe.ingredients = updatedRecipe.ingredients.map(ing => ({
-    ...ing,
-    percentage: calculateBakersPercentage(ing.weight, totalFlour)
-  }));
-
-  if (recipe.starter) {
-    recipe.starter.percentage = calculateBakersPercentage(recipe.starter.weight, totalFlour);
   }
 
   return updatedRecipe;

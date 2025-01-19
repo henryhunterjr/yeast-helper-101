@@ -24,11 +24,6 @@ const IngredientInputs = ({
   onHydrationTargetChange,
   onReset,
 }: IngredientInputsProps) => {
-  const handleFlourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    onFlourChange(value === '' ? null : Number(value));
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -36,7 +31,7 @@ const IngredientInputs = ({
         <Input
           type="number"
           value={recipe.flour || ''}
-          onChange={handleFlourChange}
+          onChange={(e) => onFlourChange(e.target.value === '' ? null : Number(e.target.value))}
           min="0"
           step="1"
           placeholder="Enter flour weight"
@@ -64,6 +59,11 @@ const IngredientInputs = ({
         </div>
       </div>
 
+      <StarterSettings 
+        recipe={recipe}
+        onStarterChange={onStarterChange}
+      />
+
       <div className="space-y-4">
         <Label>Ingredients</Label>
         {recipe.ingredients.map((ingredient) => (
@@ -81,11 +81,6 @@ const IngredientInputs = ({
           />
         ))}
       </div>
-
-      <StarterSettings 
-        recipe={recipe}
-        onStarterChange={onStarterChange}
-      />
 
       <div className="flex justify-end">
         <Button
