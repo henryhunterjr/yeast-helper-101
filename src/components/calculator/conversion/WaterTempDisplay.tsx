@@ -13,10 +13,6 @@ interface WaterTempDisplayProps {
 }
 
 const WaterTempDisplay = ({ roomTemp, waterTemp }: WaterTempDisplayProps) => {
-  console.group('WaterTempDisplay Render');
-  console.log('Props:', { roomTemp, waterTemp });
-  console.groupEnd();
-
   return (
     <Card className="p-4 space-y-2 bg-background">
       <div className="flex items-center justify-between">

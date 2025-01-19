@@ -52,7 +52,7 @@ const AdjustmentDetails = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="p-4 bg-background">
           <h4 className="font-medium mb-2 text-foreground">Temperature Adjustments</h4>
-          <p className="text-sm text-muted-foreground break-words">
+          <p className="text-sm text-foreground break-words">
             {temperature}°F: {temperatureAdjustment}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -63,7 +63,7 @@ const AdjustmentDetails = ({
         {hydrationAdjustment?.showAdjustments && (
           <Card className="p-4 bg-background">
             <h4 className="font-medium mb-2 text-foreground">Hydration Adjustments</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
+            <ul className="text-sm text-foreground space-y-1">
               <li>Flour: {hydrationAdjustment.flourAdjustment.toFixed(1)}g</li>
               <li>Water: {hydrationAdjustment.waterAdjustment.toFixed(1)}g</li>
             </ul>
@@ -74,7 +74,7 @@ const AdjustmentDetails = ({
       <Card className="p-4 bg-background">
         <h4 className="font-medium mb-2 text-foreground">Fermentation Time</h4>
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-foreground">
             {fermentationTime ? `${fermentationTime.minHours.toFixed(1)}-${fermentationTime.maxHours.toFixed(1)} hours` : 'Not available'}
           </p>
           <Tooltip>
