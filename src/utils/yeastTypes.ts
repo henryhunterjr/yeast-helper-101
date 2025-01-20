@@ -9,41 +9,42 @@ export const yeastTypes = {
 export type YeastType = keyof typeof yeastTypes;
 export type UnitType = 'g' | 'tsp' | 'oz';
 
-// Updated conversion factors based on weight (grams)
+// Updated conversion factors based on the specified ratios
+// 7g active dry = 5g instant = 21g fresh = 100g sourdough
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
-    'instant': 0.75,
-    'fresh': 2.5,
-    'bread-machine': 0.75,
-    'sourdough': 5, // New ratio: 1g yeast = 5g starter
+    'instant': 5/7,      // 7g active dry = 5g instant
+    'fresh': 3,          // 7g active dry = 21g fresh
+    'bread-machine': 5/7, // Same as instant
+    'sourdough': 100/7,  // 7g active dry = 100g sourdough
     'active-dry': 1
   },
   'instant': {
-    'active-dry': 1.33,
-    'fresh': 3.33,
+    'active-dry': 7/5,   // 5g instant = 7g active dry
+    'fresh': 21/5,       // 5g instant = 21g fresh
     'bread-machine': 1,
-    'sourdough': 5, // Same ratio for instant yeast
+    'sourdough': 100/5,  // 5g instant = 100g sourdough
     'instant': 1
   },
   'fresh': {
-    'active-dry': 0.4,
-    'instant': 0.3,
-    'bread-machine': 0.3,
-    'sourdough': 2,
+    'active-dry': 1/3,   // 21g fresh = 7g active dry
+    'instant': 5/21,     // 21g fresh = 5g instant
+    'bread-machine': 5/21,
+    'sourdough': 100/21, // 21g fresh = 100g sourdough
     'fresh': 1
   },
   'bread-machine': {
-    'active-dry': 1.33,
+    'active-dry': 7/5,
     'instant': 1,
-    'fresh': 3.33,
-    'sourdough': 5,
+    'fresh': 21/5,
+    'sourdough': 100/5,
     'bread-machine': 1
   },
   'sourdough': {
-    'active-dry': 0.2,
-    'instant': 0.2,
-    'fresh': 0.5,
-    'bread-machine': 0.2,
+    'active-dry': 7/100, // 100g sourdough = 7g active dry
+    'instant': 5/100,    // 100g sourdough = 5g instant
+    'fresh': 21/100,     // 100g sourdough = 21g fresh
+    'bread-machine': 5/100,
     'sourdough': 1
   }
 };
