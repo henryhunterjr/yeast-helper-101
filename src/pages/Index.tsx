@@ -21,7 +21,7 @@ const Index = () => {
         <div 
           className="space-y-8"
           style={{ minHeight: "calc(100vh - 1px)" }}
-          {...(!hasSeenTutorial ? { 'inert': '' } as { inert: '' }): {}}
+          {...(!hasSeenTutorial ? { inert: '' } : {})}
         >
           <YeastCalculator />
           <NewCalculator />
