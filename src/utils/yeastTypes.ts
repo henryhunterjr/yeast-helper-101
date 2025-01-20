@@ -9,44 +9,43 @@ export const yeastTypes = {
 export type YeastType = keyof typeof yeastTypes;
 export type UnitType = 'g' | 'tsp' | 'oz';
 
-// Updated conversion factors based on the new specifications:
-// 1 tsp active dry/instant = 30g sourdough
-// 1 tsp fresh (10g) = 30g sourdough
-// 1 tsp sourdough = 5g
+// Updated conversion factors based on Kurt's specifications:
+// 1g active dry/instant = 30g sourdough
+// 1g fresh = 10g sourdough
 export const conversionFactors: Record<YeastType, Record<YeastType, number>> = {
   'active-dry': {
     'instant': 1,        // 1:1 ratio for small amounts
     'fresh': 3.33,       // 1 tsp active dry = 3.33 tsp fresh
     'bread-machine': 1,  // Same as instant
-    'sourdough': 6,      // 1 tsp active dry = 30g sourdough = 6 tsp sourdough
+    'sourdough': 30,     // 1g active dry = 30g sourdough
     'active-dry': 1
   },
   'instant': {
     'active-dry': 1,     // 1:1 ratio for small amounts
     'fresh': 3.33,       // 1 tsp instant = 3.33 tsp fresh
     'bread-machine': 1,
-    'sourdough': 6,      // 1 tsp instant = 30g sourdough = 6 tsp sourdough
+    'sourdough': 30,     // 1g instant = 30g sourdough
     'instant': 1
   },
   'fresh': {
     'active-dry': 0.3,   // 1 tsp fresh = 0.3 tsp active dry
     'instant': 0.3,      // 1 tsp fresh = 0.3 tsp instant
     'bread-machine': 0.3,
-    'sourdough': 1.8,    // 1 tsp fresh (10g) = 30g sourdough = 6 tsp sourdough
+    'sourdough': 10,     // 1g fresh = 10g sourdough
     'fresh': 1
   },
   'bread-machine': {
     'active-dry': 1,
     'instant': 1,
     'fresh': 3.33,
-    'sourdough': 6,
+    'sourdough': 30,     // Same as instant/active dry
     'bread-machine': 1
   },
   'sourdough': {
-    'active-dry': 0.167, // 1 tsp sourdough = 0.167 tsp active dry
-    'instant': 0.167,    // 1 tsp sourdough = 0.167 tsp instant
-    'fresh': 0.556,      // 1 tsp sourdough = 0.556 tsp fresh
-    'bread-machine': 0.167,
+    'active-dry': 0.033, // 1g sourdough = 0.033g active dry (1/30)
+    'instant': 0.033,    // 1g sourdough = 0.033g instant (1/30)
+    'fresh': 0.1,        // 1g sourdough = 0.1g fresh (1/10)
+    'bread-machine': 0.033,
     'sourdough': 1
   }
 };
