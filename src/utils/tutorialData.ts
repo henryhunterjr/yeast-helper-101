@@ -6,6 +6,10 @@ export interface TutorialStep {
     top: string;
     left: string;
   };
+  example?: {
+    amount: number;
+    temperature: number;
+  };
 }
 
 export const tutorialSteps: TutorialStep[] = [
@@ -16,6 +20,10 @@ export const tutorialSteps: TutorialStep[] = [
     position: {
       top: '50%',
       left: '50%'
+    },
+    example: {
+      amount: 7,
+      temperature: 75
     }
   },
   {
@@ -25,42 +33,62 @@ export const tutorialSteps: TutorialStep[] = [
     position: {
       top: '30%',
       left: '25%'
+    },
+    example: {
+      amount: 2.25,
+      temperature: 75
     }
   },
   {
     id: 3,
-    title: "Baker's Percentage Calculator",
-    description: "Use our baker's percentage calculator to create perfectly balanced recipes. Enter your flour weight and adjust hydration, starter, and salt percentages.",
+    title: "Temperature Adjustments",
+    description: "The temperature of your dough affects fermentation. Adjust the temperature to see how it impacts your proofing time.",
     position: {
       top: '40%',
       left: '25%'
+    },
+    example: {
+      amount: 2.25,
+      temperature: 82
     }
   },
   {
     id: 4,
-    title: "Unit Switching",
-    description: "Switch between grams and ounces at any time using the unit toggle. Your measurements will automatically update to the selected unit.",
+    title: "Baker's Percentage Calculator",
+    description: "Use our baker's percentage calculator to create perfectly balanced recipes. Enter your flour weight and adjust hydration, starter, and salt percentages.",
     position: {
       top: '50%',
       left: '25%'
+    },
+    example: {
+      amount: 1000,
+      temperature: 75
     }
   },
   {
     id: 5,
-    title: "Real-time Validation",
-    description: "As you input values, we'll provide immediate feedback to ensure your recipe stays within recommended ranges for best results.",
+    title: "Real-time Updates",
+    description: "As you adjust values, all calculations update instantly. This helps you see how changes affect your recipe in real-time.",
     position: {
       top: '60%',
       left: '25%'
+    },
+    example: {
+      amount: 7,
+      temperature: 75
     }
   },
   {
     id: 6,
-    title: "Recipe Breakdown",
-    description: "View a detailed breakdown of your recipe, including exact measurements for each ingredient and the total recipe weight.",
+    title: "Ready to Start!",
+    description: "You're all set to start using YeastWise! Remember, you can always access this tutorial again using the tutorial button in the bottom right corner.",
     position: {
       top: '40%',
       left: '75%'
+    },
+    example: {
+      amount: 7,
+      temperature: 75
     }
   }
 ];
