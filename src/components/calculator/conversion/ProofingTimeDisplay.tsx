@@ -40,7 +40,7 @@ const ProofingTimeDisplay = ({
       </div>
       <div className="text-sm">
         <p className="font-semibold text-foreground">
-          {fermentationTime.minHours}-{fermentationTime.maxHours} hours
+          {fermentationTime.minHours.toFixed(1)}-{fermentationTime.maxHours.toFixed(1)} hours
         </p>
         <p className="text-xs text-muted-foreground mt-1">
           At {temperature}°F with {hydration}% hydration
