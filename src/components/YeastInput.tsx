@@ -43,15 +43,23 @@ const YeastInput = ({
     };
   }, [setUnit, setUseTsp]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty input or valid numbers
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <Label htmlFor="yeast-amount">Amount ({unit})</Label>
       <Input
         id="yeast-amount"
-        type="number"
-        inputMode="decimal"
+        type="text"
+        pattern="[0-9]*\.?[0-9]*"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={handleInputChange}
         className="w-full"
         placeholder={`Enter amount in ${unit}`}
         min="0"

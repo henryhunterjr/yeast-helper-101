@@ -15,14 +15,14 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
   const handleTemperatureChange = (value: string) => {
     console.log('Temperature Input - handleTemperatureChange called with:', value);
     
-    const numValue = parseFloat(value);
-    
     if (value === '') {
       console.log('Temperature Input - Empty value, resetting to default (72)');
       setTemperature('72');
       return;
     }
 
+    const numValue = parseFloat(value);
+    
     if (isNaN(numValue)) {
       console.log('Temperature Input - Invalid number entered');
       toast({
@@ -47,6 +47,14 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
     setTemperature(value);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty input or valid numbers
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      handleTemperatureChange(value);
+    }
+  };
+
   const handleSliderChange = (value: number[]) => {
     console.log('Temperature Input - Slider changed to:', value[0]);
     setTemperature(value[0].toString());
@@ -58,10 +66,10 @@ const TemperatureInput = ({ temperature, setTemperature }: TemperatureInputProps
       <div className="relative">
         <Thermometer className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
         <Input
-          type="number"
-          inputMode="decimal"
+          type="text"
+          pattern="[0-9]*\.?[0-9]*"
           value={temperature}
-          onChange={(e) => handleTemperatureChange(e.target.value)}
+          onChange={handleInputChange}
           className="pl-10 w-full text-lg sm:text-base h-12 sm:h-10"
           placeholder="Temperature (°F)"
           min="32"
