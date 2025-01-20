@@ -25,14 +25,18 @@ const CalculatorLayout = ({ children }: CalculatorLayoutProps) => {
                 onToggle={toggleDarkMode}
               />
             </div>
-            {children}
+            <div role="main" className="calculator-content">
+              {children}
+            </div>
           </div>
         </div>
 
         <div className="bg-background dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-border">
           <div className="p-4 sm:p-6">
             <h2 className="text-lg font-semibold mb-4 text-foreground">Saved Favorites</h2>
-            <FavoritesList />
+            <div className="favorites-list-container">
+              <FavoritesList />
+            </div>
           </div>
         </div>
       </div>

@@ -14,13 +14,19 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
         ws: true
+      },
+      '/wss': {
+        target: 'wss://lovable.dev',
+        changeOrigin: true,
+        secure: false,
+        ws: true
       }
     },
-    cors: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+    cors: {
+      origin: '*',
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
     }
   },
   plugins: [
