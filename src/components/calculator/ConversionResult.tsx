@@ -20,6 +20,7 @@ interface ConversionResultProps {
   unit: UnitType;
   onReset: () => void;
   isSimplified?: boolean;
+  starterStrength?: 'strong' | 'moderate' | 'weak';
 }
 
 const ConversionResult: React.FC<ConversionResultProps> = ({
