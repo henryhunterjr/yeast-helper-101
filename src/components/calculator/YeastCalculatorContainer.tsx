@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { YeastType, UnitType } from '@/utils/yeastTypes';
-import { calculateProofingTime, calculateConversion, getTemperatureAdjustment, calculateHydrationAdjustment } from '@/utils/yeastCalculations';
+import { 
+  calculateProofingTime, 
+  calculateConversion, 
+  getTemperatureAdjustment, 
+  calculateHydrationAdjustment 
+} from '@/utils/yeastCalculations';
 import CalculatorForm from './form/CalculatorForm';
 import ConversionResult from './ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
+import StarterStrengthSelect from './StarterStrengthSelect';
 
 interface YeastCalculatorContainerProps {
   onConvert: (amount: string, fromType: YeastType, toType: YeastType) => {
@@ -19,6 +25,7 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
   const [toType, setToType] = useState<YeastType>('instant');
   const [temperature, setTemperature] = useState('72');
   const [hydration, setHydration] = useState('100');
+  const [starterStrength, setStarterStrength] = useState<'strong' | 'moderate' | 'weak'>('moderate');
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
@@ -27,14 +34,22 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
 
   useEffect(() => {
     if (amount && fromType && toType) {
-      const { result, isSimplified } = onConvert(amount, fromType, toType);
+      const { result, isSimplified } = calculateConversion(
+        amount,
+        fromType,
+        toType,
+        useTsp,
+        parseFloat(temperature),
+        parseFloat(hydration),
+        starterStrength
+      );
       setConversionResult(result);
       setIsSimplified(isSimplified);
     } else {
       setConversionResult('');
       setIsSimplified(false);
     }
-  }, [amount, fromType, toType, onConvert]);
+  }, [amount, fromType, toType, temperature, hydration, starterStrength, useTsp]);
 
   const handleReset = () => {
     setAmount('');
@@ -42,10 +57,17 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
     setToType('instant');
     setTemperature('72');
     setHydration('100');
+    setStarterStrength('moderate');
     setConversionResult('');
   };
 
-  const fermentationTime = calculateProofingTime(fromType, parseFloat(hydration), parseFloat(temperature));
+  const fermentationTime = calculateProofingTime(
+    fromType,
+    parseFloat(hydration),
+    parseFloat(temperature),
+    starterStrength
+  );
+  
   const temperatureAdjustment = getTemperatureAdjustment(parseFloat(temperature));
   const hydrationAdjustment = calculateHydrationAdjustment(
     parseFloat(hydration),
@@ -74,6 +96,13 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
         setUseTsp={setUseTsp}
       />
 
+      {toType === 'sourdough' && (
+        <StarterStrengthSelect
+          value={starterStrength}
+          onChange={setStarterStrength}
+        />
+      )}
+
       {conversionResult && (
         <ConversionResult
           amount={amount}
@@ -89,6 +118,7 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
           unit={unit}
           onReset={handleReset}
           isSimplified={isSimplified}
+          starterStrength={starterStrength}
         />
       )}
     </CalculatorLayout>
