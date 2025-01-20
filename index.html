@@ -14,11 +14,12 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/">
     <meta property="og:title" content="YeastWise - Yeast Calculator">
-    <meta property="og:description" content="Convert between different types of yeast for perfect bread baking results">
-    <meta property="og:image" content="/og-image.png">
+    <meta property="og:description" content="Baking Great Bread at Home - Your Ultimate Yeast Converter">
+    <meta property="og:image" content="/lovable-uploads/64ffc596-d181-4e45-ac6a-b2b92a2a813c.png">
     <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:height" content="1200">
     <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="YeastWise Converter - Baking Great Bread at Home">
   </head>
   <body>
     <div id="root"></div>
@@ -26,59 +27,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
-<lov-write file_path="vite.config.ts">
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
-
-export default defineConfig(({ mode }) => ({
-  base: '/',
-  server: {
-    host: "0.0.0.0",
-    port: 8080,
-    proxy: {
-      '/api': {
-        target: 'https://lovable.dev',
-        changeOrigin: true,
-        secure: false,
-        ws: true
-      },
-      '/wss': {
-        target: 'wss://lovable.dev',
-        changeOrigin: true,
-        secure: false,
-        ws: true
-      }
-    },
-    cors: {
-      origin: '*',
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      credentials: true,
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-    }
-  },
-  plugins: [
-    react(),
-    mode === 'development' && componentTagger(),
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-        },
-      },
-    },
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom'],
-  },
-}));
