@@ -56,12 +56,17 @@
   body {
     @apply bg-background text-foreground antialiased;
     background-image: 
-      radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.1) 1px, transparent 0);
-    background-size: 20px 20px;
+      radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.15) 1px, transparent 0),
+      linear-gradient(to right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05));
+    background-size: 16px 16px, 100% 100%;
+    background-position: 0 0;
   }
   .dark body {
     background-image: 
-      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.15) 1px, transparent 0),
+      linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
+    background-size: 16px 16px, 100% 100%;
+    background-position: 0 0;
   }
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
