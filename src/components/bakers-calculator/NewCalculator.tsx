@@ -12,6 +12,8 @@ const NewCalculator = () => {
   const {
     flour,
     setFlour,
+    water,
+    setWater,
     hydration,
     setHydration,
     starterPercentage,
@@ -59,6 +61,8 @@ const NewCalculator = () => {
           <CoreInputs
             flour={flour}
             setFlour={setFlour}
+            water={water}
+            setWater={setWater}
             hydration={hydration}
             setHydration={setHydration}
             starterPercentage={starterPercentage}

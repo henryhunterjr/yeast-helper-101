@@ -1,6 +1,6 @@
 import React from 'react';
 import FlourInput from './inputs/FlourInput';
-import HydrationInput from './inputs/HydrationInput';
+import WaterInput from './inputs/WaterInput';
 import PercentageInput from './inputs/PercentageInput';
 
 interface CoreInputsProps {
@@ -8,6 +8,8 @@ interface CoreInputsProps {
   setFlour: (value: number | null) => void;
   hydration: number;
   setHydration: (value: number) => void;
+  water: number | null;
+  setWater: (value: number | null) => void;
   starterPercentage: number;
   setStarterPercentage: (value: number) => void;
   saltPercentage: number;
@@ -16,6 +18,7 @@ interface CoreInputsProps {
   validationErrors: {
     flour?: string;
     hydration?: string;
+    water?: string;
     starter?: string;
     salt?: string;
   };
@@ -26,6 +29,8 @@ const CoreInputs = ({
   setFlour,
   hydration,
   setHydration,
+  water,
+  setWater,
   starterPercentage,
   setStarterPercentage,
   saltPercentage,
@@ -45,10 +50,14 @@ const CoreInputs = ({
           error={validationErrors.flour}
         />
 
-        <HydrationInput
+        <WaterInput
+          water={water}
+          setWater={setWater}
           hydration={hydration}
           setHydration={setHydration}
-          error={validationErrors.hydration}
+          flour={flour}
+          unit={unit}
+          error={validationErrors.water}
         />
 
         <PercentageInput

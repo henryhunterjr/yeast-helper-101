@@ -13,12 +13,14 @@ interface Calculations {
 interface ValidationErrors {
   flour?: string;
   hydration?: string;
+  water?: string;
   starter?: string;
   salt?: string;
 }
 
 export const useNewBakersCalculator = () => {
   const [flour, setFlour] = useState<number | null>(500);
+  const [water, setWater] = useState<number | null>(375);
   const [hydration, setHydration] = useState<number>(75);
   const [starterPercentage, setStarterPercentage] = useState<number>(20);
   const [saltPercentage, setSaltPercentage] = useState<number>(2);
@@ -30,6 +32,10 @@ export const useNewBakersCalculator = () => {
     
     if (!flour || flour <= 0) {
       errors.flour = "Flour weight must be greater than 0";
+    }
+    
+    if (!water || water <= 0) {
+      errors.water = "Water weight must be greater than 0";
     }
     
     if (hydration < 50) {
@@ -51,7 +57,7 @@ export const useNewBakersCalculator = () => {
     }
     
     return errors;
-  }, [flour, hydration, starterPercentage, saltPercentage]);
+  }, [flour, water, hydration, starterPercentage, saltPercentage]);
 
   const validationWarnings = useMemo(() => {
     const warnings: string[] = [];
@@ -125,6 +131,8 @@ export const useNewBakersCalculator = () => {
   return {
     flour,
     setFlour,
+    water,
+    setWater,
     hydration,
     setHydration,
     starterPercentage,
