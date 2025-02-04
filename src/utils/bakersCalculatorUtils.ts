@@ -20,7 +20,7 @@ interface CalculatorResults {
 const CONVERSION = {
   gToOz: 0.03527396,
   ozToG: 28.3495,
-};
+} as const;
 
 export function calculateWater(flour: number, hydration: number): number {
   if (flour < 0 || hydration < 0 || hydration > 100) {
@@ -38,8 +38,18 @@ export function calculateSalt(flour: number, saltPercentage: number): number {
 }
 
 export function calculateStarterContributions(starterWeight: number, starterHydration: number) {
+  if (starterHydration <= -100) {
+    throw new Error("Invalid hydration percentage: cannot be -100% or lower");
+  }
+  
+  const totalParts = 1 + (starterHydration / 100);
+  if (totalParts === 0) {
+    throw new Error("Invalid hydration: results in division by zero");
+  }
+  
   const flourFromStarter = (starterWeight * 100) / (100 + starterHydration);
   const waterFromStarter = starterWeight - flourFromStarter;
+  
   return { flourFromStarter, waterFromStarter };
 }
 

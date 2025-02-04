@@ -3,24 +3,23 @@ import { conversionFactors } from './yeastTypes';
 
 export const SIMPLIFIED_THRESHOLD = 14; // grams
 
-export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
-  const desiredTemp = {
-    'active-dry': 75,
-    'instant': 75,
-    'fresh': 75,
-    'sourdough': 78,
-    'bread-machine': 75
-  }[yeastType];
-
-  let waterTemp = (desiredTemp * 3) - roomTemp;
-
-  if (yeastType === 'sourdough') {
-    waterTemp = Math.min(Math.max(waterTemp, 78), 82);
-  } else {
-    waterTemp = Math.min(Math.max(waterTemp, 75), 80);
+export const TEMPERATURE_RANGES = {
+  STANDARD: {
+    DESIRED: 75,
+    MIN: 75,
+    MAX: 80
+  },
+  SOURDOUGH: {
+    DESIRED: 78,
+    MIN: 78,
+    MAX: 82
   }
+} as const;
 
-  return Math.round(waterTemp);
+export const calculateWaterTemperature = (roomTemp: number, yeastType: YeastType): number => {
+  const config = yeastType === 'sourdough' ? TEMPERATURE_RANGES.SOURDOUGH : TEMPERATURE_RANGES.STANDARD;
+  let waterTemp = (config.DESIRED * 3) - roomTemp;
+  return Math.min(Math.max(waterTemp, config.MIN), config.MAX);
 };
 
 export const calculateProofingTime = (
@@ -79,7 +78,7 @@ export const calculateConversion = (
 } => {
   const numericAmount = parseFloat(amount);
   if (isNaN(numericAmount) || numericAmount <= 0) {
-    return { result: '', isSimplified: false };
+    throw new Error('Invalid amount provided');
   }
 
   // Convert to grams if using teaspoons

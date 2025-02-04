@@ -11,30 +11,33 @@ import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import React from 'react';
 
+interface ApiError {
+  response?: {
+    status: number;
+    data?: {
+      message?: string;
+    };
+  };
+  message: string;
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: (failureCount, error: any) => {
-        // Don't retry on 429 errors (rate limiting)
+      retry: (failureCount, error: ApiError) => {
         if (error?.response?.status === 429) {
-          toast({
-            title: "Rate limit reached",
-            description: "Please wait a moment before trying again",
-            variant: "destructive",
-          });
-          return false;
+          console.log('Rate limit reached, waiting before retry...');
+          return failureCount < 3;
         }
-        return failureCount < 3;
+        return failureCount < 2;
       },
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
       meta: {
-        onError: (error: Error) => {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
+        onSettled: (_data: unknown, error: Error | null) => {
+          if (error) {
+            console.error('Query error:', error);
+          }
         },
       },
     },
@@ -66,11 +69,6 @@ const App = () => {
   useEffect(() => {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error("Unhandled promise rejection:", event.reason);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      });
     };
 
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
@@ -87,7 +85,11 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <Index />
+                </ErrorBoundary>
+              } />
               <Route path="/settings" element={<Settings />} />
               <Route path="/help" element={<HelpAbout />} />
             </Routes>
