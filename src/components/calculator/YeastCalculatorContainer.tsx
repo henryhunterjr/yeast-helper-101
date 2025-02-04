@@ -1,25 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useToast } from "@/hooks/use-toast";
+import React, { useState } from 'react';
 import { YeastType, UnitType } from '@/utils/yeastTypes';
-import { 
-  calculateProofingTime, 
-  calculateConversion, 
-  getTemperatureAdjustment, 
-  calculateHydrationAdjustment 
-} from '@/utils/yeastCalculations';
 import CalculatorForm from './form/CalculatorForm';
 import ConversionResult from './ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
 import StarterStrengthSelect from './StarterStrengthSelect';
+import { calculateConversion } from '@/utils/yeastCalculations';
 
-interface YeastCalculatorContainerProps {
-  onConvert: (amount: string, fromType: YeastType, toType: YeastType) => {
-    result: string;
-    isSimplified: boolean;
-  };
-}
-
-const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) => {
+const YeastCalculatorContainer = () => {
   const [amount, setAmount] = useState('');
   const [fromType, setFromType] = useState<YeastType>('active-dry');
   const [toType, setToType] = useState<YeastType>('instant');
@@ -29,10 +16,8 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
-  const [conversionResult, setConversionResult] = useState<string>('');
-  const [isSimplified, setIsSimplified] = useState(false);
 
-  useEffect(() => {
+  const handleConversion = () => {
     if (amount && fromType && toType) {
       const { result, isSimplified } = calculateConversion(
         amount,
@@ -43,38 +28,12 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
         parseFloat(hydration),
         starterStrength
       );
-      setConversionResult(result);
-      setIsSimplified(isSimplified);
-    } else {
-      setConversionResult('');
-      setIsSimplified(false);
+      return { result, isSimplified };
     }
-  }, [amount, fromType, toType, temperature, hydration, starterStrength, useTsp]);
-
-  const handleReset = () => {
-    setAmount('');
-    setFromType('active-dry');
-    setToType('instant');
-    setTemperature('72');
-    setHydration('100');
-    setStarterStrength('moderate');
-    setConversionResult('');
+    return { result: '', isSimplified: false };
   };
 
-  const fermentationTime = calculateProofingTime(
-    fromType,
-    parseFloat(hydration),
-    parseFloat(temperature),
-    starterStrength
-  );
-  
-  const temperatureAdjustment = getTemperatureAdjustment(parseFloat(temperature));
-  const hydrationAdjustment = calculateHydrationAdjustment(
-    parseFloat(hydration),
-    parseFloat(amount),
-    fromType,
-    toType
-  );
+  const { result, isSimplified } = handleConversion();
 
   return (
     <CalculatorLayout>
@@ -103,20 +62,30 @@ const YeastCalculatorContainer = ({ onConvert }: YeastCalculatorContainerProps) 
         />
       )}
 
-      {conversionResult && (
+      {result && (
         <ConversionResult
           amount={amount}
           fromType={fromType}
           toType={toType}
           temperature={temperature}
           hydration={hydration}
-          result={conversionResult}
-          temperatureAdjustment={temperatureAdjustment}
-          hydrationAdjustment={hydrationAdjustment}
-          fermentationTime={fermentationTime}
+          result={result}
+          temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+          hydrationAdjustment={calculateHydrationAdjustment(
+            parseFloat(hydration),
+            parseFloat(amount),
+            fromType,
+            toType
+          )}
+          fermentationTime={calculateProofingTime(
+            fromType,
+            parseFloat(hydration),
+            parseFloat(temperature),
+            starterStrength
+          )}
           isLoading={isLoading}
           unit={unit}
-          onReset={handleReset}
+          onReset={() => setAmount('')}
           isSimplified={isSimplified}
           starterStrength={starterStrength}
         />
