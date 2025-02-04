@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UnitType } from '@/utils/yeastTypes';
@@ -22,41 +22,28 @@ const YeastInput = ({
   useTsp,
   setUseTsp
 }: YeastInputProps) => {
-  console.log('YeastInput rendering with amount:', amount);
-  console.log('Current unit:', unit);
+  const handleUnitChange = useCallback(() => {
+    const savedSettings = localStorage.getItem('yeastwise-settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setUnit(settings.units);
+      setUseTsp(settings.units === 'tsp');
+    }
+  }, [setUnit, setUseTsp]);
 
-  // Listen for unit changes from settings
   useEffect(() => {
-    const handleUnitChange = () => {
-      console.log('Unit change event triggered');
-      const savedSettings = localStorage.getItem('yeastwise-settings');
-      if (savedSettings) {
-        const settings = JSON.parse(savedSettings);
-        console.log('Loading settings:', settings);
-        setUnit(settings.units);
-        setUseTsp(settings.units === 'tsp');
-      }
-    };
-
+    handleUnitChange();
     window.addEventListener('unitChange', handleUnitChange);
     
-    // Initial load
-    handleUnitChange();
-
     return () => {
       window.removeEventListener('unitChange', handleUnitChange);
     };
-  }, [setUnit, setUseTsp]);
+  }, [handleUnitChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log('Input change detected:', value);
-    // Allow empty input or valid numbers
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      console.log('Setting new amount:', value);
       setAmount(value);
-    } else {
-      console.log('Invalid input rejected:', value);
     }
   };
 
