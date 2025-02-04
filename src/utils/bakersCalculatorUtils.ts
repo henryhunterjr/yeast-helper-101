@@ -13,19 +13,19 @@ export const calculateStarterContributions = (starterWeight: number, starterHydr
 export const validateCalculatorInputs = (inputs: CalculatorInputs): string[] => {
   const warnings: string[] = [];
   
-  if (inputs.flour <= 0) {
+  if (!inputs.flour || inputs.flour <= 0) {
     warnings.push('Flour weight must be greater than 0');
   }
   
-  if (inputs.water < 0) {
+  if (!inputs.water || inputs.water < 0) {
     warnings.push('Water weight cannot be negative');
   }
   
-  if (inputs.starter.weight < 0) {
+  if (!inputs.starter?.weight || inputs.starter.weight < 0) {
     warnings.push('Starter weight cannot be negative');
   }
   
-  if (inputs.salt < 0) {
+  if (!inputs.salt || inputs.salt < 0) {
     warnings.push('Salt weight cannot be negative');
   }
   
@@ -34,6 +34,7 @@ export const validateCalculatorInputs = (inputs: CalculatorInputs): string[] => 
 
 export const calculateResults = (inputs: CalculatorInputs): CalculatorResults => {
   const { flour, water, starter, salt, hydrationTarget } = inputs;
+  
   const { flour: flourFromStarter, water: waterFromStarter } = calculateStarterContributions(
     starter.weight,
     starter.hydration
