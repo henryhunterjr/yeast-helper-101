@@ -5,6 +5,11 @@ import ConversionResult from './ConversionResult';
 import CalculatorLayout from './layout/CalculatorLayout';
 import StarterStrengthSelect from './StarterStrengthSelect';
 import { calculateConversion } from '@/utils/yeastCalculations';
+import { 
+  getTemperatureAdjustment,
+  calculateHydrationAdjustment,
+  calculateProofingTime
+} from '@/utils/calculationHelpers';
 
 const YeastCalculatorContainer = () => {
   const [amount, setAmount] = useState('');
