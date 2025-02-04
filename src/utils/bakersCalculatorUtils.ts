@@ -33,7 +33,7 @@ export const validateCalculatorInputs = (inputs: CalculatorInputs): string[] => 
 };
 
 export const calculateResults = (inputs: CalculatorInputs): CalculatorResults => {
-  const { flour, water, starter, salt, hydrationTarget } = inputs;
+  const { flour, water, starter, salt } = inputs;
   
   const { flour: flourFromStarter, water: waterFromStarter } = calculateStarterContributions(
     starter.weight,
