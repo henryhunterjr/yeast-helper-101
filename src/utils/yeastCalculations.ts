@@ -1,7 +1,7 @@
 import type { YeastType } from './yeastTypes';
 import { conversionFactors } from './yeastTypes';
-import { 
-  calculateTemperatureMultiplier, 
+import {
+  calculateTemperatureMultiplier,
   calculateHydrationMultiplier,
   getStarterStrengthMultiplier,
   memoizedCalculation
