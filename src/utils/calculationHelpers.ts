@@ -33,3 +33,49 @@ export const memoizedCalculation = <T extends (...args: any[]) => any>(
     return result;
   }) as T;
 };
+
+export const getTemperatureAdjustment = (temperature: number): string => {
+  if (temperature < 70) {
+    return "Increase fermentation time by 10-15%";
+  } else if (temperature > 80) {
+    return "Decrease fermentation time by 10-15%";
+  }
+  return "Temperature is in optimal range";
+};
+
+export const calculateHydrationAdjustment = (
+  hydration: number,
+  amount: number,
+  fromType: string,
+  toType: string
+) => {
+  const baseHydration = 100;
+  const hydrationDiff = hydration - baseHydration;
+  
+  return {
+    flourAdjustment: amount * (hydrationDiff / 100),
+    waterAdjustment: amount * (hydrationDiff / 100),
+    showAdjustments: hydrationDiff !== 0
+  };
+};
+
+export const calculateProofingTime = (
+  yeastType: string,
+  hydration: number,
+  temperature: number,
+  starterStrength: 'strong' | 'moderate' | 'weak' = 'moderate'
+): { minHours: number; maxHours: number } => {
+  const tempMultiplier = calculateTemperatureMultiplier(temperature);
+  const hydrationMultiplier = calculateHydrationMultiplier(hydration);
+  const strengthMultiplier = getStarterStrengthMultiplier(starterStrength);
+
+  const baseTime = {
+    minHours: yeastType === 'sourdough' ? 4 : 1.5,
+    maxHours: yeastType === 'sourdough' ? 6 : 2.5
+  };
+
+  return {
+    minHours: baseTime.minHours * tempMultiplier * hydrationMultiplier * strengthMultiplier,
+    maxHours: baseTime.maxHours * tempMultiplier * hydrationMultiplier * strengthMultiplier
+  };
+};

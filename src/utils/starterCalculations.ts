@@ -1,9 +1,4 @@
 import { Recipe } from '@/types/recipe';
-import { 
-  calculateWaterFromHydration,
-  calculateSaltFromFlour,
-  calculateStarterContributions
-} from './bakersCalculatorHelpers';
 
 export const calculateStarterContributions = (
   starterWeight: number,
@@ -28,6 +23,20 @@ export const calculateStarterFromFlour = (
   starterPercentage: number = 20
 ): number => {
   return (flourWeight * starterPercentage) / 100;
+};
+
+export const calculateWaterFromHydration = (
+  flourWeight: number,
+  hydration: number
+): number => {
+  return (flourWeight * hydration) / 100;
+};
+
+export const calculateSaltFromFlour = (
+  flourWeight: number,
+  saltPercentage: number = 2
+): number => {
+  return (flourWeight * saltPercentage) / 100;
 };
 
 export const calculateRecipeFromStarter = (
