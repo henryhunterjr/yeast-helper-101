@@ -17,4 +17,5 @@ export interface CalculatorResults {
   flourFromStarter: number;
   waterFromStarter: number;
   totalWeight: number;
+  hydrationPercentage?: number;
 }
