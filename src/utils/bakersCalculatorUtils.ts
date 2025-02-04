@@ -1,57 +1,42 @@
-interface CalculatorInputs {
-  flour: number;
-  hydration: number;
-  starterPercentage: number;
-  saltPercentage: number;
-  starterWeight?: number;
-  starterHydration?: number;
-  unit?: 'g' | 'oz';
-}
-
-interface CalculatorResults {
-  flour: number;
-  water: number;
-  starter: number;
-  salt: number;
-  totalWeight: number;
-  error?: string;
-}
+import { memoizedCalculation } from './calculationHelpers';
 
 const CONVERSION = {
   gToOz: 0.03527396,
   ozToG: 28.3495,
 } as const;
 
-export function calculateWater(flour: number, hydration: number): number {
+export const calculateWater = memoizedCalculation((flour: number, hydration: number): number => {
   if (flour < 0 || hydration < 0 || hydration > 100) {
     throw new Error("Invalid input: Flour must be non-negative and hydration must be between 0% and 100%");
   }
   return (flour * hydration) / 100;
-}
+});
 
-export function calculateStarter(flour: number, starterPercentage: number): number {
+export const calculateStarter = memoizedCalculation((flour: number, starterPercentage: number): number => {
   return (flour * starterPercentage) / 100;
-}
+});
 
-export function calculateSalt(flour: number, saltPercentage: number): number {
+export const calculateSalt = memoizedCalculation((flour: number, saltPercentage: number): number => {
   return (flour * saltPercentage) / 100;
-}
+});
 
-export function calculateStarterContributions(starterWeight: number, starterHydration: number) {
-  if (starterHydration <= -100) {
-    throw new Error("Invalid hydration percentage: cannot be -100% or lower");
+export const calculateStarterContributions = memoizedCalculation(
+  (starterWeight: number, starterHydration: number) => {
+    if (starterHydration <= -100) {
+      throw new Error("Invalid hydration percentage: cannot be -100% or lower");
+    }
+    
+    const totalParts = 1 + (starterHydration / 100);
+    if (totalParts === 0) {
+      throw new Error("Invalid hydration: results in division by zero");
+    }
+    
+    const flourFromStarter = (starterWeight * 100) / (100 + starterHydration);
+    const waterFromStarter = starterWeight - flourFromStarter;
+    
+    return { flourFromStarter, waterFromStarter };
   }
-  
-  const totalParts = 1 + (starterHydration / 100);
-  if (totalParts === 0) {
-    throw new Error("Invalid hydration: results in division by zero");
-  }
-  
-  const flourFromStarter = (starterWeight * 100) / (100 + starterHydration);
-  const waterFromStarter = starterWeight - flourFromStarter;
-  
-  return { flourFromStarter, waterFromStarter };
-}
+);
 
 export function convertUnits(value: number, from: 'g' | 'oz', to: 'g' | 'oz'): number {
   if (from === to) return value;
