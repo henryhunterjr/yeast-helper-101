@@ -45,14 +45,10 @@ const CalculatorForm = ({
       <YeastInputSection
         amount={amount}
         setAmount={setAmount}
-        temperature={temperature}
-        setTemperature={setTemperature}
-        hydration={hydration}
-        setHydration={setHydration}
         fromType={fromType}
-        setFromType={handleFromTypeChange}
         toType={toType}
-        setToType={handleToTypeChange}
+        handleFromTypeChange={handleFromTypeChange}
+        handleToTypeChange={handleToTypeChange}
         isLoading={isLoading}
         unit={unit}
         setUnit={setUnit}

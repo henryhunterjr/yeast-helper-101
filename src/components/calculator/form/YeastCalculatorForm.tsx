@@ -6,10 +6,6 @@ import { YeastType, UnitType } from '@/utils/yeastTypes';
 interface YeastCalculatorFormProps {
   amount: string;
   setAmount: (value: string) => void;
-  temperature: string;
-  setTemperature: (value: string) => void;
-  hydration: string;
-  setHydration: (value: string) => void;
   fromType: YeastType;
   toType: YeastType;
   handleFromTypeChange: (value: YeastType) => void;
@@ -24,10 +20,6 @@ interface YeastCalculatorFormProps {
 const YeastCalculatorForm = ({
   amount,
   setAmount,
-  temperature,
-  setTemperature,
-  hydration,
-  setHydration,
   fromType,
   toType,
   handleFromTypeChange,
@@ -50,16 +42,11 @@ const YeastCalculatorForm = ({
       <YeastInputSection
         amount={amount}
         setAmount={setAmount}
-        temperature={temperature}
-        setTemperature={setTemperature}
-        hydration={hydration}
-        setHydration={setHydration}
         fromType={fromType}
-        setFromType={handleFromTypeChange}
         toType={toType}
-        setToType={handleToTypeChange}
+        handleFromTypeChange={handleFromTypeChange}
+        handleToTypeChange={handleToTypeChange}
         isLoading={isLoading}
-        showAdjustments={false}
         unit={unit}
         setUnit={setUnit}
         useTsp={useTsp}
