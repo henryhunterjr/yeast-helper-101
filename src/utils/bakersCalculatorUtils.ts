@@ -1,3 +1,4 @@
+import { CalculatorInputs, CalculatorResults } from '../types/calculator';
 import { memoizedCalculation } from './calculationHelpers';
 
 const CONVERSION = {
