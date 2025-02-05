@@ -1,3 +1,5 @@
+import { YeastType } from './yeastTypes';
+
 export const calculateTemperatureMultiplier = (temperature: number): number => {
   return Math.pow(0.8, (temperature - 75) / 10);
 };
@@ -36,9 +38,9 @@ export const memoizedCalculation = <T extends (...args: any[]) => any>(
 
 export const getTemperatureAdjustment = (temperature: number): string => {
   if (temperature < 70) {
-    return "Increase fermentation time by 10-15%";
+    return "Increase proofing time by 10-15%";
   } else if (temperature > 80) {
-    return "Decrease fermentation time by 10-15%";
+    return "Decrease proofing time by 10-15%";
   }
   return "Temperature is in optimal range";
 };
@@ -46,21 +48,33 @@ export const getTemperatureAdjustment = (temperature: number): string => {
 export const calculateHydrationAdjustment = (
   hydration: number,
   amount: number,
-  fromType: string,
-  toType: string
-) => {
+  fromType: YeastType,
+  toType: YeastType
+): {
+  flourAdjustment: number;
+  waterAdjustment: number;
+  showAdjustments: boolean;
+} => {
   const baseHydration = 100;
   const hydrationDiff = hydration - baseHydration;
+  
+  if (fromType === toType || (!['sourdough'].includes(fromType) && !['sourdough'].includes(toType))) {
+    return {
+      flourAdjustment: 0,
+      waterAdjustment: 0,
+      showAdjustments: false
+    };
+  }
   
   return {
     flourAdjustment: amount * (hydrationDiff / 100),
     waterAdjustment: amount * (hydrationDiff / 100),
-    showAdjustments: hydrationDiff !== 0
+    showAdjustments: true
   };
 };
 
 export const calculateProofingTime = (
-  yeastType: string,
+  yeastType: YeastType,
   hydration: number,
   temperature: number,
   starterStrength: 'strong' | 'moderate' | 'weak' = 'moderate'

@@ -18,55 +18,25 @@ export const calculateStarterContributions = (
   };
 };
 
-export const calculateStarterFromFlour = (
-  flourWeight: number, 
-  starterPercentage: number = 20
-): number => {
-  return (flourWeight * starterPercentage) / 100;
-};
-
-export const calculateWaterFromHydration = (
-  flourWeight: number,
-  hydration: number
-): number => {
+export const calculateWaterFromHydration = (flourWeight: number, hydration: number): number => {
   return (flourWeight * hydration) / 100;
 };
 
-export const calculateSaltFromFlour = (
-  flourWeight: number,
-  saltPercentage: number = 2
-): number => {
-  return (flourWeight * saltPercentage) / 100;
+export const calculateSaltFromFlour = (flourWeight: number, percentage: number = 2): number => {
+  return (flourWeight * percentage) / 100;
 };
 
-export const calculateRecipeFromStarter = (
-  starterWeight: number,
-  starterHydration: number,
-  targetHydration: number
-): Recipe => {
-  const { flour: flourFromStarter, water: waterFromStarter } = calculateStarterContributions(
-    starterWeight,
-    starterHydration
-  );
-
-  const totalFlour = flourFromStarter * 5;
-  const targetWater = calculateWaterFromHydration(totalFlour, targetHydration);
-  const mainFlour = totalFlour - flourFromStarter;
-  const mainWater = targetWater - waterFromStarter;
-  const salt = calculateSaltFromFlour(totalFlour);
-
+export const calculateStarterFromFlour = (
+  flourWeight: number,
+  starterPercentage: number,
+  hydration: number
+): Recipe['starter'] => {
+  if (!flourWeight || !starterPercentage) return undefined;
+  
+  const starterWeight = (flourWeight * starterPercentage) / 100;
+  
   return {
-    flour: mainFlour,
-    unit: 'g',
-    hydrationTarget: targetHydration,
-    ingredients: [
-      { id: 'water', name: 'Water', weight: mainWater, percentage: (mainWater / totalFlour) * 100 },
-      { id: 'salt', name: 'Salt', weight: salt, percentage: (salt / totalFlour) * 100 }
-    ],
-    starter: {
-      weight: starterWeight,
-      hydration: starterHydration,
-      percentage: (starterWeight / totalFlour) * 100
-    }
+    weight: starterWeight,
+    hydration: hydration
   };
 };
