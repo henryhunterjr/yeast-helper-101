@@ -10,6 +10,7 @@ import HelpAbout from "./components/HelpAbout";
 import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import React from 'react';
+import { useErrorHandling } from "./hooks/useErrorHandling";
 
 interface ApiError {
   response?: {
@@ -66,27 +67,7 @@ const ErrorFallback = ({ error }: { error: Error }) => {
 };
 
 const App = () => {
-  useEffect(() => {
-    // Handle ResizeObserver errors
-    const handleError = (event: ErrorEvent) => {
-      if (event.message.includes('ResizeObserver')) {
-        event.stopImmediatePropagation();
-      }
-    };
-
-    window.addEventListener('error', handleError);
-    
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error("Unhandled promise rejection:", event.reason);
-    };
-
-    window.addEventListener("unhandledrejection", handleUnhandledRejection);
-    
-    return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
-    };
-  }, []);
+  useErrorHandling();
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
