@@ -33,4 +33,18 @@ describe('Temperature Adjustments', () => {
     const waterTemp = await screen.findByText(/78°F/i);
     expect(waterTemp).toBeInTheDocument();
   });
+
+  it('should handle extreme temperatures appropriately', async () => {
+    render(<YeastCalculator />);
+    
+    const temperatureInput = screen.getByPlaceholderText(/Temperature/i);
+    const fromSelect = screen.getByLabelText(/From/i);
+    
+    await userEvent.clear(temperatureInput);
+    await userEvent.type(temperatureInput, '85');
+    await userEvent.selectOptions(fromSelect, 'active-dry');
+
+    const adjustment = await screen.findByText(/Decrease starter amount/i);
+    expect(adjustment).toBeInTheDocument();
+  });
 });
