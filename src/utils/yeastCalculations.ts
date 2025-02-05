@@ -1,8 +1,8 @@
 import type { YeastType } from './yeastTypes';
 import { conversionFactors } from './yeastTypes';
 import {
-  calculateTemperatureMultiplier,
-  calculateHydrationMultiplier,
+  calculateTemperatureMultiplier as tempMultiplier,
+  calculateHydrationMultiplier as hydrationMultiplier,
   getStarterStrengthMultiplier,
   memoizedCalculation
 } from './calculationHelpers';
@@ -21,6 +21,10 @@ export const TEMPERATURE_RANGES = {
     MAX: 82
   }
 } as const;
+
+// Export these functions that are needed by the tests
+export const calculateTemperatureMultiplier = tempMultiplier;
+export const calculateHydrationMultiplier = hydrationMultiplier;
 
 export const calculateWaterTemperature = memoizedCalculation(
   (roomTemp: number, yeastType: YeastType): number => {
