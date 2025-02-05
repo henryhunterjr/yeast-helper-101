@@ -90,9 +90,9 @@ const Settings = () => {
     <Dialog open onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle>YeastWise Settings</DialogTitle>
           <DialogDescription>
-            Customize your yeast calculator preferences
+            Customize your yeast calculator preferences and measurement units
           </DialogDescription>
         </DialogHeader>
         

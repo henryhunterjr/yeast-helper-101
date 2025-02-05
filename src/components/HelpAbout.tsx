@@ -23,10 +23,10 @@ const HelpAbout = () => {
   return (
     <Dialog open onOpenChange={() => navigate('/')}>
       <DialogContent className="sm:max-w-[725px] max-h-[90vh] overflow-hidden">
-        <DialogHeader className="relative">
-          <DialogTitle>Help & About</DialogTitle>
+        <DialogHeader>
+          <DialogTitle>Help & About YeastWise</DialogTitle>
           <DialogDescription>
-            Learn how to use the yeast calculator and get help
+            Learn how to use the yeast calculator and get help with your bread baking journey
           </DialogDescription>
           <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
             <X className="h-4 w-4" />
