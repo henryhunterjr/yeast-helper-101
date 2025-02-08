@@ -31,6 +31,7 @@ const WaterInput = ({
 
   React.useEffect(() => {
     if (flour) {
+      console.log("Calculating water from flour and hydration:", { flour, hydration });
       const calculatedWater = (flour * hydration) / 100;
       setWater(Math.round(calculatedWater * 10) / 10);
     }
@@ -43,25 +44,28 @@ const WaterInput = ({
     if (waterValue !== null && (waterValue < 0 || waterValue > 10000)) {
       toast({
         title: "Invalid Water Amount",
-        description: "Water amount must be between 0 and 10,000 grams",
+        description: "Please enter a water amount between 0 and 10,000 grams for best results.",
         variant: "destructive",
       });
       return;
     }
 
+    console.log("Setting new water value:", waterValue);
     setWater(waterValue);
     
     if (waterValue !== null && flour) {
       const newHydration = (waterValue / flour) * 100;
+      console.log("Calculating new hydration:", newHydration);
       setHydration(Math.round(newHydration * 10) / 10);
     }
   };
 
   const handleHydrationChange = (value: number) => {
-    console.log("Hydration changed:", value);
+    console.log("Hydration slider changed:", value);
     setHydration(value);
     if (flour) {
       const newWater = (flour * value) / 100;
+      console.log("Calculating new water from hydration:", newWater);
       setWater(Math.round(newWater * 10) / 10);
     }
   };
@@ -69,13 +73,13 @@ const WaterInput = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="water">Water ({unit})</Label>
+        <Label htmlFor="water" className="text-sm font-medium">Water ({unit})</Label>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+            <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p>Water amount determines the dough's hydration level. Higher hydration makes a more open crumb structure but can be harder to handle.</p>
+          <TooltipContent side="top" className="max-w-xs p-3">
+            <p className="text-sm">Water amount determines the dough's hydration percentage. Higher hydration creates a more open crumb structure but can make the dough harder to handle. Adjust the slider to find your preferred hydration level.</p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -86,18 +90,19 @@ const WaterInput = ({
         onChange={(e) => handleWaterChange(e.target.value)}
         min="0"
         step="1"
-        className={`transition-colors ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+        className={`transition-all duration-200 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'}`}
+        placeholder={`Enter water amount in ${unit}`}
       />
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Label htmlFor="hydration">Hydration</Label>
+            <Label htmlFor="hydration" className="text-sm font-medium">Hydration</Label>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p>Hydration is the ratio of water to flour, expressed as a percentage. It affects the texture and handling of your dough.</p>
+              <TooltipContent side="top" className="max-w-xs p-3">
+                <p className="text-sm">Hydration is the ratio of water to flour, expressed as a percentage. It significantly affects your dough's texture and handling characteristics.</p>
               </TooltipContent>
             </Tooltip>
           </div>

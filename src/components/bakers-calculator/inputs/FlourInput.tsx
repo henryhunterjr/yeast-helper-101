@@ -24,25 +24,26 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
     if (flourValue !== null && (flourValue < 0 || flourValue > 10000)) {
       toast({
         title: "Invalid Flour Amount",
-        description: "Flour amount must be between 0 and 10,000 grams",
+        description: "Please enter a flour amount between 0 and 10,000 grams for best results.",
         variant: "destructive",
       });
       return;
     }
 
+    console.log("Setting new flour value:", flourValue);
     setFlour(flourValue);
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 transition-all duration-200">
       <div className="flex items-center justify-between">
-        <Label htmlFor="flour">Flour Weight ({unit})</Label>
+        <Label htmlFor="flour" className="text-sm font-medium">Flour Weight ({unit})</Label>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+            <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p>Flour is the base ingredient (100%) for calculating baker's percentages. All other ingredients are calculated as a percentage of the flour weight.</p>
+          <TooltipContent side="top" className="max-w-xs p-3">
+            <p className="text-sm">Flour is the foundation (100%) for baker's percentages. All other ingredients are calculated relative to the total flour weight. For best results, use between 250-1000g of flour.</p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -53,7 +54,8 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
         onChange={(e) => handleFlourChange(e.target.value)}
         min="0"
         step="1"
-        className={`transition-colors ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+        className={`transition-all duration-200 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'}`}
+        placeholder={`Enter flour weight in ${unit}`}
       />
       {error && (
         <Alert variant="destructive" className="py-2 animate-fade-in">

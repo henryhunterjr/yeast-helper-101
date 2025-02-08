@@ -24,25 +24,30 @@ const HydrationInput = ({ hydration, setHydration, error }: HydrationInputProps)
     if (hydrationValue < 50 || hydrationValue > 100) {
       toast({
         title: "Invalid Hydration Level",
-        description: "Hydration must be between 50% and 100%",
+        description: "For best results, keep hydration between 50% and 100%. Lower hydration creates firmer dough, while higher hydration gives more open crumb.",
         variant: "destructive",
       });
       return;
     }
 
+    console.log("Setting new hydration value:", hydrationValue);
     setHydration(hydrationValue);
   };
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="hydration">Hydration ({hydration}%)</Label>
+        <Label htmlFor="hydration" className="text-sm font-medium">Hydration ({hydration}%)</Label>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+            <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p>Hydration percentage affects dough texture and handling. Lower hydration (50-65%) makes firmer dough, while higher hydration (70-85%) creates more open crumb but can be harder to handle.</p>
+          <TooltipContent side="top" className="max-w-xs p-3">
+            <p className="text-sm">Hydration affects dough texture and handling:
+              <br/>• 50-65%: Firmer, easier to handle
+              <br/>• 65-75%: Standard bread dough
+              <br/>• 75-85%: Rustic breads, more open crumb
+              <br/>• 85%+: Very wet dough, harder to handle</p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -55,7 +60,8 @@ const HydrationInput = ({ hydration, setHydration, error }: HydrationInputProps)
           min="50"
           max="100"
           step="1"
-          className={`transition-colors ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+          className={`transition-all duration-200 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'}`}
+          placeholder="Enter hydration percentage"
         />
         <Slider
           value={[hydration]}
