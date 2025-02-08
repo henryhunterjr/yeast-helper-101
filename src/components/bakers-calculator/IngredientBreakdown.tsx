@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -25,7 +26,7 @@ const IngredientBreakdown = ({ calculations, unit }: IngredientBreakdownProps) =
 
   if (!calculations.water && !calculations.starter && !calculations.salt) {
     return (
-      <Card className="p-4 space-y-4">
+      <Card className="p-4 space-y-4 bg-white/50 dark:bg-gray-900/50">
         <Label className="text-lg font-semibold">Ingredient Breakdown</Label>
         <div className="space-y-4">
           <Skeleton className="h-4 w-full" />
@@ -37,14 +38,14 @@ const IngredientBreakdown = ({ calculations, unit }: IngredientBreakdownProps) =
   }
 
   return (
-    <Card className="p-4 space-y-4">
+    <Card className="p-4 space-y-4 bg-white/50 dark:bg-gray-900/50 shadow-md">
       <div>
-        <Label className="text-lg font-semibold">Ingredient Breakdown</Label>
+        <Label className="text-lg font-semibold text-gray-900 dark:text-white">Ingredient Breakdown</Label>
         <div className="mt-4 space-y-2">
           <div className="flex justify-between items-center">
-            <span>Water</span>
+            <span className="text-gray-900 dark:text-white">Water</span>
             <div className="flex items-center gap-2">
-              <span>{formatNumber(calculations.water)} {unit}</span>
+              <span className="text-gray-900 dark:text-white">{formatNumber(calculations.water)} {unit}</span>
               {showHydrationWarning && (
                 <Tooltip>
                   <TooltipTrigger>
@@ -59,24 +60,24 @@ const IngredientBreakdown = ({ calculations, unit }: IngredientBreakdownProps) =
           </div>
           
           <div className="flex justify-between">
-            <span>Starter</span>
-            <span>{formatNumber(calculations.starter)} {unit}</span>
+            <span className="text-gray-900 dark:text-white">Starter</span>
+            <span className="text-gray-900 dark:text-white">{formatNumber(calculations.starter)} {unit}</span>
           </div>
           
-          <div className="pl-4 text-sm text-gray-600">
+          <div className="pl-4 space-y-1">
             <div className="flex justify-between">
-              <span>• Flour from Starter</span>
-              <span>{formatNumber(calculations.flourFromStarter)} {unit}</span>
+              <span className="text-gray-600 dark:text-gray-300 font-medium">• Flour from Starter</span>
+              <span className="text-gray-600 dark:text-gray-300">{formatNumber(calculations.flourFromStarter)} {unit}</span>
             </div>
             <div className="flex justify-between">
-              <span>• Water from Starter</span>
-              <span>{formatNumber(calculations.waterFromStarter)} {unit}</span>
+              <span className="text-gray-600 dark:text-gray-300 font-medium">• Water from Starter</span>
+              <span className="text-gray-600 dark:text-gray-300">{formatNumber(calculations.waterFromStarter)} {unit}</span>
             </div>
           </div>
           
           <div className="flex justify-between">
-            <span>Salt</span>
-            <span>{formatNumber(calculations.salt)} {unit}</span>
+            <span className="text-gray-900 dark:text-white">Salt</span>
+            <span className="text-gray-900 dark:text-white">{formatNumber(calculations.salt)} {unit}</span>
           </div>
         </div>
       </div>
