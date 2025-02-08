@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,13 @@ const WaterInput = ({
   unit,
   error 
 }: WaterInputProps) => {
+  React.useEffect(() => {
+    if (flour) {
+      const calculatedWater = (flour * hydration) / 100;
+      setWater(Math.round(calculatedWater * 10) / 10);
+    }
+  }, [flour, hydration, setWater]);
+
   const handleWaterChange = (value: string) => {
     const waterValue = value === '' ? null : Number(value);
     setWater(waterValue);
