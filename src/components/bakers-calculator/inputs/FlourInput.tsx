@@ -16,15 +16,17 @@ interface FlourInputProps {
 
 const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
   const { toast } = useToast();
+  const startTime = React.useRef<number>();
 
   const handleFlourChange = (value: string) => {
+    startTime.current = performance.now();
     console.log("Flour input changed:", value);
     const flourValue = value === '' ? null : Number(value);
     
     if (flourValue !== null && (flourValue < 0 || flourValue > 10000)) {
       toast({
         title: "Invalid Flour Amount",
-        description: "Please enter a flour amount between 0 and 10,000 grams for best results.",
+        description: `Please enter a flour amount between 0 and 10,000 ${unit} for optimal dough consistency and handling.`,
         variant: "destructive",
       });
       return;
@@ -32,6 +34,9 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
 
     console.log("Setting new flour value:", flourValue);
     setFlour(flourValue);
+    
+    const endTime = performance.now();
+    console.log(`Flour calculation completed in ${Math.round(endTime - (startTime.current || endTime))}ms`);
   };
 
   return (
@@ -47,8 +52,10 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
           <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
             <p className="text-sm">
               Flour is the foundation (100%) for baker's percentages. All other ingredients 
-              are calculated relative to the total flour weight. For best results, use 
-              between 250-1000g of flour.
+              are calculated relative to the total flour weight. For the best results with most bread recipes:
+              <br/>• Standard loaf: 250-500g flour
+              <br/>• Double batch: 500-1000g flour
+              <br/>• Large batch: 1000g+ flour
             </p>
           </TooltipContent>
         </Tooltip>

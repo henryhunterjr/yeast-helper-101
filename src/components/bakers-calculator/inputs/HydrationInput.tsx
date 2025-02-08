@@ -16,15 +16,17 @@ interface HydrationInputProps {
 
 const HydrationInput = ({ hydration, setHydration, error }: HydrationInputProps) => {
   const { toast } = useToast();
+  const startTime = React.useRef<number>();
 
   const handleHydrationChange = (value: string | number) => {
+    startTime.current = performance.now();
     console.log("Hydration input changed:", value);
     const hydrationValue = typeof value === 'string' ? Number(value) : value;
     
     if (hydrationValue < 50 || hydrationValue > 100) {
       toast({
         title: "Invalid Hydration Level",
-        description: "For best results, keep hydration between 50% and 100%. Lower hydration creates firmer dough, while higher hydration gives more open crumb.",
+        description: "For optimal dough consistency, keep hydration between 50% and 100%. Lower hydration creates firmer dough, while higher hydration gives a more open crumb structure.",
         variant: "destructive",
       });
       return;
@@ -32,6 +34,9 @@ const HydrationInput = ({ hydration, setHydration, error }: HydrationInputProps)
 
     console.log("Setting new hydration value:", hydrationValue);
     setHydration(hydrationValue);
+    
+    const endTime = performance.now();
+    console.log(`Hydration calculation completed in ${Math.round(endTime - (startTime.current || endTime))}ms`);
   };
 
   return (
@@ -47,10 +52,10 @@ const HydrationInput = ({ hydration, setHydration, error }: HydrationInputProps)
           <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
             <p className="text-sm">
               Hydration affects dough texture and handling:
-              <br/>• 50-65%: Firmer, easier to handle
-              <br/>• 65-75%: Standard bread dough
+              <br/>• 50-65%: Firmer dough, ideal for bagels and pizza
+              <br/>• 65-75%: Classic bread dough texture
               <br/>• 75-85%: Rustic breads, more open crumb
-              <br/>• 85%+: Very wet dough, harder to handle
+              <br/>• 85%+: Very wet dough, needs advanced handling
             </p>
           </TooltipContent>
         </Tooltip>

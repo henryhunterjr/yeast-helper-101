@@ -28,23 +28,28 @@ const WaterInput = ({
   error 
 }: WaterInputProps) => {
   const { toast } = useToast();
+  const startTime = React.useRef<number>();
 
   useEffect(() => {
     if (flour) {
+      startTime.current = performance.now();
       console.log("Calculating water from flour and hydration:", { flour, hydration });
       const calculatedWater = Math.round((flour * hydration) / 100);
       setWater(calculatedWater);
+      const endTime = performance.now();
+      console.log(`Water calculation completed in ${Math.round(endTime - (startTime.current || endTime))}ms`);
     }
   }, [flour, hydration, setWater]);
 
   const handleWaterChange = (value: string) => {
+    startTime.current = performance.now();
     console.log("Water input changed:", value);
     const waterValue = value === '' ? null : Number(value);
     
     if (waterValue !== null && (waterValue < 0 || waterValue > 10000)) {
       toast({
         title: "Invalid Water Amount",
-        description: "Please enter a water amount between 0 and 10,000 grams for best results.",
+        description: `Please enter a water amount between 0 and 10,000 ${unit} for optimal dough consistency.`,
         variant: "destructive",
       });
       return;
@@ -58,9 +63,13 @@ const WaterInput = ({
       console.log("Calculating new hydration:", newHydration);
       setHydration(newHydration);
     }
+    
+    const endTime = performance.now();
+    console.log(`Water and hydration calculations completed in ${Math.round(endTime - (startTime.current || endTime))}ms`);
   };
 
   const handleHydrationChange = (value: number) => {
+    startTime.current = performance.now();
     console.log("Hydration slider changed:", value);
     setHydration(value);
     if (flour) {
@@ -68,6 +77,8 @@ const WaterInput = ({
       console.log("Calculating new water from hydration:", newWater);
       setWater(newWater);
     }
+    const endTime = performance.now();
+    console.log(`Hydration-based water calculation completed in ${Math.round(endTime - (startTime.current || endTime))}ms`);
   };
 
   return (
@@ -80,9 +91,11 @@ const WaterInput = ({
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
             <p className="text-sm">
-              Water amount determines the dough's hydration percentage. Higher hydration 
-              creates a more open crumb structure but can make the dough harder to handle. 
-              Adjust the slider to find your preferred hydration level.
+              Water amount determines your dough's hydration level:
+              <br/>• Less water = firmer dough
+              <br/>• More water = softer, more open crumb
+              <br/>• Adjust using either the input or slider
+              <br/>• Water temperature affects fermentation
             </p>
           </TooltipContent>
         </Tooltip>
@@ -109,8 +122,10 @@ const WaterInput = ({
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
                 <p className="text-sm">
-                  Hydration is the ratio of water to flour, expressed as a percentage. 
-                  It significantly affects your dough's texture and handling characteristics.
+                  Hydration is the ratio of water to flour:
+                  <br/>• Lower = firmer, easier to handle
+                  <br/>• Higher = softer, more open crumb
+                  <br/>• Choose based on your recipe type
                 </p>
               </TooltipContent>
             </Tooltip>
