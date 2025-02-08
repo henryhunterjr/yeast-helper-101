@@ -35,15 +35,21 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
   };
 
   return (
-    <div className="space-y-2 transition-all duration-200">
+    <div className="space-y-2 transition-all duration-200 animate-in fade-in-50">
       <div className="flex items-center justify-between">
-        <Label htmlFor="flour" className="text-sm font-medium">Flour Weight ({unit})</Label>
+        <Label htmlFor="flour" className="text-sm font-medium">
+          Flour Weight ({unit})
+        </Label>
         <Tooltip>
           <TooltipTrigger asChild>
             <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-xs p-3">
-            <p className="text-sm">Flour is the foundation (100%) for baker's percentages. All other ingredients are calculated relative to the total flour weight. For best results, use between 250-1000g of flour.</p>
+          <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
+            <p className="text-sm">
+              Flour is the foundation (100%) for baker's percentages. All other ingredients 
+              are calculated relative to the total flour weight. For best results, use 
+              between 250-1000g of flour.
+            </p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -54,11 +60,13 @@ const FlourInput = ({ flour, setFlour, unit, error }: FlourInputProps) => {
         onChange={(e) => handleFlourChange(e.target.value)}
         min="0"
         step="1"
-        className={`transition-all duration-200 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'}`}
+        className={`transition-all duration-200 hover:border-primary focus-visible:ring-offset-2 ${
+          error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'
+        }`}
         placeholder={`Enter flour weight in ${unit}`}
       />
       {error && (
-        <Alert variant="destructive" className="py-2 animate-fade-in">
+        <Alert variant="destructive" className="py-2 animate-in slide-in-from-top-1">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>

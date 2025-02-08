@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -29,11 +29,11 @@ const WaterInput = ({
 }: WaterInputProps) => {
   const { toast } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (flour) {
       console.log("Calculating water from flour and hydration:", { flour, hydration });
-      const calculatedWater = (flour * hydration) / 100;
-      setWater(Math.round(calculatedWater * 10) / 10);
+      const calculatedWater = Math.round((flour * hydration) / 100);
+      setWater(calculatedWater);
     }
   }, [flour, hydration, setWater]);
 
@@ -54,9 +54,9 @@ const WaterInput = ({
     setWater(waterValue);
     
     if (waterValue !== null && flour) {
-      const newHydration = (waterValue / flour) * 100;
+      const newHydration = Math.round((waterValue / flour) * 100);
       console.log("Calculating new hydration:", newHydration);
-      setHydration(Math.round(newHydration * 10) / 10);
+      setHydration(newHydration);
     }
   };
 
@@ -64,22 +64,26 @@ const WaterInput = ({
     console.log("Hydration slider changed:", value);
     setHydration(value);
     if (flour) {
-      const newWater = (flour * value) / 100;
+      const newWater = Math.round((flour * value) / 100);
       console.log("Calculating new water from hydration:", newWater);
-      setWater(Math.round(newWater * 10) / 10);
+      setWater(newWater);
     }
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 transition-all duration-200 animate-in fade-in-50">
       <div className="flex items-center justify-between">
         <Label htmlFor="water" className="text-sm font-medium">Water ({unit})</Label>
         <Tooltip>
           <TooltipTrigger asChild>
             <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-xs p-3">
-            <p className="text-sm">Water amount determines the dough's hydration percentage. Higher hydration creates a more open crumb structure but can make the dough harder to handle. Adjust the slider to find your preferred hydration level.</p>
+          <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
+            <p className="text-sm">
+              Water amount determines the dough's hydration percentage. Higher hydration 
+              creates a more open crumb structure but can make the dough harder to handle. 
+              Adjust the slider to find your preferred hydration level.
+            </p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -90,7 +94,9 @@ const WaterInput = ({
         onChange={(e) => handleWaterChange(e.target.value)}
         min="0"
         step="1"
-        className={`transition-all duration-200 ${error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'}`}
+        className={`transition-all duration-200 hover:border-primary focus-visible:ring-offset-2 ${
+          error ? 'border-red-500 focus-visible:ring-red-500' : 'focus-visible:ring-primary'
+        }`}
         placeholder={`Enter water amount in ${unit}`}
       />
       <div className="space-y-2">
@@ -101,8 +107,11 @@ const WaterInput = ({
               <TooltipTrigger asChild>
                 <Info className="h-4 w-4 text-muted-foreground cursor-help hover:text-primary transition-colors" />
               </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-xs p-3">
-                <p className="text-sm">Hydration is the ratio of water to flour, expressed as a percentage. It significantly affects your dough's texture and handling characteristics.</p>
+              <TooltipContent side="top" className="max-w-xs p-3 animate-in zoom-in-50">
+                <p className="text-sm">
+                  Hydration is the ratio of water to flour, expressed as a percentage. 
+                  It significantly affects your dough's texture and handling characteristics.
+                </p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -118,7 +127,7 @@ const WaterInput = ({
         />
       </div>
       {error && (
-        <Alert variant="destructive" className="py-2 animate-fade-in">
+        <Alert variant="destructive" className="py-2 animate-in slide-in-from-top-1">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
