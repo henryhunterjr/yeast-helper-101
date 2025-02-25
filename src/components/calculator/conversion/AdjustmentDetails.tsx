@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Tooltip,
@@ -22,6 +23,8 @@ interface AdjustmentDetailsProps {
     maxHours: number;
   } | null;
   fromType: YeastType;
+  toType?: YeastType;
+  result?: string;
 }
 
 const AdjustmentDetails = ({
@@ -30,8 +33,12 @@ const AdjustmentDetails = ({
   hydrationAdjustment,
   fermentationTime,
   fromType,
+  toType,
+  result,
 }: AdjustmentDetailsProps) => {
   const waterTemp = calculateWaterTemperature(parseFloat(temperature), fromType);
+  const starterAmount = parseFloat(result || '0');
+  const showSourdoughAdjustments = toType === 'sourdough' && !isNaN(starterAmount);
 
   return (
     <div className="space-y-4">
@@ -43,7 +50,7 @@ const AdjustmentDetails = ({
           </TooltipTrigger>
           <TooltipContent>
             <p className="max-w-xs">
-              These adjustments help optimize your recipe based on temperature and hydration levels.
+              These adjustments help optimize your recipe based on temperature, hydration, and starter composition.
             </p>
           </TooltipContent>
         </Tooltip>
@@ -60,7 +67,18 @@ const AdjustmentDetails = ({
           </p>
         </Card>
         
-        {hydrationAdjustment?.showAdjustments && (
+        {showSourdoughAdjustments ? (
+          <Card className="p-4 bg-card border border-border">
+            <h4 className="font-medium mb-2 text-foreground">Starter Composition</h4>
+            <ul className="text-sm text-foreground space-y-1">
+              <li>Flour: {(starterAmount / 2).toFixed(1)}g</li>
+              <li>Water: {(starterAmount / 2).toFixed(1)}g</li>
+            </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              Reduce recipe's flour and water by these amounts
+            </p>
+          </Card>
+        ) : hydrationAdjustment?.showAdjustments && (
           <Card className="p-4 bg-card border border-border">
             <h4 className="font-medium mb-2 text-foreground">Hydration Adjustments</h4>
             <ul className="text-sm text-foreground space-y-1">
