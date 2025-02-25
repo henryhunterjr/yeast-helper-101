@@ -22,7 +22,6 @@ export const TEMPERATURE_RANGES = {
   }
 } as const;
 
-// Export these functions that are needed by the tests
 export const calculateTemperatureMultiplier = tempMultiplier;
 export const calculateHydrationMultiplier = hydrationMultiplier;
 
@@ -98,12 +97,21 @@ export const calculateConversion = memoizedCalculation(
       return { result: amount, isSimplified: true };
     }
 
-    let result = amountInGrams * conversionFactors[fromType][toType];
+    let activeDryEquivalent: number;
+    if (fromType === 'sourdough') {
+      activeDryEquivalent = amountInGrams / 20;
+    } else if (fromType === 'fresh') {
+      activeDryEquivalent = amountInGrams / 1.3333;
+    } else {
+      activeDryEquivalent = amountInGrams;
+    }
 
+    let result: number;
     if (toType === 'sourdough') {
+      result = activeDryEquivalent * 20;
+      
       const tempMultiplier = calculateTemperatureMultiplier(temperature);
       const strengthMultiplier = getStarterStrengthMultiplier(starterStrength);
-      
       result *= tempMultiplier * strengthMultiplier;
 
       const flourAdjustment = result / (1 + hydration/100);
@@ -119,6 +127,10 @@ export const calculateConversion = memoizedCalculation(
         flourAdjustment,
         waterAdjustment
       };
+    } else if (toType === 'fresh') {
+      result = activeDryEquivalent * 1.3333;
+    } else {
+      result = activeDryEquivalent;
     }
 
     if (useTsp && (toType === 'active-dry' || toType === 'instant')) {
