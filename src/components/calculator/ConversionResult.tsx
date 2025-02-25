@@ -41,20 +41,19 @@ const ConversionResult: React.FC<ConversionResultProps> = ({
   const waterTemp = parseFloat(temperature) + 20;
 
   return (
-    <Card className="mt-8 p-6 bg-card dark:bg-gray-800/50 backdrop-blur-sm border border-border dark:border-gray-700 shadow-lg transition-all duration-200 ease-in-out">
+    <Card className="mt-4 sm:mt-8 p-4 sm:p-6 bg-card dark:bg-gray-800/50 backdrop-blur-sm border border-border dark:border-gray-700 shadow-lg transition-all duration-200 ease-in-out">
       {(!amount || !result) ? (
-        // Placeholder state
         <div className="space-y-4 animate-pulse">
           <div className="h-8 w-3/4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
           <div className="h-12 w-full bg-gray-200 dark:bg-gray-700 rounded-md"></div>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="space-y-2">
-            <p className="text-xl font-mono text-gray-700 dark:text-gray-300 break-words">
+            <p className="text-lg sm:text-xl font-mono text-gray-700 dark:text-gray-300 break-words">
               {amount} {unit} {fromType} =
             </p>
-            <p className="text-3xl font-bold font-mono text-primary dark:text-primary break-words">
+            <p className="text-2xl sm:text-3xl font-bold font-mono text-primary dark:text-primary break-words">
               {result} {unit} {toType}
             </p>
           </div>
@@ -77,13 +76,15 @@ const ConversionResult: React.FC<ConversionResultProps> = ({
             />
           </div>
 
-          <AdjustmentDetails
-            temperature={temperature}
-            temperatureAdjustment={temperatureAdjustment}
-            hydrationAdjustment={hydrationAdjustment}
-            fermentationTime={fermentationTime}
-            fromType={fromType}
-          />
+          <div className="pt-2 sm:pt-4">
+            <AdjustmentDetails
+              temperature={temperature}
+              temperatureAdjustment={temperatureAdjustment}
+              hydrationAdjustment={hydrationAdjustment}
+              fermentationTime={fermentationTime}
+              fromType={fromType}
+            />
+          </div>
         </div>
       )}
     </Card>
