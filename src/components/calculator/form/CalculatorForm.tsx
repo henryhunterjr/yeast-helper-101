@@ -1,6 +1,9 @@
+
 import React from 'react';
 import { YeastType, UnitType } from '@/utils/yeastTypes';
-import YeastInputSection from '../YeastInputSection';
+import YeastTypeSelector from '../YeastTypeSelector';
+import UnitSelector from '../inputs/UnitSelector';
+import AmountInput from '../inputs/AmountInput';
 import TemperatureInput from '@/components/TemperatureInput';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,36 +45,55 @@ const CalculatorForm = ({
 }: CalculatorFormProps) => {
   return (
     <div className="space-y-6">
-      <YeastInputSection
-        amount={amount}
-        setAmount={setAmount}
-        fromType={fromType}
-        toType={toType}
-        handleFromTypeChange={handleFromTypeChange}
-        handleToTypeChange={handleToTypeChange}
-        isLoading={isLoading}
-        unit={unit}
-        setUnit={setUnit}
-        useTsp={useTsp}
-        setUseTsp={setUseTsp}
-      />
-      
-      <TemperatureInput
-        temperature={temperature}
-        setTemperature={setTemperature}
-      />
-
-      <div className="space-y-2">
-        <Label htmlFor="hydration">Dough Hydration (%)</Label>
-        <Input
-          id="hydration"
-          type="number"
-          value={hydration}
-          onChange={(e) => setHydration(e.target.value)}
-          min="0"
-          max="200"
-          className="w-full"
+      {/* 1. Yeast Type Selection */}
+      <div className="space-y-4">
+        <YeastTypeSelector
+          fromType={fromType}
+          toType={toType}
+          onFromTypeChange={handleFromTypeChange}
+          onToTypeChange={handleToTypeChange}
         />
+      </div>
+
+      {/* 2. Measurement Unit Selection */}
+      <div className="space-y-2">
+        <UnitSelector
+          unit={unit}
+          setUnit={setUnit}
+          useTsp={useTsp}
+          setUseTsp={setUseTsp}
+        />
+      </div>
+
+      {/* 3. Amount Input */}
+      <div className="space-y-2">
+        <AmountInput
+          amount={amount}
+          setAmount={setAmount}
+          unit={unit}
+          yeastType={fromType}
+        />
+      </div>
+
+      {/* 4. Temperature and Hydration */}
+      <div className="space-y-4">
+        <TemperatureInput
+          temperature={temperature}
+          setTemperature={setTemperature}
+        />
+
+        <div className="space-y-2">
+          <Label htmlFor="hydration">Dough Hydration (%)</Label>
+          <Input
+            id="hydration"
+            type="number"
+            value={hydration}
+            onChange={(e) => setHydration(e.target.value)}
+            min="0"
+            max="200"
+            className="w-full"
+          />
+        </div>
       </div>
     </div>
   );
