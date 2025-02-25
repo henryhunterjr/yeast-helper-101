@@ -1,13 +1,18 @@
+
 import { useState, useEffect } from 'react';
 
 export const useDarkMode = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true); // Set default to true
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('yeastwise-settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setIsDarkMode(settings.darkMode || false);
+      setIsDarkMode(settings.darkMode ?? true); // Default to true if not set
+    } else {
+      // If no settings exist, initialize with dark mode
+      localStorage.setItem('yeastwise-settings', JSON.stringify({ darkMode: true }));
+      document.documentElement.classList.add('dark');
     }
   }, []);
 
