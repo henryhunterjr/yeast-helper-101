@@ -38,59 +38,65 @@ const YeastCalculatorContainer = () => {
   return (
     <CalculatorLayout>
       <div className="space-y-6">
-        <CalculatorForm
-          amount={amount}
-          setAmount={setAmount}
-          temperature={temperature}
-          setTemperature={setTemperature}
-          hydration={hydration}
-          setHydration={setHydration}
-          fromType={fromType}
-          toType={toType}
-          handleFromTypeChange={setFromType}
-          handleToTypeChange={setToType}
-          isLoading={isLoading}
-          unit={unit}
-          setUnit={setUnit}
-          useTsp={useTsp}
-          setUseTsp={setUseTsp}
-        />
+        <div className="grid gap-6">
+          <div className="space-y-6">
+            <CalculatorForm
+              amount={amount}
+              setAmount={setAmount}
+              temperature={temperature}
+              setTemperature={setTemperature}
+              hydration={hydration}
+              setHydration={setHydration}
+              fromType={fromType}
+              toType={toType}
+              handleFromTypeChange={setFromType}
+              handleToTypeChange={setToType}
+              isLoading={isLoading}
+              unit={unit}
+              setUnit={setUnit}
+              useTsp={useTsp}
+              setUseTsp={setUseTsp}
+            />
 
-        {result && (
-          <ConversionResult
-            amount={amount}
-            fromType={fromType}
-            toType={toType}
-            temperature={temperature}
-            hydration={hydration}
-            result={result}
-            temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
-            hydrationAdjustment={calculateHydrationAdjustment(
-              parseFloat(hydration),
-              parseFloat(amount),
-              fromType,
-              toType
+            {result && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <ConversionResult
+                  amount={amount}
+                  fromType={fromType}
+                  toType={toType}
+                  temperature={temperature}
+                  hydration={hydration}
+                  result={result}
+                  temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+                  hydrationAdjustment={calculateHydrationAdjustment(
+                    parseFloat(hydration),
+                    parseFloat(amount),
+                    fromType,
+                    toType
+                  )}
+                  fermentationTime={calculateProofingTime(
+                    fromType,
+                    parseFloat(hydration),
+                    parseFloat(temperature),
+                    starterStrength
+                  )}
+                  isLoading={isLoading}
+                  unit={unit}
+                  onReset={() => setAmount('')}
+                  isSimplified={isSimplified}
+                  starterStrength={starterStrength}
+                />
+              </div>
             )}
-            fermentationTime={calculateProofingTime(
-              fromType,
-              parseFloat(hydration),
-              parseFloat(temperature),
-              starterStrength
-            )}
-            isLoading={isLoading}
-            unit={unit}
-            onReset={() => setAmount('')}
-            isSimplified={isSimplified}
-            starterStrength={starterStrength}
-          />
-        )}
+          </div>
 
-        {toType === 'sourdough' && (
-          <StarterStrengthSelect
-            value={starterStrength}
-            onChange={setStarterStrength}
-          />
-        )}
+          {toType === 'sourdough' && (
+            <StarterStrengthSelect
+              value={starterStrength}
+              onChange={setStarterStrength}
+            />
+          )}
+        </div>
       </div>
     </CalculatorLayout>
   );
