@@ -18,6 +18,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
 
 const YeastCalculatorContainer = () => {
   const [amount, setAmount] = useState('');
@@ -118,19 +119,17 @@ const YeastCalculatorContainer = () => {
             )}
 
             <div className="space-y-4">
-              <input
+              <Input
                 type="number"
                 value={temperature}
                 onChange={(e) => setTemperature(e.target.value)}
                 placeholder="Enter room temperature"
-                className="w-full p-2 border rounded"
               />
-              <input
+              <Input
                 type="number"
                 value={hydration}
                 onChange={(e) => setHydration(e.target.value)}
                 placeholder="Enter hydration"
-                className="w-full p-2 border rounded"
               />
             </div>
           </div>
