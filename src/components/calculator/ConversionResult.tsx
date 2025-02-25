@@ -93,37 +93,19 @@ const ConversionResult: React.FC<ConversionResultProps> = ({
             </Alert>
           )}
 
-          <div 
-            className="grid gap-4 sm:grid-cols-2"
-            role="complementary"
-            aria-label="Additional conversion details"
-          >
-            <WaterTempDisplay 
-              roomTemp={temperature} 
-              waterTemp={waterTemp}
-              aria-label="Water temperature recommendation"
-            />
-            <ProofingTimeDisplay
-              fermentationTime={fermentationTime}
-              temperature={temperature}
-              hydration={hydration}
-              aria-label="Proofing time recommendation"
-            />
-          </div>
-
-          <div 
-            className="pt-2 sm:pt-4"
-            role="region"
-            aria-label="Adjustment recommendations"
-          >
-            <AdjustmentDetails
-              temperature={temperature}
-              temperatureAdjustment={temperatureAdjustment}
-              hydrationAdjustment={hydrationAdjustment}
-              fermentationTime={fermentationTime}
-              fromType={fromType}
-            />
-          </div>
+          <AdjustmentDetails
+            temperature={temperature}
+            temperatureAdjustment={temperatureAdjustment}
+            hydrationAdjustment={{
+              flourAdjustment: parseFloat(result) / 2,
+              waterAdjustment: parseFloat(result) / 2,
+              showAdjustments: toType === 'sourdough'
+            }}
+            fermentationTime={fermentationTime}
+            fromType={fromType}
+            toType={toType}
+            result={result}
+          />
         </div>
       )}
     </Card>
