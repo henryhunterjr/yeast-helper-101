@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { YeastType, UnitType } from '@/utils/yeastTypes';
 import CalculatorForm from './form/CalculatorForm';
@@ -22,9 +23,8 @@ const YeastCalculatorContainer = () => {
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
 
-  const handleConversion = () => {
-    if (amount && fromType && toType) {
-      const { result, isSimplified } = calculateConversion(
+  const { result, isSimplified } = amount && fromType && toType 
+    ? calculateConversion(
         amount,
         fromType,
         toType,
@@ -32,69 +32,66 @@ const YeastCalculatorContainer = () => {
         parseFloat(temperature),
         parseFloat(hydration),
         starterStrength
-      );
-      return { result, isSimplified };
-    }
-    return { result: '', isSimplified: false };
-  };
-
-  const { result, isSimplified } = handleConversion();
+      )
+    : { result: '', isSimplified: false };
 
   return (
     <CalculatorLayout>
-      <CalculatorForm
-        amount={amount}
-        setAmount={setAmount}
-        temperature={temperature}
-        setTemperature={setTemperature}
-        hydration={hydration}
-        setHydration={setHydration}
-        fromType={fromType}
-        toType={toType}
-        handleFromTypeChange={setFromType}
-        handleToTypeChange={setToType}
-        isLoading={isLoading}
-        unit={unit}
-        setUnit={setUnit}
-        useTsp={useTsp}
-        setUseTsp={setUseTsp}
-      />
-
-      {toType === 'sourdough' && (
-        <StarterStrengthSelect
-          value={starterStrength}
-          onChange={setStarterStrength}
-        />
-      )}
-
-      {result && (
-        <ConversionResult
+      <div className="space-y-6">
+        <CalculatorForm
           amount={amount}
+          setAmount={setAmount}
+          temperature={temperature}
+          setTemperature={setTemperature}
+          hydration={hydration}
+          setHydration={setHydration}
           fromType={fromType}
           toType={toType}
-          temperature={temperature}
-          hydration={hydration}
-          result={result}
-          temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
-          hydrationAdjustment={calculateHydrationAdjustment(
-            parseFloat(hydration),
-            parseFloat(amount),
-            fromType,
-            toType
-          )}
-          fermentationTime={calculateProofingTime(
-            fromType,
-            parseFloat(hydration),
-            parseFloat(temperature),
-            starterStrength
-          )}
+          handleFromTypeChange={setFromType}
+          handleToTypeChange={setToType}
           isLoading={isLoading}
           unit={unit}
-          onReset={() => setAmount('')}
-          isSimplified={isSimplified}
-          starterStrength={starterStrength}
+          setUnit={setUnit}
+          useTsp={useTsp}
+          setUseTsp={setUseTsp}
         />
-      )}
+
+        {result && (
+          <ConversionResult
+            amount={amount}
+            fromType={fromType}
+            toType={toType}
+            temperature={temperature}
+            hydration={hydration}
+            result={result}
+            temperatureAdjustment={getTemperatureAdjustment(parseFloat(temperature))}
+            hydrationAdjustment={calculateHydrationAdjustment(
+              parseFloat(hydration),
+              parseFloat(amount),
+              fromType,
+              toType
+            )}
+            fermentationTime={calculateProofingTime(
+              fromType,
+              parseFloat(hydration),
+              parseFloat(temperature),
+              starterStrength
+            )}
+            isLoading={isLoading}
+            unit={unit}
+            onReset={() => setAmount('')}
+            isSimplified={isSimplified}
+            starterStrength={starterStrength}
+          />
+        )}
+
+        {toType === 'sourdough' && (
+          <StarterStrengthSelect
+            value={starterStrength}
+            onChange={setStarterStrength}
+          />
+        )}
+      </div>
     </CalculatorLayout>
   );
 };
