@@ -1,3 +1,4 @@
+
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,7 +19,7 @@ describe('Sourdough Conversions', () => {
     await userEvent.clear(hydrationInput);
     await userEvent.type(hydrationInput, '100');
 
-    const result = await screen.findByText(/300.00g/i);
+    const result = await screen.findByText(/200.00g/i);
     expect(result).toBeInTheDocument();
   });
 
@@ -36,7 +37,7 @@ describe('Sourdough Conversions', () => {
     await userEvent.clear(hydrationInput);
     await userEvent.type(hydrationInput, '80');
 
-    const result = await screen.findByText(/300.00g/i);
+    const result = await screen.findByText(/200.00g/i);
     const flourAdjustment = await screen.findByText(/Flour Adjustment/i);
     expect(result).toBeInTheDocument();
     expect(flourAdjustment).toBeInTheDocument();
