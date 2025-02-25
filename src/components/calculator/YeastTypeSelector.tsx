@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { YeastType } from '@/utils/yeastTypes';
 import { useToast } from "@/hooks/use-toast";
@@ -53,6 +54,7 @@ const YeastTypeSelector = ({
           <option value="active-dry">Active Dry Yeast</option>
           <option value="instant">Instant Yeast</option>
           <option value="fresh">Fresh Yeast</option>
+          <option value="sourdough">Sourdough Starter</option>
         </select>
       </div>
       <div className="flex flex-col space-y-2">
@@ -65,6 +67,7 @@ const YeastTypeSelector = ({
           <option value="active-dry">Active Dry Yeast</option>
           <option value="instant">Instant Yeast</option>
           <option value="fresh">Fresh Yeast</option>
+          <option value="sourdough">Sourdough Starter</option>
         </select>
       </div>
     </div>
