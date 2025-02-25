@@ -11,6 +11,13 @@ import {
   calculateHydrationAdjustment,
   calculateProofingTime
 } from '@/utils/calculationHelpers';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const YeastCalculatorContainer = () => {
   const [amount, setAmount] = useState('');
@@ -22,6 +29,7 @@ const YeastCalculatorContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [unit, setUnit] = useState<UnitType>('g');
   const [useTsp, setUseTsp] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { result, isSimplified } = amount && fromType && toType 
     ? calculateConversion(
@@ -43,15 +51,10 @@ const YeastCalculatorContainer = () => {
             <CalculatorForm
               amount={amount}
               setAmount={setAmount}
-              temperature={temperature}
-              setTemperature={setTemperature}
-              hydration={hydration}
-              setHydration={setHydration}
               fromType={fromType}
               toType={toType}
               handleFromTypeChange={setFromType}
               handleToTypeChange={setToType}
-              isLoading={isLoading}
               unit={unit}
               setUnit={setUnit}
               useTsp={useTsp}
@@ -59,7 +62,7 @@ const YeastCalculatorContainer = () => {
             />
 
             {result && (
-              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
                 <ConversionResult
                   amount={amount}
                   fromType={fromType}
@@ -86,16 +89,51 @@ const YeastCalculatorContainer = () => {
                   isSimplified={isSimplified}
                   starterStrength={starterStrength}
                 />
+
+                {toType === 'sourdough' && (
+                  <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                    <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Info className="h-4 w-4" />
+                      {isOpen ? 'Hide' : 'Show'} sourdough starter information
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2">
+                      <Alert>
+                        <AlertDescription className="text-sm">
+                          When converting to sourdough starter, remember that it contains both flour and water. 
+                          To maintain the right balance, reduce the recipe's flour and water by half the weight 
+                          of the starter added. Also, expect longer fermentation times compared to commercial yeast.
+                        </AlertDescription>
+                      </Alert>
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
               </div>
             )}
-          </div>
 
-          {toType === 'sourdough' && (
-            <StarterStrengthSelect
-              value={starterStrength}
-              onChange={setStarterStrength}
-            />
-          )}
+            {toType === 'sourdough' && (
+              <StarterStrengthSelect
+                value={starterStrength}
+                onChange={setStarterStrength}
+              />
+            )}
+
+            <div className="space-y-4">
+              <input
+                type="number"
+                value={temperature}
+                onChange={(e) => setTemperature(e.target.value)}
+                placeholder="Enter room temperature"
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="number"
+                value={hydration}
+                onChange={(e) => setHydration(e.target.value)}
+                placeholder="Enter hydration"
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </CalculatorLayout>
