@@ -40,6 +40,9 @@ const AdjustmentDetails = ({
   const starterAmount = parseFloat(result || '0');
   const showSourdoughAdjustments = toType === 'sourdough' && !isNaN(starterAmount);
 
+  const flourInStarter = starterAmount / 2;
+  const waterInStarter = starterAmount / 2;
+
   return (
     <div className="space-y-4">
       <div className="font-medium flex items-center gap-2">
@@ -69,13 +72,19 @@ const AdjustmentDetails = ({
         
         {showSourdoughAdjustments ? (
           <Card className="p-4 bg-card border border-border">
-            <h4 className="font-medium mb-2 text-foreground">Starter Composition</h4>
-            <ul className="text-sm text-foreground space-y-1">
-              <li>Flour: {(starterAmount / 2).toFixed(1)}g</li>
-              <li>Water: {(starterAmount / 2).toFixed(1)}g</li>
-            </ul>
+            <h4 className="font-medium mb-2 text-foreground">Sourdough Starter Adjustment</h4>
+            <p className="text-sm text-foreground mb-2">
+              {starterAmount.toFixed(1)}g starter ({flourInStarter.toFixed(1)}g flour + {waterInStarter.toFixed(1)}g water)
+            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-foreground">Recipe adjustments needed:</p>
+              <ul className="text-sm text-foreground space-y-1 list-disc pl-4">
+                <li>Reduce flour by {flourInStarter.toFixed(1)}g</li>
+                <li>Reduce water by {waterInStarter.toFixed(1)}g</li>
+              </ul>
+            </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Reduce recipe's flour and water by these amounts
+              This maintains proper hydration when using 100% hydration starter
             </p>
           </Card>
         ) : hydrationAdjustment?.showAdjustments && (
