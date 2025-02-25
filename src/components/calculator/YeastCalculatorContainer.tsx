@@ -12,13 +12,14 @@ import {
   calculateProofingTime
 } from '@/utils/calculationHelpers';
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const YeastCalculatorContainer = () => {
   const [amount, setAmount] = useState('');
@@ -92,20 +93,35 @@ const YeastCalculatorContainer = () => {
                 />
 
                 {toType === 'sourdough' && (
-                  <div className="bg-background rounded-lg">
+                  <div className="border rounded-lg shadow-sm">
                     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-                      <CollapsibleTrigger className="flex w-full items-center justify-start gap-2 p-4 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <Info className="h-4 w-4" />
-                        {isOpen ? 'Hide' : 'Show'} sourdough starter information
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="px-4 pb-4">
-                        <Alert>
-                          <AlertDescription className="text-sm">
-                            When converting to sourdough starter, remember that it contains both flour and water. 
-                            To maintain the right balance, reduce the recipe's flour and water by half the weight 
-                            of the starter added. Also, expect longer fermentation times compared to commercial yeast.
-                          </AlertDescription>
-                        </Alert>
+                      <div className="border-b">
+                        <Button
+                          variant="ghost"
+                          className="w-full flex items-center justify-between p-4"
+                          asChild
+                        >
+                          <CollapsibleTrigger>
+                            <div className="flex items-center gap-2">
+                              <InfoIcon className="h-4 w-4" />
+                              <span>Sourdough Starter Information</span>
+                            </div>
+                            <span className="text-sm text-muted-foreground">
+                              {isOpen ? 'Hide' : 'Show'}
+                            </span>
+                          </CollapsibleTrigger>
+                        </Button>
+                      </div>
+                      <CollapsibleContent>
+                        <div className="p-4">
+                          <Alert>
+                            <AlertDescription>
+                              When converting to sourdough starter, remember that it contains both flour and water. 
+                              To maintain the right balance, reduce the recipe's flour and water by half the weight 
+                              of the starter added. Also, expect longer fermentation times compared to commercial yeast.
+                            </AlertDescription>
+                          </Alert>
+                        </div>
                       </CollapsibleContent>
                     </Collapsible>
                   </div>
