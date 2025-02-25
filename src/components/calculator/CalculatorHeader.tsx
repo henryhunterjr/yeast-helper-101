@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -24,9 +25,14 @@ const CalculatorHeader = () => {
         </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-yeast-800">
-          YeastWise Calculator
-        </h1>
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-yeast-800">
+            YeastWise
+          </h1>
+          <h2 className="text-xl sm:text-2xl text-yeast-600 mt-1">
+            Yeast & Baker's Percentage Calculator
+          </h2>
+        </div>
         <div className="flex gap-2">
           <AboutUsButton />
           <Button
@@ -50,7 +56,7 @@ const CalculatorHeader = () => {
         </div>
       </div>
       <p className="mt-2 text-gray-600 text-sm sm:text-base">
-        Convert between different types of yeast for perfect bread baking results
+        Convert between different types of yeast and calculate baker's percentages for perfect bread baking results
       </p>
     </div>
   );
