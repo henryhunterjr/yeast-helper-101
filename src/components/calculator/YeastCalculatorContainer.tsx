@@ -92,21 +92,23 @@ const YeastCalculatorContainer = () => {
                 />
 
                 {toType === 'sourdough' && (
-                  <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-                    <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      <Info className="h-4 w-4" />
-                      {isOpen ? 'Hide' : 'Show'} sourdough starter information
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-2">
-                      <Alert>
-                        <AlertDescription className="text-sm">
-                          When converting to sourdough starter, remember that it contains both flour and water. 
-                          To maintain the right balance, reduce the recipe's flour and water by half the weight 
-                          of the starter added. Also, expect longer fermentation times compared to commercial yeast.
-                        </AlertDescription>
-                      </Alert>
-                    </CollapsibleContent>
-                  </Collapsible>
+                  <div className="bg-background rounded-lg">
+                    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                      <CollapsibleTrigger className="flex w-full items-center justify-start gap-2 p-4 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <Info className="h-4 w-4" />
+                        {isOpen ? 'Hide' : 'Show'} sourdough starter information
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="px-4 pb-4">
+                        <Alert>
+                          <AlertDescription className="text-sm">
+                            When converting to sourdough starter, remember that it contains both flour and water. 
+                            To maintain the right balance, reduce the recipe's flour and water by half the weight 
+                            of the starter added. Also, expect longer fermentation times compared to commercial yeast.
+                          </AlertDescription>
+                        </Alert>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
                 )}
               </div>
             )}
