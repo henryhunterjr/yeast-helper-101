@@ -39,44 +39,83 @@ const ConversionResult: React.FC<ConversionResultProps> = ({
   isSimplified = false,
 }) => {
   const waterTemp = parseFloat(temperature) + 20;
+  const resultId = React.useId();
 
   return (
-    <Card className="mt-4 sm:mt-8 p-4 sm:p-6 bg-card dark:bg-gray-800/50 backdrop-blur-sm border border-border dark:border-gray-700 shadow-lg transition-all duration-200 ease-in-out">
+    <Card 
+      className="mt-4 sm:mt-8 p-4 sm:p-6 bg-card dark:bg-gray-800/50 backdrop-blur-sm border border-border dark:border-gray-700 shadow-lg transition-all duration-200 ease-in-out"
+      role="region"
+      aria-label="Conversion Result"
+      tabIndex={0}
+    >
       {(!amount || !result) ? (
-        <div className="space-y-4 animate-pulse">
+        <div 
+          className="space-y-4 animate-pulse"
+          role="status"
+          aria-label="Loading conversion result"
+        >
           <div className="h-8 w-3/4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
           <div className="h-12 w-full bg-gray-200 dark:bg-gray-700 rounded-md"></div>
         </div>
       ) : (
         <div className="space-y-4 sm:space-y-6">
-          <div className="space-y-2">
-            <p className="text-lg sm:text-xl font-mono text-gray-700 dark:text-gray-300 break-words">
+          <div 
+            className="space-y-2"
+            role="region"
+            aria-labelledby={resultId}
+          >
+            <p 
+              id={resultId}
+              className="text-lg sm:text-xl font-mono text-gray-700 dark:text-gray-300 break-words"
+              aria-label={`Converting ${amount} ${unit} of ${fromType}`}
+            >
               {amount} {unit} {fromType} =
             </p>
-            <p className="text-2xl sm:text-3xl font-bold font-mono text-primary dark:text-primary break-words">
+            <p 
+              className="text-2xl sm:text-3xl font-bold font-mono text-primary dark:text-primary break-words"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               {result} {unit} {toType}
             </p>
           </div>
 
           {isSimplified && (
-            <Alert className="bg-card dark:bg-gray-800/80">
-              <InfoCircledIcon className="h-4 w-4" />
+            <Alert 
+              className="bg-card dark:bg-gray-800/80"
+              role="note"
+            >
+              <InfoCircledIcon className="h-4 w-4" aria-hidden="true" />
               <AlertDescription>
                 For small amounts (14g or less), active dry and instant yeast can be used interchangeably at a 1:1 ratio.
               </AlertDescription>
             </Alert>
           )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <WaterTempDisplay roomTemp={temperature} waterTemp={waterTemp} />
+          <div 
+            className="grid gap-4 sm:grid-cols-2"
+            role="complementary"
+            aria-label="Additional conversion details"
+          >
+            <WaterTempDisplay 
+              roomTemp={temperature} 
+              waterTemp={waterTemp}
+              aria-label="Water temperature recommendation"
+            />
             <ProofingTimeDisplay
               fermentationTime={fermentationTime}
               temperature={temperature}
               hydration={hydration}
+              aria-label="Proofing time recommendation"
             />
           </div>
 
-          <div className="pt-2 sm:pt-4">
+          <div 
+            className="pt-2 sm:pt-4"
+            role="region"
+            aria-label="Adjustment recommendations"
+          >
             <AdjustmentDetails
               temperature={temperature}
               temperatureAdjustment={temperatureAdjustment}
