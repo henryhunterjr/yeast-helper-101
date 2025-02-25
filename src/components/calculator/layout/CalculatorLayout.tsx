@@ -1,9 +1,9 @@
+
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import DarkModeToggle from '../../MeasurementToggle';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import CalculatorHeader from '../CalculatorHeader';
-import FavoritesList from '../../favorites/FavoritesList';
 
 interface CalculatorLayoutProps {
   children: React.ReactNode;
@@ -27,15 +27,6 @@ const CalculatorLayout = ({ children }: CalculatorLayoutProps) => {
             </div>
             <div role="main" className="calculator-content">
               {children}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-background dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-border">
-          <div className="p-4 sm:p-6">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">Saved Favorites</h2>
-            <div className="favorites-list-container">
-              <FavoritesList />
             </div>
           </div>
         </div>
