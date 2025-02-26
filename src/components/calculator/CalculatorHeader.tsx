@@ -12,7 +12,7 @@ const CalculatorHeader = () => {
     <div className="relative bg-yeast-50 p-4 sm:p-6 border-b overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 opacity-10 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: 'url("/lovable-uploads/b0d3f906-169b-46d0-a0ca-ab3082f87b18.png")',
           filter: 'grayscale(20%)',
