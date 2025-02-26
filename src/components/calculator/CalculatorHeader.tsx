@@ -27,10 +27,10 @@ const CalculatorHeader = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="text-center sm:text-left">
           <h1 className="text-2xl sm:text-3xl font-bold text-yeast-800">
-            YeastWise
+            YeastWise and Baker's Percentage Calculator
           </h1>
           <h2 className="text-xl sm:text-2xl text-yeast-600 mt-1">
-            Yeast & Baker's Percentage Calculator
+            Your Ultimate Baking Calculator
           </h2>
         </div>
         <div className="flex gap-2">
