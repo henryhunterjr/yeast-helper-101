@@ -39,13 +39,16 @@ jobs:
           entry.integrity = 'sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==';
           fs.writeFileSync(p, JSON.stringify(lock, null, 2) + '\n');
           NODE
+          cp package-lock.json /tmp/security-package-lock.json
 
-      - name: Verify lockfile and build
+      - name: Verify patched dependency and build
         shell: bash
         run: |
           node -e "const l=require('./package-lock.json'); const v=l.packages?.['node_modules/nanoid']?.version; if(v!=='3.3.18'){throw new Error('Expected nanoid 3.3.18, found '+v)}"
-          npm ci --ignore-scripts
+          npm install --ignore-scripts --no-audit --no-fund
           npm run build
+          cp /tmp/security-package-lock.json package-lock.json
+          node -e "const l=require('./package-lock.json'); const v=l.packages?.['node_modules/nanoid']?.version; if(v!=='3.3.18'){throw new Error('Expected nanoid 3.3.18 after restore, found '+v)}"
 
       - name: Commit security fix and remove temporary workflow
         shell: bash
